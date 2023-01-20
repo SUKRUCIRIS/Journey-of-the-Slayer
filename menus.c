@@ -31,18 +31,26 @@ button quitbutton = {
 	.textcolor = {255,255,255,255}
 };
 
+button backbutton = {
+	.backcolor = {48, 0, 74,255},
+	.frontcolor = {96, 0, 148,255},
+	.position = {1680,20,220,75},
+	.text = "BACK",
+	.textcolor = {255,255,255,255}
+};
+
 void intromenu(void) {
-	Font myfont = LoadFontEx("data/fonts/font2.ttf", 250, 0, 350);
-	Vector2 a = MeasureTextEx(myfont, u8"A Þükrü Çiriþ Game", 250, 0);
+	Font myfont = LoadFontEx("data/fonts/font2.ttf", 150, 0, 350);
+	Vector2 a = MeasureTextEx(myfont, u8"A Þükrü Çiriþ Game", 150, 0);
 	Color textc = { 255,255,255,0 };
 	a.x = (1920 - a.x) / 2;
-	a.y = (1080 - a.y) / 2;
+	a.y = 700;
 	RenderTexture2D target = LoadRenderTexture(1920, 1080);
 	Rectangle targetsource = { 0,0,1920,-1080 };
 	Rectangle targetdest = { 0,0,(float)GetScreenWidth(),(float)GetScreenHeight() };
 	Vector2 origin = { 0,0 };
 	Texture2D logo = LoadTexture("data/characters/logo.png");
-	Rectangle logorect = { 810,50,300,300 };
+	Rectangle logorect = { 810,200,300,300 };
 	Rectangle logosrc = { 0,0,11,11 };
 	for (int i = 0; i < 434; i++) {
 		if (i < 127) {
@@ -53,7 +61,7 @@ void intromenu(void) {
 		}
 		BeginTextureMode(target);
 		ClearBackground(BLACK);
-		DrawTextEx(myfont, u8"A Þükrü Çiriþ Game", a, 250, 0, textc);
+		DrawTextEx(myfont, u8"A Þükrü Çiriþ Game", a, 150, 0, textc);
 		DrawTexturePro(logo, logosrc, logorect, origin, 0, textc);
 		EndTextureMode();
 
@@ -62,7 +70,7 @@ void intromenu(void) {
 		DrawTexturePro(target.texture, targetsource, targetdest, origin, 0, WHITE);
 		EndDrawing();
 	}
-
+	UnloadRenderTexture(target);
 	UnloadFont(myfont);
 }
 
@@ -94,6 +102,7 @@ char tilesetintromainmenu(tile* t, int speed, int x, float ratio, Font* f, Vecto
 		ClearBackground(BLACK);
 		y = mainmenuinput(f, a);
 		if (y != 111) {
+			UnloadRenderTexture(target);
 			return y;
 		}
 		for (int i = 0; i < x * x; i++) {
@@ -115,6 +124,26 @@ char tilesetintromainmenu(tile* t, int speed, int x, float ratio, Font* f, Vecto
 		DrawTexturePro(target.texture, targetsource, targetdest, origin, 0, WHITE);
 		EndDrawing();
 	}
+	for (int i = 0; i < 30; i++) {
+		BeginTextureMode(target);
+		ClearBackground(BLACK);
+		y = mainmenuinput(f, a);
+		if (y != 111) {
+			UnloadRenderTexture(target);
+			return y;
+		}
+		for (int i = 0; i < x * x; i++) {
+			tile_render(&(t[i]));
+		}
+		renderallmapobjects();
+		EndTextureMode();
+
+		BeginDrawing();
+		ClearBackground(BLACK);
+		DrawTexturePro(target.texture, targetsource, targetdest, origin, 0, WHITE);
+		EndDrawing();
+	}
+	UnloadRenderTexture(target);
 	return 111;
 }
 
@@ -129,6 +158,7 @@ char tilesetoutromainmenu(tile* t, int speed, int x, float ratio, Font* f, Vecto
 		ClearBackground(BLACK);
 		y = mainmenuinput(f, a);
 		if (y != 111) {
+			UnloadRenderTexture(target);
 			return y;
 		}
 		for (int i = (x * x) - 1; i >= 0; i--) {
@@ -147,6 +177,7 @@ char tilesetoutromainmenu(tile* t, int speed, int x, float ratio, Font* f, Vecto
 		DrawTexturePro(target.texture, targetsource, targetdest, origin, 0, WHITE);
 		EndDrawing();
 	}
+	UnloadRenderTexture(target);
 	return 111;
 }
 
@@ -182,4 +213,43 @@ char mainmenu(void) {
 	deletetiletextures();
 	UnloadFont(myfont);
 	return x;
+}
+
+void settingsmenu(void) {
+	RenderTexture2D target = LoadRenderTexture(1920, 1080);
+	Rectangle targetsource = { 0,0,1920,-1080 };
+	Rectangle targetdest = { 0,0,(float)GetScreenWidth(),(float)GetScreenHeight() };
+	Vector2 origin = { 0,0 };
+	Font myfont = LoadFontEx("data/fonts/font1.ttf", 50, 0, 0);
+	Vector2 fullscreentextpos = { 100,100 };
+	Rectangle fullscreenbox = { 550,85,80,80 };
+	Rectangle fullscreentick = { 570,105,40,40 };
+	Vector2 e;
+	while (!WindowShouldClose()) {
+		BeginTextureMode(target);
+		ClearBackground(BLACK);
+		DrawTextEx(myfont, "Fullscreen:", fullscreentextpos, 50, 0, WHITE);
+		DrawRectangleLinesEx(fullscreenbox, 10, WHITE);
+		if (IsWindowFullscreen()) {
+			DrawRectangleRec(fullscreentick, WHITE);
+		}
+		if (renderbutton(&backbutton, &myfont)) {
+			break;
+		}
+		e.x = GetMousePosition().x * (1920.0f / GetScreenWidth());
+		e.y = GetMousePosition().y * (1080.0f / GetScreenHeight());
+		if (CheckCollisionPointRec(e, fullscreenbox)) {
+			if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+				ToggleFullscreen();
+			}
+		}
+		EndTextureMode();
+
+		BeginDrawing();
+		ClearBackground(BLACK);
+		DrawTexturePro(target.texture, targetsource, targetdest, origin, 0, WHITE);
+		EndDrawing();
+	}
+	UnloadFont(myfont);
+	UnloadRenderTexture(target);
 }

@@ -128,6 +128,7 @@ void tilesetintro(tile* t, int speed, int x, float ratio) {
 		DrawTexturePro(target.texture, targetsource, targetdest, origin, 0, WHITE);
 		EndDrawing();
 	}
+	UnloadRenderTexture(target);
 }
 
 void tilesetoutro(tile* t, int speed, int x, float ratio) {
@@ -154,4 +155,5 @@ void tilesetoutro(tile* t, int speed, int x, float ratio) {
 		DrawTexturePro(target.texture, targetsource, targetdest, origin, 0, WHITE);
 		EndDrawing();
 	}
+	UnloadRenderTexture(target);
 }
