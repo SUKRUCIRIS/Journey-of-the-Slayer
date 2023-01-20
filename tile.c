@@ -2,12 +2,14 @@
 #include "tile.h"
 #include "map_object.h"
 #include <stdlib.h>
+#include <time.h>
 
 Vector2 a, b, c, d;
 
 Rectangle tile_source = { 0,0,64,64 };
 
 Texture2D grasstile;
+Texture2D seatile;
 
 unsigned char tile_status(tile* t) {
 	a.x = t->absposition.x;
@@ -40,16 +42,17 @@ void tile_render(tile* t) {
 	DrawTexturePro(*(t->texture), tile_source, t->position, a, 0, WHITE);
 }
 
-tile* createtileset(int x, int size, float startx, float starty, char middle) {
+tile* createtileset(int x, int size, float startx, float starty, char middle, int tilexchar, int tileychar) {
 	tile* t = malloc(sizeof(tile) * x * x);
 	if (middle == 1) {
 		startx = ((GetRenderWidth() - (size * x)) / 2.0f) + (((x - 1) / 2.0f) * size);
 		starty = (GetRenderHeight() - ((size / 2.0f) * (x - 1)) - size) / 2.0f;
 	}
+	srand((unsigned int)time(0));
+	int seatilen = 0;
 	for (int i = 0; i < x; i++) {
 		for (int i2 = 0; i2 < x; i2++) {
 			t[(i * x) + i2].obstacle = 0;
-			t[(i * x) + i2].texture = &grasstile;
 			t[(i * x) + i2].position.x = startx + (i2 * (size / 2.0f)) - (i * (size / 2.0f));
 			t[(i * x) + i2].position.y = starty + (i2 * (size / 4.0f)) + (i * (size / 4.0f));
 			t[(i * x) + i2].position.width = (float)size;
@@ -58,6 +61,15 @@ tile* createtileset(int x, int size, float startx, float starty, char middle) {
 			t[(i * x) + i2].absposition.y = t[(i * x) + i2].position.y;
 			t[(i * x) + i2].absposition.width = t[(i * x) + i2].position.width;
 			t[(i * x) + i2].absposition.height = t[(i * x) + i2].position.height;
+			if (rand() % 2 == 0 && max(abs(tilexchar - i), abs(tileychar - i2)) > 1 && seatilen < (x * x) / 3.0f) {
+				t[(i * x) + i2].texture = &seatile;
+				t[(i * x) + i2].type = 2;
+				seatilen++;
+			}
+			else {
+				t[(i * x) + i2].texture = &grasstile;
+				t[(i * x) + i2].type = 1;
+			}
 		}
 	}
 	return t;
@@ -76,13 +88,15 @@ void destroytileset(tile* t) {
 
 void loadtiletextures(void) {
 	grasstile = LoadTexture("data/map_assets/grass_tile.png");
+	seatile = LoadTexture("data/map_assets/sea_tile.png");
 }
 
 void deletetiletextures(void) {
 	UnloadTexture(grasstile);
+	UnloadTexture(seatile);
 }
 
-void tilesetintro(tile* t, int speed, int x) {
+void tilesetintro(tile* t, int speed, int x, float ratio) {
 	for (int i = 0; i < x * x; i++) {
 		t[i].position.y += GetScreenHeight();
 	}
@@ -91,7 +105,7 @@ void tilesetintro(tile* t, int speed, int x) {
 		ClearBackground(BLACK);
 		for (int i = 0; i < x * x; i++) {
 			if (t[i].position.y > t[i].absposition.y) {
-				if ((i == 0) || (t[i - 1].position.y <= t[i - 1].absposition.y + (GetScreenHeight() * (3 / 4.0f)))) {
+				if ((i == 0) || (t[i - 1].position.y <= t[i - 1].absposition.y + (GetScreenHeight() * ratio))) {
 					t[i].position.y -= speed;
 				}
 			}
@@ -105,12 +119,12 @@ void tilesetintro(tile* t, int speed, int x) {
 	}
 }
 
-void tilesetoutro(tile* t, int speed, int x) {
+void tilesetoutro(tile* t, int speed, int x, float ratio) {
 	while (t[0].position.y <= t[0].absposition.y + GetScreenHeight()) {
 		BeginDrawing();
 		ClearBackground(BLACK);
 		for (int i = (x * x) - 1; i >= 0; i--) {
-			if ((i == (x * x) - 1) || (t[i + 1].position.y >= t[i + 1].absposition.y + (GetScreenHeight() * (1 / 4.0f)))) {
+			if ((i == (x * x) - 1) || (t[i + 1].position.y >= t[i + 1].absposition.y + (GetScreenHeight() * ratio))) {
 				t[i].position.y += speed;
 			}
 		}
