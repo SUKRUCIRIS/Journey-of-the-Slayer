@@ -8,7 +8,7 @@ void maingameloop(void) {
 	tile* tileset = createtileset(7, 192, 0, 0, 1, 3, 0);
 	character* mainc = createcharacter(3, 0, 48, tileset, 7);
 	tilesetintro(tileset, 25, 7, 0.85f);
-	char nextlevelexit = 1;
+	char nextlevelexit = 0;
 	while (!WindowShouldClose()) {
 		BeginDrawing();
 		ClearBackground(BLACK);
