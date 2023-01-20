@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-Vector2 a, b, c, d;
+Vector2 a, b, c, d, e;
 
 Rectangle tile_source = { 0,0,64,64 };
 
@@ -20,10 +20,12 @@ unsigned char tile_status(tile* t) {
 	c.y = t->absposition.y + (t->absposition.height / 4);
 	d.x = t->absposition.x + (t->absposition.width / 2);
 	d.y = t->absposition.y + (t->absposition.height / 2);
-	if (CheckCollisionPointTriangle(GetMousePosition(), a, b, c) ||
-		CheckCollisionPointTriangle(GetMousePosition(), a, d, c) ||
-		CheckCollisionPointTriangle(GetMousePosition(), a, d, b) ||
-		CheckCollisionPointTriangle(GetMousePosition(), c, d, b)) {
+	e.x = GetMousePosition().x * (1920.0f / GetScreenWidth());
+	e.y = GetMousePosition().y * (1080.0f / GetScreenHeight());
+	if (CheckCollisionPointTriangle(e, a, b, c) ||
+		CheckCollisionPointTriangle(e, a, d, c) ||
+		CheckCollisionPointTriangle(e, a, d, b) ||
+		CheckCollisionPointTriangle(e, c, d, b)) {
 		if (t->position.y == t->absposition.y) {
 			t->position.y -= (t->absposition.width / 8);
 		}
@@ -45,8 +47,8 @@ void tile_render(tile* t) {
 tile* createtileset(int x, int size, float startx, float starty, char middle, int tilexchar, int tileychar) {
 	tile* t = malloc(sizeof(tile) * x * x);
 	if (middle == 1) {
-		startx = ((GetRenderWidth() - (size * x)) / 2.0f) + (((x - 1) / 2.0f) * size);
-		starty = (GetRenderHeight() - ((size / 2.0f) * (x - 1)) - size) / 2.0f;
+		startx = ((1920 - (size * x)) / 2.0f) + (((x - 1) / 2.0f) * size);
+		starty = (1080 - ((size / 2.0f) * (x - 1)) - size) / 2.0f;
 	}
 	srand((unsigned int)time(0));
 	int seatilen = 0;
@@ -97,15 +99,19 @@ void deletetiletextures(void) {
 }
 
 void tilesetintro(tile* t, int speed, int x, float ratio) {
+	RenderTexture2D target = LoadRenderTexture(1920, 1080);
+	Rectangle targetsource = { 0,0,1920,-1080 };
+	Rectangle targetdest = { 0,0,(float)GetScreenWidth(),(float)GetScreenHeight() };
+	Vector2 origin = { 0,0 };
 	for (int i = 0; i < x * x; i++) {
-		t[i].position.y += GetScreenHeight();
+		t[i].position.y += 1080;
 	}
 	while (t[(x * x) - 1].position.y != t[(x * x) - 1].absposition.y) {
-		BeginDrawing();
+		BeginTextureMode(target);
 		ClearBackground(BLACK);
 		for (int i = 0; i < x * x; i++) {
 			if (t[i].position.y > t[i].absposition.y) {
-				if ((i == 0) || (t[i - 1].position.y <= t[i - 1].absposition.y + (GetScreenHeight() * ratio))) {
+				if ((i == 0) || (t[i - 1].position.y <= t[i - 1].absposition.y + (1080 * ratio))) {
 					t[i].position.y -= speed;
 				}
 			}
@@ -115,16 +121,25 @@ void tilesetintro(tile* t, int speed, int x, float ratio) {
 			tile_render(&(t[i]));
 		}
 		renderallmapobjects();
+		EndTextureMode();
+
+		BeginDrawing();
+		ClearBackground(BLACK);
+		DrawTexturePro(target.texture, targetsource, targetdest, origin, 0, WHITE);
 		EndDrawing();
 	}
 }
 
 void tilesetoutro(tile* t, int speed, int x, float ratio) {
-	while (t[0].position.y <= t[0].absposition.y + GetScreenHeight()) {
-		BeginDrawing();
+	RenderTexture2D target = LoadRenderTexture(1920, 1080);
+	Rectangle targetsource = { 0,0,1920,-1080 };
+	Rectangle targetdest = { 0,0,(float)GetScreenWidth(),(float)GetScreenHeight() };
+	Vector2 origin = { 0,0 };
+	while (t[0].position.y <= t[0].absposition.y + 1080) {
+		BeginTextureMode(target);
 		ClearBackground(BLACK);
 		for (int i = (x * x) - 1; i >= 0; i--) {
-			if ((i == (x * x) - 1) || (t[i + 1].position.y >= t[i + 1].absposition.y + (GetScreenHeight() * ratio))) {
+			if ((i == (x * x) - 1) || (t[i + 1].position.y >= t[i + 1].absposition.y + (1080 * ratio))) {
 				t[i].position.y += speed;
 			}
 		}
@@ -132,6 +147,11 @@ void tilesetoutro(tile* t, int speed, int x, float ratio) {
 			tile_render(&(t[i]));
 		}
 		renderallmapobjects();
+		EndTextureMode();
+
+		BeginDrawing();
+		ClearBackground(BLACK);
+		DrawTexturePro(target.texture, targetsource, targetdest, origin, 0, WHITE);
 		EndDrawing();
 	}
 }

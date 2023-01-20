@@ -141,6 +141,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="button.c" />
     <ClCompile Include="character.c" />
     <ClCompile Include="game.c" />
     <ClCompile Include="main.c" />
@@ -149,6 +150,7 @@
     <ClCompile Include="tile.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="button.h" />
     <ClInclude Include="character.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="map_object.h" />
