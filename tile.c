@@ -20,8 +20,8 @@ unsigned char tile_status(tile* t) {
 	c.y = t->absposition.y + (t->absposition.height / 4);
 	d.x = t->absposition.x + (t->absposition.width / 2);
 	d.y = t->absposition.y + (t->absposition.height / 2);
-	e.x = GetMousePosition().x * (1920.0f / GetScreenWidth());
-	e.y = GetMousePosition().y * (1080.0f / GetScreenHeight());
+	e.x = GetMousePosition().x * (1920.0f / GetRenderWidth());
+	e.y = GetMousePosition().y * (1080.0f / GetRenderHeight());
 	if (CheckCollisionPointTriangle(e, a, b, c) ||
 		CheckCollisionPointTriangle(e, a, d, c) ||
 		CheckCollisionPointTriangle(e, a, d, b) ||
@@ -101,7 +101,7 @@ void deletetiletextures(void) {
 void tilesetintro(tile* t, int speed, int x, float ratio) {
 	RenderTexture2D target = LoadRenderTexture(1920, 1080);
 	Rectangle targetsource = { 0,0,1920,-1080 };
-	Rectangle targetdest = { 0,0,(float)GetScreenWidth(),(float)GetScreenHeight() };
+	Rectangle targetdest = { 0,0,(float)GetRenderWidth(),(float)GetRenderHeight() };
 	Vector2 origin = { 0,0 };
 	for (int i = 0; i < x * x; i++) {
 		t[i].position.y += 1080;
@@ -134,7 +134,7 @@ void tilesetintro(tile* t, int speed, int x, float ratio) {
 void tilesetoutro(tile* t, int speed, int x, float ratio) {
 	RenderTexture2D target = LoadRenderTexture(1920, 1080);
 	Rectangle targetsource = { 0,0,1920,-1080 };
-	Rectangle targetdest = { 0,0,(float)GetScreenWidth(),(float)GetScreenHeight() };
+	Rectangle targetdest = { 0,0,(float)GetRenderWidth(),(float)GetRenderHeight() };
 	Vector2 origin = { 0,0 };
 	while (t[0].position.y <= t[0].absposition.y + 1080) {
 		BeginTextureMode(target);
