@@ -7,6 +7,7 @@ Color skillbackcolor = { 48, 0, 74,255 };
 Color skillfrontcolor = { 96, 0, 148,255 };
 
 typedef struct skillbutton {
+	Rectangle* position;
 	const char* name;
 	Texture2D texture;
 	char passive;
@@ -14,4 +15,4 @@ typedef struct skillbutton {
 	char mouseon;
 }skillbutton;
 
-char renderskillbutton(skillbutton* s);
+void renderskillbutton(skillbutton* s);
