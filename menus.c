@@ -67,6 +67,7 @@ void intromenu(void) {
 	}
 	UnloadRenderTexture(target);
 	UnloadFont(myfont);
+	UnloadTexture(logo);
 }
 
 char mainmenuinput(Font* f, Vector2* a) {

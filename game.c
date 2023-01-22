@@ -4,22 +4,6 @@
 #include <raylib.h>
 #include "button.h"
 
-button menubutton = {
-	.backcolor = {48, 0, 74,255},
-	.frontcolor = {96, 0, 148,255},
-	.position = {760,700,400,75},
-	.text = "MAINMENU",
-	.textcolor = {255,255,255,255}
-};
-
-button resumebutton = {
-	.backcolor = {48, 0, 74,255},
-	.frontcolor = {96, 0, 148,255},
-	.position = {760,600,400,75},
-	.text = "RESUME",
-	.textcolor = {255,255,255,255}
-};
-
 void maingameloop(void) {
 	loadtiletextures();
 	tile* tileset = createtileset(7, 192, 0, 0, 1, 3, 0);
@@ -34,6 +18,20 @@ void maingameloop(void) {
 	Rectangle screen = { 0,0,1920,1080 };
 	Color pausecolor = { 0,0,0,200 };
 	Font myfont = LoadFontEx("data/fonts/font1.ttf", 50, 0, 0);
+	button menubutton = {
+		.backcolor = {48, 0, 74,255},
+		.frontcolor = {96, 0, 148,255},
+		.position = {760,700,400,75},
+		.text = "MAINMENU",
+		.textcolor = {255,255,255,255}
+	};
+	button resumebutton = {
+		.backcolor = {48, 0, 74,255},
+		.frontcolor = {96, 0, 148,255},
+		.position = {760,600,400,75},
+		.text = "RESUME",
+		.textcolor = {255,255,255,255}
+	};
 	while (!WindowShouldClose()) {
 		BeginTextureMode(target);
 		ClearBackground(BLACK);

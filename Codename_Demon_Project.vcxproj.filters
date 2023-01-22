@@ -36,6 +36,9 @@
     <ClCompile Include="button.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="skillbutton.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -54,6 +57,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="button.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="skillbutton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="weapon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="armor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
