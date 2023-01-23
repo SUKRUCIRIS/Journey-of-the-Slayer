@@ -1,18 +1,22 @@
 #pragma once
 #include <raylib.h>
 
-Rectangle moveskillposition = { 1740,200,128,128 };
-Rectangle jumpskillposition = { 1740,380,128,128 };
-Color skillbackcolor = { 48, 0, 74,255 };
-Color skillfrontcolor = { 96, 0, 148,255 };
-
 typedef struct skillbutton {
-	Rectangle* position;
+	const Rectangle* position;
 	const char* name;
-	Texture2D texture;
-	char passive;
+	const Texture2D* texture;
+	const char passive;
 	char pressed;
 	char mouseon;
+	char actionpoint;
 }skillbutton;
 
+void loadskillbuttontextures(void);
+
+void unloadskillbuttontextures(void);
+
 void renderskillbutton(skillbutton* s);
+
+skillbutton* getjumpskillbutton(void);
+
+skillbutton* getmoveskillbutton(void);

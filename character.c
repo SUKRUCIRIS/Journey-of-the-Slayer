@@ -8,8 +8,8 @@ character* createcharacter(int tilex, int tiley, float size, tile* tileset, int 
 	c->health = 5;
 	c->maxactionpoint = 5;
 	c->actionpoint = 5;
-	c->moveskill = 0;
-	c->jumpskill = 0;
+	c->moveskill = getmoveskillbutton();
+	c->jumpskill = getjumpskillbutton();
 	c->weaponinfo = 0;
 	c->headarmor = 0;
 	c->torsoarmor = 0;

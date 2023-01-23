@@ -4,8 +4,14 @@
 #include <raylib.h>
 #include "button.h"
 
+void gamelogic(tile* tileset, character* mainc) {
+	renderskillbutton(mainc->jumpskill);
+	renderskillbutton(mainc->moveskill);
+}
+
 void maingameloop(void) {
 	loadtiletextures();
+	loadskillbuttontextures();
 	tile* tileset = createtileset(7, 192, 0, 0, 1, 3, 0);
 	character* mainc = createcharacter(3, 0, 48, tileset, 7);
 	tilesetintro(tileset, 25, 7, 0.85f);
@@ -37,6 +43,7 @@ void maingameloop(void) {
 		ClearBackground(BLACK);
 		rendertileset(tileset, 7);
 		renderallmapobjects();
+		gamelogic(tileset, mainc);
 		EndTextureMode();
 
 		if (IsKeyPressed(KEY_ESCAPE)) {
@@ -78,5 +85,6 @@ void maingameloop(void) {
 	UnloadRenderTexture(target);
 	destroytileset(tileset);
 	destroycharacter(mainc);
+	unloadskillbuttontextures();
 	deletetiletextures();
 }
