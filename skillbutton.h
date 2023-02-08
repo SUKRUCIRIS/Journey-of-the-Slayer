@@ -9,13 +9,14 @@ typedef struct skillbutton {
 	char pressed;
 	char mouseon;
 	char actionpoint;
+	const char* explanation;
 }skillbutton;
 
 void loadskillbuttontextures(void);
 
 void unloadskillbuttontextures(void);
 
-void renderskillbutton(skillbutton* s);
+void renderskillbutton(skillbutton* s, void* mainc);
 
 skillbutton* getjumpskillbutton(void);
 

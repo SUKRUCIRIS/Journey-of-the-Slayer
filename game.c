@@ -5,8 +5,14 @@
 #include "button.h"
 
 void gamelogic(tile* tileset, character* mainc) {
-	renderskillbutton(mainc->jumpskill);
-	renderskillbutton(mainc->moveskill);
+	renderskillbutton(mainc->jumpskill, mainc);
+	renderskillbutton(mainc->moveskill, mainc);
+	if (mainc->weaponinfo && mainc->weaponinfo->skill1) {
+		renderskillbutton(mainc->weaponinfo->skill1, mainc);
+	}
+	if (mainc->weaponinfo && mainc->weaponinfo->skill2) {
+		renderskillbutton(mainc->weaponinfo->skill2, mainc);
+	}
 }
 
 void maingameloop(void) {
@@ -23,7 +29,7 @@ void maingameloop(void) {
 	Vector2 origin = { 0,0 };
 	Rectangle screen = { 0,0,1920,1080 };
 	Color pausecolor = { 0,0,0,200 };
-	Font myfont = LoadFontEx("data/fonts/font1.ttf", 50, 0, 0);
+	Font myfont = LoadFontEx("data/fonts/font1.ttf", 70, 0, 0);
 	button menubutton = {
 		.backcolor = {48, 0, 74,255},
 		.frontcolor = {96, 0, 148,255},
@@ -49,7 +55,9 @@ void maingameloop(void) {
 
 		if (IsKeyPressed(KEY_ESCAPE)) {
 			escpressed = 1;
-			while (!WindowShouldClose()) {
+			while (!WindowShouldClose() && !(mainc->jumpskill->pressed) && !(mainc->moveskill->pressed) && 
+				(!(mainc->weaponinfo) || !(mainc->weaponinfo->skill1->pressed)) && 
+				(!(mainc->weaponinfo) || !(mainc->weaponinfo->skill2->pressed))) {
 				BeginTextureMode(target);
 				ClearBackground(BLACK);
 				for (int i = 0; i < 49; i++) {
@@ -71,6 +79,12 @@ void maingameloop(void) {
 				DrawTexturePro(target.texture, targetsource, targetdest, origin, 0, WHITE);
 				EndDrawing();
 				escpressed = 0;
+			}
+			mainc->jumpskill->pressed = 0;
+			mainc->moveskill->pressed = 0;
+			if (mainc->weaponinfo) {
+				mainc->weaponinfo->skill1->pressed = 0;
+				mainc->weaponinfo->skill2->pressed = 0;
 			}
 		}
 

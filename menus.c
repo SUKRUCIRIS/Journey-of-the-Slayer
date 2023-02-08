@@ -71,7 +71,7 @@ void intromenu(void) {
 }
 
 char mainmenuinput(Font* f, Vector2* a) {
-	DrawTextEx(*f, "Codename Demon Project", *a, 50, 0, WHITE);
+	DrawTextEx(*f, "Codename Demon Project", *a, 70, 0, WHITE);
 	if (WindowShouldClose() || renderbutton(&quitbutton, f)) {
 		return 0;
 	}
@@ -179,14 +179,14 @@ char tilesetoutromainmenu(tile* t, int speed, int x, float ratio, Font* f, Vecto
 
 char mainmenu(void) {
 	loadtiletextures();
-	Font myfont = LoadFontEx("data/fonts/font1.ttf", 50, 0, 0);
+	Font myfont = LoadFontEx("data/fonts/font1.ttf", 70, 0, 0);
 	tile* tileset = createtileset(4, 192, 0, 0, 1, 1, 1);
 	character* mainc = createcharacter(1, 1, 48, tileset, 4);
 	char x = 111;
 	int tilex = 4;
 	int tilexchar = 1;
 	int tileychar = 1;
-	Vector2 a = MeasureTextEx(myfont, "Codename Demon Project", 50, 0);
+	Vector2 a = MeasureTextEx(myfont, "Codename Demon Project", 70, 0);
 	a.x = (1920 - a.x) / 2;
 	a.y = 100;
 	while (!WindowShouldClose() && x == 111) {
@@ -216,10 +216,10 @@ void settingsmenu(void) {
 	Rectangle targetsource = { 0,0,1920,-1080 };
 	Rectangle targetdest = { 0,0,(float)GetRenderWidth(),(float)GetRenderHeight() };
 	Vector2 origin = { 0,0 };
-	Font myfont = LoadFontEx("data/fonts/font1.ttf", 50, 0, 0);
+	Font myfont = LoadFontEx("data/fonts/font1.ttf", 70, 0, 0);
 	Vector2 fullscreentextpos = { 100,100 };
-	Rectangle fullscreenbox = { 550,85,80,80 };
-	Rectangle fullscreentick = { 570,105,40,40 };
+	Rectangle fullscreenbox = { 410,105,80,80 };
+	Rectangle fullscreentick = { 430,125,40,40 };
 	Vector2 e = { 0,0 };
 	button backbutton = {
 	.backcolor = {48, 0, 74,255},
@@ -277,8 +277,8 @@ void settingsmenu(void) {
 	while (!WindowShouldClose()) {
 		BeginTextureMode(target);
 		ClearBackground(BLACK);
-		DrawTextEx(myfont, "Fullscreen:", fullscreentextpos, 50, 0, WHITE);
-		DrawTextEx(myfont, "Resolution:", resolutiontextpos, 50, 0, WHITE);
+		DrawTextEx(myfont, "Fullscreen:", fullscreentextpos, 70, 0, WHITE);
+		DrawTextEx(myfont, "Resolution:", resolutiontextpos, 70, 0, WHITE);
 		e.x = GetMousePosition().x * (1920.0f / GetRenderWidth());
 		e.y = GetMousePosition().y * (1080.0f / GetRenderHeight());
 		if (CheckCollisionPointRec(e, fullscreenbox)) {
