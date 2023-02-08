@@ -38,6 +38,7 @@ void maingameloop(void) {
 		.text = "RESUME",
 		.textcolor = {255,255,255,255}
 	};
+	char escpressed = 0;
 	while (!WindowShouldClose()) {
 		BeginTextureMode(target);
 		ClearBackground(BLACK);
@@ -47,6 +48,7 @@ void maingameloop(void) {
 		EndTextureMode();
 
 		if (IsKeyPressed(KEY_ESCAPE)) {
+			escpressed = 1;
 			while (!WindowShouldClose()) {
 				BeginTextureMode(target);
 				ClearBackground(BLACK);
@@ -55,7 +57,7 @@ void maingameloop(void) {
 				}
 				renderallmapobjects();
 				DrawRectangleRec(screen, pausecolor);
-				if (renderbutton(&resumebutton, &myfont)) {
+				if (renderbutton(&resumebutton, &myfont) || (escpressed == 0 && IsKeyPressed(KEY_ESCAPE))) {
 					break;
 				}
 				if (renderbutton(&menubutton, &myfont)) {
@@ -68,6 +70,7 @@ void maingameloop(void) {
 				ClearBackground(BLACK);
 				DrawTexturePro(target.texture, targetsource, targetdest, origin, 0, WHITE);
 				EndDrawing();
+				escpressed = 0;
 			}
 		}
 
