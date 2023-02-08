@@ -24,6 +24,7 @@ void maingameloop(void) {
 	char nextlevelexit = 0;
 	char exit = 0;
 	RenderTexture2D target = LoadRenderTexture(1920, 1080);
+	SetTextureFilter(target.texture, TEXTURE_FILTER_POINT);
 	Rectangle targetsource = { 0,0,1920,-1080 };
 	Rectangle targetdest = { 0,0,(float)GetRenderWidth(),(float)GetRenderHeight() };
 	Vector2 origin = { 0,0 };
@@ -55,8 +56,8 @@ void maingameloop(void) {
 
 		if (IsKeyPressed(KEY_ESCAPE)) {
 			escpressed = 1;
-			while (!WindowShouldClose() && !(mainc->jumpskill->pressed) && !(mainc->moveskill->pressed) && 
-				(!(mainc->weaponinfo) || !(mainc->weaponinfo->skill1->pressed)) && 
+			while (!WindowShouldClose() && !(mainc->jumpskill->pressed) && !(mainc->moveskill->pressed) &&
+				(!(mainc->weaponinfo) || !(mainc->weaponinfo->skill1->pressed)) &&
 				(!(mainc->weaponinfo) || !(mainc->weaponinfo->skill2->pressed))) {
 				BeginTextureMode(target);
 				ClearBackground(BLACK);
