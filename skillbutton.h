@@ -12,6 +12,8 @@ typedef struct skillbutton {
 	const char* explanation;
 }skillbutton;
 
+void writeinrectangle(Font* font, const char* text, float x, float y, float w, float size, float borderwidth, Color* color);
+
 void loadskillbuttontextures(void);
 
 void unloadskillbuttontextures(void);

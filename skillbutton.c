@@ -24,7 +24,7 @@ skillbutton jumpskillbutton = {
 	.pressed = 0,
 	.mouseon = 0,
 	.actionpoint = 3,
-	.explanation = "Use 3 action\npoints for\njumping into\na tile in 2\nunit range."
+	.explanation = "Use 3 action points for jumping into a tile in 2 unit range."
 };
 
 skillbutton moveskillbutton = {
@@ -35,8 +35,37 @@ skillbutton moveskillbutton = {
 	.pressed = 0,
 	.mouseon = 0,
 	.actionpoint = 1,
-	.explanation = "Use 1 action\npoint for\nevery tile\nyou passed\non."
+	.explanation = "Use 1 action point for every tile you passed on."
 };
+
+void writeinrectangle(Font* font, const char* text, float x, float y, float w, float size, float borderwidth, Color* color) {
+	int count = 0;
+	const char** splitted = TextSplit(text, ' ', &count);
+	float xlast = x + borderwidth;
+	float ylast = y + borderwidth;
+	float spacewidth = MeasureTextEx(*font, " ", size, 0).x;
+	float spaceheight = MeasureTextEx(*font, " ", size, 0).y;
+	float width = 0;
+	e.x = 0;
+	e.y = 0;
+	for (int i = 0; i < count; i++) {
+		width = MeasureTextEx(*font, splitted[i], size, 0).x;
+		if (xlast + width > x + w - borderwidth) {
+			xlast = x + borderwidth;
+			ylast = ylast + spaceheight;
+			e2.x = xlast;
+			e2.y = ylast;
+			DrawTextPro(*font, splitted[i], e2, e, 0, size, 0, *color);
+			xlast = xlast + width + spacewidth;
+		}
+		else {
+			e2.x = xlast;
+			e2.y = ylast;
+			DrawTextPro(*font, splitted[i], e2, e, 0, size, 0, *color);
+			xlast = xlast + width + spacewidth;
+		}
+	}
+}
 
 void renderskillbutton(skillbutton* s, void* mainc) {
 	e.x = GetMousePosition().x * (1920.0f / GetRenderWidth());
@@ -78,10 +107,7 @@ void renderskillbutton(skillbutton* s, void* mainc) {
 		e2.y = s->position->y - 8;
 		DrawTextPro(myfont, s->name, e2, e, 0, 40, 0, WHITE);
 
-		e2 = MeasureTextEx(myfont, s->explanation, 30, 0);
-		e2.x = s->position->x - 215 + (200 - e2.x) / 2;
-		e2.y = s->position->y + 30;
-		DrawTextPro(myfont, s->explanation, e2, e, 0, 30, 0, WHITE);
+		writeinrectangle(&myfont, s->explanation, s->position->x - 215, s->position->y + 30, 200, 30, 10, &WHITE);
 	}
 	DrawTexturePro(*(s->texture), source, *(s->position), e, 0, WHITE);
 }

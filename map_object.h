@@ -4,14 +4,16 @@
 
 typedef struct map_object {
 	Rectangle position;
-	Texture2D texture;
+	Texture2D* texture;
 	Vector2 tileposition;
 	Rectangle source;
 	tile* tileon;
 }map_object;
 
-map_object* createmapobject(const char* filename, int tilex, int tiley, float size, tile* tileset, 
+map_object* createmapobject(Texture2D* texture, int tilex, int tiley, float size, tile* tileset,
 	int x, int sourcex, int sourcey, int sourcewidth, int sourceheight);
+
+void movemapobject(map_object* m, int targetx, int targety, tile* tileset, int x);
 
 void destroymapobject(map_object* m);
 

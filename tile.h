@@ -5,7 +5,7 @@ typedef struct tile{
 	Rectangle absposition;
 	Rectangle position;
 	Texture2D* texture;
-	char obstacle;
+	char obstacle;//eðer düþman veya agaç gibi þeyler varsa 1 olucak
 	unsigned char type;//1 grass, 2 sea
 }tile;
 
