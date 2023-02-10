@@ -23,3 +23,5 @@ typedef struct character{
 character* createcharacter(int tilex, int tiley, float size, tile* tileset, int x);
 
 void destroycharacter(character* c);
+
+void movecharacter(character* c, int targetx, int targety, tile* tileset, int x);

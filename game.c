@@ -5,13 +5,13 @@
 #include "button.h"
 
 void gamelogic(tile* tileset, character* mainc) {
-	renderskillbutton(mainc->jumpskill, mainc);
-	renderskillbutton(mainc->moveskill, mainc);
+	renderskillbutton(mainc->jumpskill, mainc, tileset);
+	renderskillbutton(mainc->moveskill, mainc, tileset);
 	if (mainc->weaponinfo && mainc->weaponinfo->skill1) {
-		renderskillbutton(mainc->weaponinfo->skill1, mainc);
+		renderskillbutton(mainc->weaponinfo->skill1, mainc, tileset);
 	}
 	if (mainc->weaponinfo && mainc->weaponinfo->skill2) {
-		renderskillbutton(mainc->weaponinfo->skill2, mainc);
+		renderskillbutton(mainc->weaponinfo->skill2, mainc, tileset);
 	}
 }
 

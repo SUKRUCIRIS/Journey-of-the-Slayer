@@ -29,7 +29,7 @@ unsigned char tile_status(tile* t) {
 		if (t->position.y == t->absposition.y) {
 			t->position.y -= (t->absposition.width / 8);
 		}
-		if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
 			return 3;
 		}
 		return 2;

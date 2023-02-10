@@ -1,5 +1,7 @@
 #include "skillbutton.h"
 #include "character.h"
+#include "tile.h"
+#include <math.h>
 
 Vector2 e;
 
@@ -16,6 +18,32 @@ Color skillfrontcolor = { 96, 0, 148,255 };
 Texture2D jumpskilltexture;
 Texture2D moveskilltexture;
 
+char jumpskill(tile* tileset, character* mainc) {
+	if (mainc->actionpoint >= 3) {
+		for (int x = 0; x < 7; x++) {
+			for (int y = 0; y < 7; y++) {
+				if (tile_status(&(tileset[(7 * x) + y])) == 3) {
+					if (tileset[(7 * x) + y].obstacle == 0 &&
+						abs((int)mainc->m->tileposition.x - x) <= 2 &&
+						abs((int)mainc->m->tileposition.y - y) <= 2 &&
+						tileset[(7 * x) + y].type != 2) {
+						movecharacter(mainc, x, y, tileset, 7);
+						mainc->actionpoint -= 3;
+						return 1;
+					}
+					else {
+						return -1;
+					}
+				}
+			}
+		}
+	}
+	else {
+		return 0;
+	}
+	return 2;
+}
+
 skillbutton jumpskillbutton = {
 	.position = &jumpskillposition,
 	.name = "Jump",
@@ -23,8 +51,8 @@ skillbutton jumpskillbutton = {
 	.passive = 0,
 	.pressed = 0,
 	.mouseon = 0,
-	.actionpoint = 3,
-	.explanation = "Use 3 action points for jumping into a tile in 2 unit range."
+	.explanation = "Use 3 action points for jumping into a tile in 2 unit range.",
+	.function = &jumpskill
 };
 
 skillbutton moveskillbutton = {
@@ -34,8 +62,8 @@ skillbutton moveskillbutton = {
 	.passive = 0,
 	.pressed = 0,
 	.mouseon = 0,
-	.actionpoint = 1,
-	.explanation = "Use 1 action point for every tile you passed on."
+	.explanation = "Use 1 action point for every tile you passed on.",
+	.function = 0
 };
 
 void writeinrectangle(Font* font, const char* text, float x, float y, float w, float size, float borderwidth, Color* color) {
@@ -67,7 +95,7 @@ void writeinrectangle(Font* font, const char* text, float x, float y, float w, f
 	}
 }
 
-void renderskillbutton(skillbutton* s, void* mainc) {
+void renderskillbutton(skillbutton* s, void* mainc, void* tileset) {
 	e.x = GetMousePosition().x * (1920.0f / GetRenderWidth());
 	e.y = GetMousePosition().y * (1080.0f / GetRenderHeight());
 	s->mouseon = 0;
@@ -89,6 +117,11 @@ void renderskillbutton(skillbutton* s, void* mainc) {
 					((character*)mainc)->weaponinfo->skill2->pressed = 0;
 				}
 			}
+		}
+	}
+	if (s->pressed) {
+		if (s->function && s->function(tileset, mainc) != 2) {
+			s->pressed = 0;
 		}
 	}
 	if (s->mouseon || s->pressed) {

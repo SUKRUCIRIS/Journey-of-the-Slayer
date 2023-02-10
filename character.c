@@ -19,8 +19,15 @@ character* createcharacter(int tilex, int tiley, float size, tile* tileset, int 
 		c->torsoarmor = 0;
 		c->armarmor = 0;
 		c->legarmor = 0;
+		tileset[(tilex * x) + tiley].obstacle = 1;
 	}
 	return c;
+}
+
+void movecharacter(character* c, int targetx, int targety, tile* tileset, int x) {
+	tileset[((int)c->m->tileposition.x * x) + (int)c->m->tileposition.y].obstacle = 0;
+	movemapobject(c->m, targetx, targety, tileset, x);
+	tileset[((int)c->m->tileposition.x * x) + (int)c->m->tileposition.y].obstacle = 1;
 }
 
 void destroycharacter(character* c) {
