@@ -55,6 +55,12 @@ tile* createtileset(int x, int size, float startx, float starty, char middle, in
 	}
 	srand((unsigned int)time(0));
 	int seatilen = 0;
+	int* rows = malloc(sizeof(int) * x);
+	int* columns = malloc(sizeof(int) * x);
+	for (int i = 0; i < x; i++) {
+		rows[i] = 0;
+		columns[i] = 0;
+	}
 	for (int i = 0; i < x; i++) {
 		for (int i2 = 0; i2 < x; i2++) {
 			t[(i * x) + i2].obstacle = 0;
@@ -66,10 +72,13 @@ tile* createtileset(int x, int size, float startx, float starty, char middle, in
 			t[(i * x) + i2].absposition.y = t[(i * x) + i2].position.y;
 			t[(i * x) + i2].absposition.width = t[(i * x) + i2].position.width;
 			t[(i * x) + i2].absposition.height = t[(i * x) + i2].position.height;
-			if (rand() % 2 == 0 && max(abs(tilexchar - i), abs(tileychar - i2)) > 1 && seatilen < (x * x) / 3.0f) {
+			if (rand() % 2 == 0 && max(abs(tilexchar - i), abs(tileychar - i2)) > 1 && 
+				seatilen < (x * x) / 3.0f && rows[i] < 3 && columns[i2] < 3) {
 				t[(i * x) + i2].texture = &seatile;
 				t[(i * x) + i2].type = 2;
 				seatilen++;
+				rows[i]++;
+				columns[i2]++;
 			}
 			else {
 				t[(i * x) + i2].texture = &grasstile;
@@ -77,6 +86,8 @@ tile* createtileset(int x, int size, float startx, float starty, char middle, in
 			}
 		}
 	}
+	free(rows);
+	free(columns);
 	return t;
 }
 
