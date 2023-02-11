@@ -26,8 +26,11 @@ unsigned char tile_status(tile* t) {
 		CheckCollisionPointTriangle(e, a, d, c) ||
 		CheckCollisionPointTriangle(e, a, d, b) ||
 		CheckCollisionPointTriangle(e, c, d, b)) {
-		if (t->position.y == t->absposition.y) {
+		if (t->position.y == t->absposition.y && !isthereanimation()) {
 			t->position.y -= (t->absposition.width / 8);
+		}
+		if (isthereanimation()) {
+			t->position.y = t->absposition.y;
 		}
 		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
 			return 3;

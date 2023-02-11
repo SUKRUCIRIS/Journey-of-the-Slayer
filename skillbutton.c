@@ -1,6 +1,7 @@
 #include "skillbutton.h"
 #include "character.h"
 #include "tile.h"
+#include <stdlib.h>
 #include <math.h>
 
 Vector2 e;
@@ -27,6 +28,13 @@ char jumpskill(tile* tileset, character* mainc) {
 						abs((int)mainc->m->tileposition.x - x) <= 2 &&
 						abs((int)mainc->m->tileposition.y - y) <= 2 &&
 						tileset[(7 * x) + y].type != 2) {
+						Vector2* animationpos = malloc(sizeof(Vector2) * 2);
+						if (animationpos) {
+							calculateposmapobject(&(tileset[(7 * x) + y]), mainc->m, &(animationpos[1]), 1);
+							animationpos[0].x = (animationpos[1].x + mainc->m->position.x) / 2;
+							animationpos[0].y = ((animationpos[1].y + mainc->m->position.y) / 2) - 100;
+							addanimationmapobject(mainc->m, animationpos, 2);
+						}
 						movecharacter(mainc, x, y, tileset, 7);
 						mainc->actionpoint -= 3;
 						return 1;
