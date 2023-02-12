@@ -27,7 +27,7 @@ map_object* createmapobject(Texture2D* texture, int tilex, int tiley, float size
 	m->animationpositions = 0;
 	m->maxanimationposition = 0;
 	m->inanimationposition = 0;
-	m->animationspeed = 400;
+	m->animationspeed = 500;
 	map_object** allmapobjects2 = malloc(sizeof(map_object*) * (arraysize + 1));
 	for (int i = 0; i < arraysize; i++) {
 		allmapobjects2[i] = allmapobjects[i];

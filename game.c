@@ -34,20 +34,38 @@ void maingameloop(void) {
 		.text = "RESUME",
 		.textcolor = {255,255,255,255}
 	};
+	button endturnbutton = {
+		.backcolor = {48, 0, 74,255},
+		.frontcolor = {96, 0, 148,255},
+		.position = {825,40,270,75},
+		.text = "End Turn",
+		.textcolor = {255,255,255,255}
+	};
 	char escpressed = 0;
+	char enemyturn = 0;
 	while (!WindowShouldClose()) {
 		BeginTextureMode(target);
 		ClearBackground(BLACK);
 		rendertileset(tileset, 7);
 		renderallmapobjects();
 		//game logic start
-		renderskillbutton(mainc->jumpskill, mainc, tileset);
-		renderskillbutton(mainc->moveskill, mainc, tileset);
-		if (mainc->weaponinfo && mainc->weaponinfo->skill1) {
-			renderskillbutton(mainc->weaponinfo->skill1, mainc, tileset);
+		rendercharacterinfo(mainc, &myfont);
+		if (enemyturn == 0) {
+			renderskillbutton(mainc->jumpskill, mainc, tileset);
+			renderskillbutton(mainc->moveskill, mainc, tileset);
+			if (mainc->weaponinfo && mainc->weaponinfo->skill1) {
+				renderskillbutton(mainc->weaponinfo->skill1, mainc, tileset);
+			}
+			if (mainc->weaponinfo && mainc->weaponinfo->skill2) {
+				renderskillbutton(mainc->weaponinfo->skill2, mainc, tileset);
+			}
+			if (renderbutton(&endturnbutton, &myfont)) {
+				enemyturn = 1;
+				mainc->actionpoint = mainc->maxactionpoint;
+			}
 		}
-		if (mainc->weaponinfo && mainc->weaponinfo->skill2) {
-			renderskillbutton(mainc->weaponinfo->skill2, mainc, tileset);
+		else {
+			enemyturn = 0;//düþman hareketleri burada olucak
 		}
 		//game logic end
 		EndTextureMode();

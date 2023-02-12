@@ -73,7 +73,7 @@ tile* createtileset(int x, int size, float startx, float starty, char middle, in
 			t[(i * x) + i2].absposition.width = t[(i * x) + i2].position.width;
 			t[(i * x) + i2].absposition.height = t[(i * x) + i2].position.height;
 			if (rand() % 2 == 0 && max(abs(tilexchar - i), abs(tileychar - i2)) > 1 && 
-				seatilen < (x * x) / 3.0f && rows[i] < 3 && columns[i2] < 3) {
+				seatilen < (x * x) / 3.0f && rows[i] < 3 && columns[i2] < 4) {
 				t[(i * x) + i2].texture = &seatile;
 				t[(i * x) + i2].type = 2;
 				seatilen++;

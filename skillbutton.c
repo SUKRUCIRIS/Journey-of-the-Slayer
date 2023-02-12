@@ -142,6 +142,7 @@ void renderskillbutton(skillbutton* s, void* mainc, void* tileset) {
 	e.y = 0;
 	if (s->mouseon) {
 		DrawRectangle((int)s->position->x - 215, (int)s->position->y - 10, 200, 300, skillfrontcolor);
+		DrawRectangleLines((int)s->position->x - 215, (int)s->position->y - 10, 200, 300, WHITE);
 
 		e2 = MeasureTextEx(myfont, s->name, 40, 0);
 		e2.x = s->position->x - 215 + (200 - e2.x) / 2;
