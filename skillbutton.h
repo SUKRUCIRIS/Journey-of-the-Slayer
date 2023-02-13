@@ -9,11 +9,13 @@ typedef struct skillbutton {
 	char pressed;
 	char mouseon;
 	const char* explanation;
-	char(*function)(void*,void*);//0 ap yok, 1 oldu, -1 yanlýþ hedef, 2 input bekle
+	char(*function)(void*, void*);//0 ap yok, 1 oldu, -1 yanlýþ hedef, 2 input bekle
 }skillbutton;
 
 void renderrange(int x, int y, int range, char which, int max, void* tileset, char obstacle);
 //which->0 hepsi, 1 sadece kara, 2 sadece deniz;obstacle 1 engel olan, 0 engel olmayan, 2 hepsi
+
+int* calculatedistance(int x, int y, void* tileset);
 
 void setwarning(const char* text);
 

@@ -22,6 +22,13 @@ Color skillfrontcolor = { 96, 0, 148,255 };
 Texture2D jumpskilltexture;
 Texture2D moveskilltexture;
 
+int distance[49] = { 0 };
+
+//warning
+char warning[100] = { 0 };
+Color warningcolor = { 231,31,31,0 };
+//warning
+
 char jumpskill(tile* tileset, character* mainc) {
 	if (mainc->actionpoint >= 3) {
 		renderrange((int)mainc->m->tileposition.x, (int)mainc->m->tileposition.y, 2, 1, 7, tileset, 0);
@@ -56,6 +63,89 @@ char jumpskill(tile* tileset, character* mainc) {
 	return 2;
 }
 
+Vector2* setmoveanimationpoints(int x, int y, tile* tileset, character* mainc) {
+	int max = distance[7 * x + y];
+	Vector2* result = malloc(sizeof(Vector2) * max);
+	if (result) {
+		for (int i = max - 1; i >= 0; i--) {
+			calculateposmapobject(&(tileset[(7 * x) + y]), mainc->m, &(result[i]), 1);
+			if (x - 1 >= 0 && distance[7 * (x - 1) + y] == i) {
+				x = x - 1;
+			}
+			else if (x + 1 < 7 && distance[7 * (x + 1) + y] == i) {
+				x = x + 1;
+			}
+			else if (y - 1 >= 0 && distance[7 * x + y - 1] == i) {
+				y = y - 1;
+			}
+			else if (y + 1 < 7 && distance[7 * x + y + 1] == i) {
+				y = y + 1;
+			}
+			else if (y - 1 >= 0 && x - 1 >= 0 && distance[7 * (x - 1) + y - 1] == i) {
+				y = y - 1;
+				x = x - 1;
+			}
+			else if (y - 1 >= 0 && x + 1 < 7 && distance[7 * (x + 1) + y - 1] == i) {
+				y = y - 1;
+				x = x + 1;
+			}
+			else if (y + 1 < 7 && x - 1 >= 0 && distance[7 * (x - 1) + y + 1] == i) {
+				y = y + 1;
+				x = x - 1;
+			}
+			else if (y + 1 < 7 && x + 1 < 7 && distance[7 * (x + 1) + y + 1] == i) {
+				y = y + 1;
+				x = x + 1;
+			}
+		}
+	}
+	return result;
+}
+
+char move(tile* tileset, character* mainc) {
+	if (mainc->actionpoint > 0) {
+		calculatedistance((int)mainc->m->tileposition.x, (int)mainc->m->tileposition.y, tileset);
+		for (int x2 = 0; x2 < 7; x2++) {
+			for (int y2 = 0; y2 < 7; y2++) {
+				if (distance[7 * x2 + y2] <= mainc->actionpoint) {
+					warningcolor.a = 255;
+					e.x = ((tile*)tileset)[(x2 * 7) + y2].position.x + ((tile*)tileset)[(x2 * 7) + y2].position.width / 2;
+					e.y = ((tile*)tileset)[(x2 * 7) + y2].position.y + ((tile*)tileset)[(x2 * 7) + y2].position.height / 6;
+					e2.x = ((tile*)tileset)[(x2 * 7) + y2].position.x + ((tile*)tileset)[(x2 * 7) + y2].position.width / 3;
+					e2.y = ((tile*)tileset)[(x2 * 7) + y2].position.y + ((tile*)tileset)[(x2 * 7) + y2].position.height / 4;
+					DrawLineEx(e, e2, 3, warningcolor);
+					e = e2;
+					e2.x = ((tile*)tileset)[(x2 * 7) + y2].position.x + ((tile*)tileset)[(x2 * 7) + y2].position.width / 2;
+					e2.y = ((tile*)tileset)[(x2 * 7) + y2].position.y + ((tile*)tileset)[(x2 * 7) + y2].position.height / 3;
+					DrawLineEx(e, e2, 3, warningcolor);
+					e = e2;
+					e2.x = ((tile*)tileset)[(x2 * 7) + y2].position.x + 2 * ((tile*)tileset)[(x2 * 7) + y2].position.width / 3;
+					e2.y = ((tile*)tileset)[(x2 * 7) + y2].position.y + ((tile*)tileset)[(x2 * 7) + y2].position.height / 4;
+					DrawLineEx(e, e2, 3, warningcolor);
+					e = e2;
+					e2.x = ((tile*)tileset)[(x2 * 7) + y2].position.x + ((tile*)tileset)[(x2 * 7) + y2].position.width / 2;
+					e2.y = ((tile*)tileset)[(x2 * 7) + y2].position.y + ((tile*)tileset)[(x2 * 7) + y2].position.height / 6;
+					DrawLineEx(e, e2, 3, warningcolor);
+					warningcolor.a = 0;
+					if (tile_status(&(tileset[(7 * x2) + y2])) == 3) {
+						addanimationmapobject(mainc->m, setmoveanimationpoints(x2, y2, tileset, mainc), distance[7 * x2 + y2]);
+						movecharacter(mainc, x2, y2, tileset, 7);
+						mainc->actionpoint -= distance[7 * x2 + y2];
+						return 1;
+					}
+				}
+				else if (tile_status(&(tileset[(7 * x2) + y2])) == 3) {
+					return -1;
+				}
+			}
+		}
+	}
+	else {
+		return 0;
+	}
+	return 2;
+}
+
 skillbutton jumpskillbutton = {
 	.position = &jumpskillposition,
 	.name = "Jump",
@@ -75,13 +165,55 @@ skillbutton moveskillbutton = {
 	.pressed = 0,
 	.mouseon = 0,
 	.explanation = "Use 1 action point for every tile you passed on.",
-	.function = 0
+	.function = &move
 };
 
-//warning
-char warning[100] = { 0 };
-Color warningcolor = { 231,31,31,0 };
-//warning
+void neighcalcul(int x, int y, tile* tileset) {
+	if (tileset[7 * x + y].obstacle == 0 && tileset[7 * x + y].type != 2) {
+		if (x - 1 >= 0 && distance[7 * x + y] > distance[7 * (x - 1) + y] + 1) {
+			distance[7 * x + y] = distance[7 * (x - 1) + y] + 1;
+		}
+		if (x + 1 < 7 && distance[7 * x + y] > distance[7 * (x + 1) + y] + 1) {
+			distance[7 * x + y] = distance[7 * (x + 1) + y] + 1;
+		}
+		if (y - 1 >= 0 && distance[7 * x + y] > distance[7 * x + y - 1] + 1) {
+			distance[7 * x + y] = distance[7 * x + y - 1] + 1;
+		}
+		if (y + 1 < 7 && distance[7 * x + y] > distance[7 * x + y + 1] + 1) {
+			distance[7 * x + y] = distance[7 * x + y + 1] + 1;
+		}
+		if (y - 1 >= 0 && x - 1 >= 0 && distance[7 * x + y] > distance[7 * (x - 1) + y - 1] + 1) {
+			distance[7 * x + y] = distance[7 * (x - 1) + y - 1] + 1;
+		}
+		if (y - 1 >= 0 && x + 1 < 7 && distance[7 * x + y] > distance[7 * (x + 1) + y - 1] + 1) {
+			distance[7 * x + y] = distance[7 * (x + 1) + y - 1] + 1;
+		}
+		if (y + 1 < 7 && x - 1 >= 0 && distance[7 * x + y] > distance[7 * (x - 1) + y + 1] + 1) {
+			distance[7 * x + y] = distance[7 * (x - 1) + y + 1] + 1;
+		}
+		if (y + 1 < 7 && x + 1 < 7 && distance[7 * x + y] > distance[7 * (x + 1) + y + 1] + 1) {
+			distance[7 * x + y] = distance[7 * (x + 1) + y + 1] + 1;
+		}
+	}
+}
+
+int* calculatedistance(int x, int y, void* tileset) {
+	for (int i = 0; i < 49; i++) {
+		distance[i] = 1453;
+	}
+	distance[7 * x + y] = 0;
+	for (int i = 0; i < 100; i++) {
+		for (int x2 = 0; x2 < 7; x2++) {
+			for (int y2 = 0; y2 < 7; y2++) {
+				neighcalcul(x2, y2, tileset);
+			}
+		}
+	}
+	if (((tile*)tileset)[7 * x + y].obstacle == 1 || ((tile*)tileset)[7 * x + y].type == 2) {
+		distance[7 * x + y] = 1453;
+	}
+	return distance;
+}
 
 void renderrange(int x, int y, int range, char which, int max, void* tileset, char obstacle) {
 	for (int x2 = 0; x2 < max; x2++) {
@@ -90,7 +222,6 @@ void renderrange(int x, int y, int range, char which, int max, void* tileset, ch
 				(which == 0 || ((tile*)tileset)[(x2 * max) + y2].type == which) &&
 				(obstacle == 2 || ((tile*)tileset)[(x2 * max) + y2].obstacle == obstacle)) {
 				warningcolor.a = 255;
-				//DrawPoly(e, 4, ((tile*)tileset)[(x2 * max) + y2].position.height / 8, 0, warningcolor);
 				e.x = ((tile*)tileset)[(x2 * max) + y2].position.x + ((tile*)tileset)[(x2 * max) + y2].position.width / 2;
 				e.y = ((tile*)tileset)[(x2 * max) + y2].position.y + ((tile*)tileset)[(x2 * max) + y2].position.height / 6;
 				e2.x = ((tile*)tileset)[(x2 * max) + y2].position.x + ((tile*)tileset)[(x2 * max) + y2].position.width / 3;

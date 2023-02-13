@@ -47,7 +47,6 @@ void maingameloop(void) {
 		BeginTextureMode(target);
 		ClearBackground(BLACK);
 		rendertileset(tileset, 7);
-		renderallmapobjects();
 		//game logic start
 		rendercharacterinfo(mainc, &myfont);
 		if (enemyturn == 0) {
@@ -67,6 +66,7 @@ void maingameloop(void) {
 		else {
 			enemyturn = 0;//düþman hareketleri burada olucak
 		}
+		renderallmapobjects();
 		renderwarning(&myfont);
 		//game logic end
 		EndTextureMode();
