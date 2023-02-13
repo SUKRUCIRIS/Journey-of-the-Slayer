@@ -3,6 +3,7 @@
 #include "tile.h"
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 
 Vector2 e;
 
@@ -11,6 +12,8 @@ Vector2 e2;
 Rectangle source = { 0,0,16,16 };
 
 Font myfont;
+
+char x;
 
 Rectangle moveskillposition = { 1740,40,128,128 };
 Rectangle jumpskillposition = { 1740,200,128,128 };
@@ -21,6 +24,7 @@ Texture2D moveskilltexture;
 
 char jumpskill(tile* tileset, character* mainc) {
 	if (mainc->actionpoint >= 3) {
+		renderrange((int)mainc->m->tileposition.x, (int)mainc->m->tileposition.y, 2, 1, 7, tileset, 0);
 		for (int x = 0; x < 7; x++) {
 			for (int y = 0; y < 7; y++) {
 				if (tile_status(&(tileset[(7 * x) + y])) == 3) {
@@ -73,6 +77,64 @@ skillbutton moveskillbutton = {
 	.explanation = "Use 1 action point for every tile you passed on.",
 	.function = 0
 };
+
+//warning
+char warning[100] = { 0 };
+Color warningcolor = { 231,31,31,0 };
+//warning
+
+void renderrange(int x, int y, int range, char which, int max, void* tileset, char obstacle) {
+	for (int x2 = 0; x2 < max; x2++) {
+		for (int y2 = 0; y2 < max; y2++) {
+			if (abs(x - x2) <= range && abs(y - y2) <= range &&
+				(which == 0 || ((tile*)tileset)[(x2 * max) + y2].type == which) &&
+				(obstacle == 2 || ((tile*)tileset)[(x2 * max) + y2].obstacle == obstacle)) {
+				warningcolor.a = 255;
+				//DrawPoly(e, 4, ((tile*)tileset)[(x2 * max) + y2].position.height / 8, 0, warningcolor);
+				e.x = ((tile*)tileset)[(x2 * max) + y2].position.x + ((tile*)tileset)[(x2 * max) + y2].position.width / 2;
+				e.y = ((tile*)tileset)[(x2 * max) + y2].position.y + ((tile*)tileset)[(x2 * max) + y2].position.height / 6;
+				e2.x = ((tile*)tileset)[(x2 * max) + y2].position.x + ((tile*)tileset)[(x2 * max) + y2].position.width / 3;
+				e2.y = ((tile*)tileset)[(x2 * max) + y2].position.y + ((tile*)tileset)[(x2 * max) + y2].position.height / 4;
+				DrawLineEx(e, e2, 3, warningcolor);
+				e = e2;
+				e2.x = ((tile*)tileset)[(x2 * max) + y2].position.x + ((tile*)tileset)[(x2 * max) + y2].position.width / 2;
+				e2.y = ((tile*)tileset)[(x2 * max) + y2].position.y + ((tile*)tileset)[(x2 * max) + y2].position.height / 3;
+				DrawLineEx(e, e2, 3, warningcolor);
+				e = e2;
+				e2.x = ((tile*)tileset)[(x2 * max) + y2].position.x + 2 * ((tile*)tileset)[(x2 * max) + y2].position.width / 3;
+				e2.y = ((tile*)tileset)[(x2 * max) + y2].position.y + ((tile*)tileset)[(x2 * max) + y2].position.height / 4;
+				DrawLineEx(e, e2, 3, warningcolor);
+				e = e2;
+				e2.x = ((tile*)tileset)[(x2 * max) + y2].position.x + ((tile*)tileset)[(x2 * max) + y2].position.width / 2;
+				e2.y = ((tile*)tileset)[(x2 * max) + y2].position.y + ((tile*)tileset)[(x2 * max) + y2].position.height / 6;
+				DrawLineEx(e, e2, 3, warningcolor);
+				warningcolor.a = 0;
+			}
+		}
+	}
+}
+
+void setwarning(const char* text) {
+	strcpy(warning, text);
+	warningcolor.a = 255;
+}
+
+void renderwarning(Font* font) {
+	e = MeasureTextEx(*font, warning, 30, 0);
+	e.x = (GetRenderWidth() - e.x) / 2;
+	e.y = 200;
+	e2.x = 0;
+	e2.y = 0;
+	DrawTextPro(*font, warning, e, e2, 0, 30, 0, warningcolor);
+	if (warningcolor.a > 0) {
+		if (warningcolor.a == 1) {
+			warningcolor.a = 0;
+		}
+		else {
+			warningcolor.a -= 2;
+		}
+	}
+}
 
 void writeinrectangle(Font* font, const char* text, float x, float y, float w, float size, float borderwidth, Color* color) {
 	int count = 0;
@@ -127,9 +189,16 @@ void renderskillbutton(skillbutton* s, void* mainc, void* tileset) {
 			}
 		}
 	}
-	if (s->pressed) {
-		if (s->function && s->function(tileset, mainc) != 2) {
+	if (s->pressed && s->function) {
+		x = s->function(tileset, mainc);
+		if (x != 2) {
 			s->pressed = 0;
+			if (x == 0) {
+				setwarning("You don't have enough action point.");
+			}
+			else if (x == -1) {
+				setwarning("Wrong target.");
+			}
 		}
 	}
 	if (s->mouseon || s->pressed) {

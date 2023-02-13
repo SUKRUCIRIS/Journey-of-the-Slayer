@@ -29,7 +29,7 @@ Rectangle weaponinforect = { 175,200,200,300 };
 Rectangle helmetinforect = { 175,360,200,300 };
 Rectangle chestplateinforect = { 175,520,200,300 };
 Rectangle gauntletsinforect = { 175,680,200,300 };
-Rectangle leggingsinforect = { 175,840,200,300 };
+Rectangle leggingsinforect = { 175,775,200,300 };
 //rendercharacterinfo
 
 character* createcharacter(int tilex, int tiley, float size, tile* tileset, int x) {

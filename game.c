@@ -67,6 +67,7 @@ void maingameloop(void) {
 		else {
 			enemyturn = 0;//düþman hareketleri burada olucak
 		}
+		renderwarning(&myfont);
 		//game logic end
 		EndTextureMode();
 
