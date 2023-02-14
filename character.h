@@ -15,6 +15,8 @@ typedef struct character{
 	float liferegen;
 	float damageincperc;
 	float protectperc;
+	float dodgeperc;
+	float critichitchance;
 	skillbutton* moveskill;
 	skillbutton* jumpskill;
 	weapon* weaponinfo;

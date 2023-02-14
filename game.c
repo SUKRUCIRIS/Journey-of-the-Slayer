@@ -48,7 +48,6 @@ void maingameloop(void) {
 		ClearBackground(BLACK);
 		rendertileset(tileset, 7);
 		//game logic start
-		rendercharacterinfo(mainc, &myfont);
 		if (enemyturn == 0) {
 			renderskillbutton(mainc->jumpskill, mainc, tileset);
 			renderskillbutton(mainc->moveskill, mainc, tileset);
@@ -67,6 +66,7 @@ void maingameloop(void) {
 			enemyturn = 0;//düþman hareketleri burada olucak
 		}
 		renderallmapobjects();
+		rendercharacterinfo(mainc, &myfont);
 		renderwarning(&myfont);
 		//game logic end
 		EndTextureMode();

@@ -14,7 +14,7 @@ Rectangle healthback = { 157,47,286,25 };
 Rectangle healthfront = { 155,45,290,29 };
 Vector2 center = { 170,104 };
 char charinfodet[200] = { 0 };
-Rectangle charinfodetback = { 145,40,350,300 };
+Rectangle charinfodetback = { 145,40,350,400 };
 Rectangle weaponrect = { 20,200,150,150 };
 Rectangle weaponimrect = { 55,235,80,80 };
 Rectangle helmetrect = { 20,360,150,150 };
@@ -54,6 +54,8 @@ character* createcharacter(int tilex, int tiley, float size, tile* tileset, int 
 		c->liferegen = 0;
 		c->damageincperc = 0;
 		c->protectperc = 0;
+		c->dodgeperc = 0;
+		c->critichitchance = 0;
 		strcpy(c->name, "Slayer");
 		tileset[(tilex * x) + tiley].obstacle = 1;
 	}
@@ -172,10 +174,12 @@ void rendercharacterinfo(character* c, Font* myfont) {
 		center.x = charinfodetback.x + ((charinfodetback.width - center.x) / 2);
 		center.y = charinfodetback.y + 2;
 		DrawTextPro(*myfont, c->name, center, origin, 0, 30, 0, WHITE);
-		sprintf(charinfodet, "Health: %.1f/%.1f\nAction Point: %d/%d\nDamage Reduction: %.1f%%\nDamage Bonus: %.1f%%\nLife Steal: %.1f%%\nHealth Regeneration: %.1f",
-			c->health, c->maxhealth, c->actionpoint, c->maxactionpoint, c->protectperc, c->damageincperc, c->lifesteal, c->liferegen);
+		sprintf(charinfodet, "Health: %.1f/%.1f\nAction Point: %d/%d\nDamage Reduction: %.1f%%\
+			\nDodge Chance: %.1f%%\nCritical Hit Chance: %.1f%%\nDamage Bonus: %.1f%%\nLife Steal: %.1f%%\nHealth Regeneration: %.1f",
+			c->health, c->maxhealth, c->actionpoint, c->maxactionpoint, c->protectperc,
+			c->dodgeperc, c->critichitchance, c->damageincperc, c->lifesteal, c->liferegen);
 		center.x = charinfodetback.x + 5;
-		center.y = charinfodetback.y + 30;
+		center.y = charinfodetback.y + 40;
 		DrawTextPro(*myfont, charinfodet, center, origin, 0, 30, 0, WHITE);
 	}
 	else if (CheckCollisionPointRec(center, weaponrect)) {
