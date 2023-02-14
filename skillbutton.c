@@ -24,12 +24,15 @@ Texture2D moveskilltexture;
 
 int distance[49] = { 0 };
 
+Rectangle shadowpos;
+
 //warning
 char warning[100] = { 0 };
 Color warningcolor = { 231,31,31,0 };
 //warning
 
 char jumpskill(tile* tileset, character* mainc) {
+	setcharacterapblink(0);
 	if (mainc->actionpoint >= 3) {
 		renderrange((int)mainc->m->tileposition.x, (int)mainc->m->tileposition.y, 2, 1, 7, tileset, 0);
 		for (int x = 0; x < 7; x++) {
@@ -54,6 +57,41 @@ char jumpskill(tile* tileset, character* mainc) {
 						return -1;
 					}
 				}
+				else if (tile_status(&(tileset[(7 * x) + y])) == 2 && tileset[(7 * x) + y].obstacle == 0 && abs((int)mainc->m->tileposition.x - x) <= 2
+					&& abs((int)mainc->m->tileposition.y - y) <= 2 && tileset[(7 * x) + y].type != 2) {
+					shadowpos = mainc->m->position;
+					calculateposmapobject(&(tileset[(7 * x) + y]), mainc->m, &(shadowpos), 0);
+					e.x = 0;
+					e.y = 0;
+					warningcolor.a = 127;
+					warningcolor.b = 255;
+					warningcolor.r = 255;
+					warningcolor.g = 255;
+					DrawTexturePro(*(mainc->m->texture), mainc->m->source, shadowpos, e, 0, warningcolor);
+					warningcolor.a = 0;
+					warningcolor.b = 31;
+					warningcolor.r = 231;
+					warningcolor.g = 31;
+					Vector2* linepos = malloc(sizeof(Vector2) * 3);
+					if (linepos) {
+						linepos[0].x = mainc->m->position.x + mainc->m->position.width / 2;
+						linepos[0].y = mainc->m->position.y + mainc->m->position.height / 2;
+						linepos[2].x = tileset[(7 * x) + y].position.x + tileset[(7 * x) + y].position.width / 2;
+						linepos[2].y = tileset[(7 * x) + y].position.y + tileset[(7 * x) + y].position.height / 4;
+						linepos[1].x = (linepos[0].x + linepos[2].x) / 2;
+						linepos[1].y = (linepos[0].y + linepos[2].y) / 2 - 100;
+						warningcolor.a = 127;
+						warningcolor.b = 231;
+						warningcolor.r = 31;
+						DrawLineBezier(linepos[0], linepos[1], 3, warningcolor);
+						DrawLineBezier(linepos[1], linepos[2], 3, warningcolor);
+						warningcolor.a = 0;
+						warningcolor.b = 31;
+						warningcolor.r = 231;
+					}
+					free(linepos);
+					setcharacterapblink(3);
+				}
 			}
 		}
 	}
@@ -63,12 +101,12 @@ char jumpskill(tile* tileset, character* mainc) {
 	return 2;
 }
 
-Vector2* setmoveanimationpoints(int x, int y, tile* tileset, character* mainc) {
+Vector2* setmoveanimationpoints(int x, int y, tile* tileset, character* mainc, char abs) {
 	int max = distance[7 * x + y];
 	Vector2* result = malloc(sizeof(Vector2) * max);
 	if (result) {
 		for (int i = max - 1; i >= 0; i--) {
-			calculateposmapobject(&(tileset[(7 * x) + y]), mainc->m, &(result[i]), 1);
+			calculateposmapobject(&(tileset[(7 * x) + y]), mainc->m, &(result[i]), abs);
 			if (x - 1 >= 0 && distance[7 * (x - 1) + y] == i) {
 				x = x - 1;
 			}
@@ -103,12 +141,15 @@ Vector2* setmoveanimationpoints(int x, int y, tile* tileset, character* mainc) {
 }
 
 char move(tile* tileset, character* mainc) {
+	setcharacterapblink(0);
 	if (mainc->actionpoint > 0) {
 		calculatedistance((int)mainc->m->tileposition.x, (int)mainc->m->tileposition.y, tileset);
 		for (int x2 = 0; x2 < 7; x2++) {
 			for (int y2 = 0; y2 < 7; y2++) {
 				if (distance[7 * x2 + y2] <= mainc->actionpoint) {
 					warningcolor.a = 255;
+					warningcolor.b = 231;
+					warningcolor.r = 31;
 					e.x = ((tile*)tileset)[(x2 * 7) + y2].position.x + ((tile*)tileset)[(x2 * 7) + y2].position.width / 2;
 					e.y = ((tile*)tileset)[(x2 * 7) + y2].position.y + ((tile*)tileset)[(x2 * 7) + y2].position.height / 6;
 					e2.x = ((tile*)tileset)[(x2 * 7) + y2].position.x + ((tile*)tileset)[(x2 * 7) + y2].position.width / 3;
@@ -127,11 +168,47 @@ char move(tile* tileset, character* mainc) {
 					e2.y = ((tile*)tileset)[(x2 * 7) + y2].position.y + ((tile*)tileset)[(x2 * 7) + y2].position.height / 6;
 					DrawLineEx(e, e2, 3, warningcolor);
 					warningcolor.a = 0;
+					warningcolor.b = 31;
+					warningcolor.r = 231;
 					if (tile_status(&(tileset[(7 * x2) + y2])) == 3) {
-						addanimationmapobject(mainc->m, setmoveanimationpoints(x2, y2, tileset, mainc), distance[7 * x2 + y2]);
+						addanimationmapobject(mainc->m, setmoveanimationpoints(x2, y2, tileset, mainc, 1), distance[7 * x2 + y2]);
 						movecharacter(mainc, x2, y2, tileset, 7);
 						mainc->actionpoint -= distance[7 * x2 + y2];
 						return 1;
+					}
+					else if (tile_status(&(tileset[(7 * x2) + y2])) == 2) {
+						shadowpos = mainc->m->position;
+						calculateposmapobject(&(tileset[(7 * x2) + y2]), mainc->m, &(shadowpos), 0);
+						e.x = 0;
+						e.y = 0;
+						warningcolor.a = 127;
+						warningcolor.b = 255;
+						warningcolor.r = 255;
+						warningcolor.g = 255;
+						DrawTexturePro(*(mainc->m->texture), mainc->m->source, shadowpos, e, 0, warningcolor);
+						warningcolor.a = 0;
+						warningcolor.b = 31;
+						warningcolor.r = 231;
+						warningcolor.g = 31;
+						Vector2* steps = setmoveanimationpoints(x2, y2, tileset, mainc, 0);
+						for (int i = 0; i < distance[7 * x2 + y2]; i++) {
+							steps[i].x += mainc->m->position.width / 2;
+							steps[i].y = steps[i].y - mainc->m->position.width * 0.3f + tileset[0].position.height / 4;
+						}
+						warningcolor.a = 127;
+						warningcolor.b = 231;
+						warningcolor.r = 31;
+						e.x = mainc->m->position.x + mainc->m->position.width / 2;
+						e.y = mainc->m->position.y - mainc->m->position.width * 0.3f + tileset[0].position.height / 4;
+						DrawLineEx(e, steps[0], 3, warningcolor);
+						for (int i = 0; i < distance[7 * x2 + y2] - 1; i++) {
+							DrawLineEx(steps[i], steps[i + 1], 3, warningcolor);
+						}
+						warningcolor.a = 0;
+						warningcolor.b = 31;
+						warningcolor.r = 231;
+						setcharacterapblink(distance[7 * x2 + y2]);
+						free(steps);
 					}
 				}
 				else if (tile_status(&(tileset[(7 * x2) + y2])) == 3) {
@@ -222,6 +299,8 @@ void renderrange(int x, int y, int range, char which, int max, void* tileset, ch
 				(which == 0 || ((tile*)tileset)[(x2 * max) + y2].type == which) &&
 				(obstacle == 2 || ((tile*)tileset)[(x2 * max) + y2].obstacle == obstacle)) {
 				warningcolor.a = 255;
+				warningcolor.b = 231;
+				warningcolor.r = 31;
 				e.x = ((tile*)tileset)[(x2 * max) + y2].position.x + ((tile*)tileset)[(x2 * max) + y2].position.width / 2;
 				e.y = ((tile*)tileset)[(x2 * max) + y2].position.y + ((tile*)tileset)[(x2 * max) + y2].position.height / 6;
 				e2.x = ((tile*)tileset)[(x2 * max) + y2].position.x + ((tile*)tileset)[(x2 * max) + y2].position.width / 3;
@@ -240,6 +319,8 @@ void renderrange(int x, int y, int range, char which, int max, void* tileset, ch
 				e2.y = ((tile*)tileset)[(x2 * max) + y2].position.y + ((tile*)tileset)[(x2 * max) + y2].position.height / 6;
 				DrawLineEx(e, e2, 3, warningcolor);
 				warningcolor.a = 0;
+				warningcolor.b = 31;
+				warningcolor.r = 231;
 			}
 		}
 	}

@@ -30,6 +30,8 @@ Rectangle helmetinforect = { 175,360,200,300 };
 Rectangle chestplateinforect = { 175,520,200,300 };
 Rectangle gauntletsinforect = { 175,680,200,300 };
 Rectangle leggingsinforect = { 175,775,200,300 };
+char apblink = 0;
+Color blink = { 96, 0, 148,255 };
 //rendercharacterinfo
 
 character* createcharacter(int tilex, int tiley, float size, tile* tileset, int x) {
@@ -77,10 +79,16 @@ void rendercharacterinfo(character* c, Font* myfont) {
 	DrawRectangleRounded(healthfront, 0.3f, 0, RED);
 	DrawRectangleRoundedLines(healthback, 0.3f, 0, 4, WHITE);
 	center.y = 104;
+	blink.a -= 10;
 	for (int i = 0; i < c->maxactionpoint; i++) {
 		center.x = 170 + i * 45.0f;
 		if (i < c->actionpoint) {
-			DrawCircleV(center, 15, backcolor);
+			if (c->actionpoint - i <= apblink) {
+				DrawCircleV(center, 15, blink);
+			}
+			else {
+				DrawCircleV(center, 15, backcolor);
+			}
 		}
 		DrawRing(center, 15, 20, 0, 360, 0, WHITE);
 	}
@@ -260,4 +268,8 @@ void rendercharacterinfo(character* c, Font* myfont) {
 			DrawTextPro(*myfont, "EMPTY", center, origin, 0, 30, 0, WHITE);
 		}
 	}
+}
+
+void setcharacterapblink(char ap) {
+	apblink = ap;
 }

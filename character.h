@@ -32,3 +32,5 @@ void destroycharacter(character* c);
 void movecharacter(character* c, int targetx, int targety, tile* tileset, int x);
 
 void rendercharacterinfo(character* c, Font* myfont);
+
+void setcharacterapblink(char ap);
