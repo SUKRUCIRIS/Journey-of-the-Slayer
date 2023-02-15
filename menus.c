@@ -7,6 +7,7 @@
 #include <time.h>
 #include "button.h"
 #include <stdio.h>
+#include "enemy.h"
 
 char reselect = 0;
 
@@ -179,8 +180,9 @@ char tilesetoutromainmenu(tile* t, int speed, int x, float ratio, Font* f, Vecto
 
 char mainmenu(void) {
 	loadtiletextures();
+	loadenemytextures();
 	Font myfont = LoadFontEx("data/fonts/font1.ttf", 70, 0, 0);
-	tile* tileset = createtileset(4, 192, 0, 0, 1, 1, 1);
+	tile* tileset = createtileset(4, 192, 0, 0, 1, 1, 1, 5);
 	character* mainc = createcharacter(1, 1, 48, tileset, 4);
 	char x = 111;
 	int tilex = 4;
@@ -198,16 +200,19 @@ char mainmenu(void) {
 		x = tilesetoutromainmenu(tileset, 25, tilex, 0.15f, &myfont, &a);
 		destroytileset(tileset);
 		destroycharacter(mainc);
+		destroyallenemies();
 		tilex = rand() % 3 + 2;
 		tilexchar = rand() % tilex;
 		tileychar = rand() % tilex;
-		tileset = createtileset(tilex, 192, 0, 0, 1, tilexchar, tileychar);
+		tileset = createtileset(tilex, 192, 0, 0, 1, tilexchar, tileychar, 5);
 		mainc = createcharacter(tilexchar, tileychar, 48, tileset, tilex);
 	}
 	destroytileset(tileset);
 	destroycharacter(mainc);
 	deletetiletextures();
 	UnloadFont(myfont);
+	unloadenemytextures();
+	destroyallenemies();
 	return x;
 }
 

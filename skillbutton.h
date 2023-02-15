@@ -17,6 +17,8 @@ void renderrange(int x, int y, int range, char which, int max, void* tileset, ch
 
 int* calculatedistance(int x, int y, void* tileset);
 
+Vector2* setmoveanimationpoints(int x, int y, void* tileset, void* mainc, char abs);
+
 void setwarning(const char* text);
 
 void renderwarning(Font* font);

@@ -101,45 +101,6 @@ char jumpskill(tile* tileset, character* mainc) {
 	return 2;
 }
 
-Vector2* setmoveanimationpoints(int x, int y, tile* tileset, character* mainc, char abs) {
-	int max = distance[7 * x + y];
-	Vector2* result = malloc(sizeof(Vector2) * max);
-	if (result) {
-		for (int i = max - 1; i >= 0; i--) {
-			calculateposmapobject(&(tileset[(7 * x) + y]), mainc->m, &(result[i]), abs);
-			if (x - 1 >= 0 && distance[7 * (x - 1) + y] == i) {
-				x = x - 1;
-			}
-			else if (x + 1 < 7 && distance[7 * (x + 1) + y] == i) {
-				x = x + 1;
-			}
-			else if (y - 1 >= 0 && distance[7 * x + y - 1] == i) {
-				y = y - 1;
-			}
-			else if (y + 1 < 7 && distance[7 * x + y + 1] == i) {
-				y = y + 1;
-			}
-			else if (y - 1 >= 0 && x - 1 >= 0 && distance[7 * (x - 1) + y - 1] == i) {
-				y = y - 1;
-				x = x - 1;
-			}
-			else if (y - 1 >= 0 && x + 1 < 7 && distance[7 * (x + 1) + y - 1] == i) {
-				y = y - 1;
-				x = x + 1;
-			}
-			else if (y + 1 < 7 && x - 1 >= 0 && distance[7 * (x - 1) + y + 1] == i) {
-				y = y + 1;
-				x = x - 1;
-			}
-			else if (y + 1 < 7 && x + 1 < 7 && distance[7 * (x + 1) + y + 1] == i) {
-				y = y + 1;
-				x = x + 1;
-			}
-		}
-	}
-	return result;
-}
-
 char move(tile* tileset, character* mainc) {
 	setcharacterapblink(0);
 	if (mainc->actionpoint > 0) {
@@ -244,6 +205,45 @@ skillbutton moveskillbutton = {
 	.explanation = "Use 1 action point for every tile you passed on.",
 	.function = &move
 };
+
+Vector2* setmoveanimationpoints(int x, int y, void* tileset, void* mainc, char abs) {
+	int max = distance[7 * x + y];
+	Vector2* result = malloc(sizeof(Vector2) * max);
+	if (result) {
+		for (int i = max - 1; i >= 0; i--) {
+			calculateposmapobject(&(((tile*)tileset)[(7 * x) + y]), ((character*)mainc)->m, &(result[i]), abs);
+			if (x - 1 >= 0 && distance[7 * (x - 1) + y] == i) {
+				x = x - 1;
+			}
+			else if (x + 1 < 7 && distance[7 * (x + 1) + y] == i) {
+				x = x + 1;
+			}
+			else if (y - 1 >= 0 && distance[7 * x + y - 1] == i) {
+				y = y - 1;
+			}
+			else if (y + 1 < 7 && distance[7 * x + y + 1] == i) {
+				y = y + 1;
+			}
+			else if (y - 1 >= 0 && x - 1 >= 0 && distance[7 * (x - 1) + y - 1] == i) {
+				y = y - 1;
+				x = x - 1;
+			}
+			else if (y - 1 >= 0 && x + 1 < 7 && distance[7 * (x + 1) + y - 1] == i) {
+				y = y - 1;
+				x = x + 1;
+			}
+			else if (y + 1 < 7 && x - 1 >= 0 && distance[7 * (x - 1) + y + 1] == i) {
+				y = y + 1;
+				x = x - 1;
+			}
+			else if (y + 1 < 7 && x + 1 < 7 && distance[7 * (x + 1) + y + 1] == i) {
+				y = y + 1;
+				x = x + 1;
+			}
+		}
+	}
+	return result;
+}
 
 void neighcalcul(int x, int y, tile* tileset) {
 	if (tileset[7 * x + y].obstacle == 0 && tileset[7 * x + y].type != 2) {

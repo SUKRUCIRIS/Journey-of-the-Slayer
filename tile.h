@@ -13,7 +13,7 @@ unsigned char tile_status(tile* t);
 
 void tile_render(tile* t);
 
-tile* createtileset(int x, int size, float startx, float starty, char middle, int tilexchar, int tileychar);
+tile* createtileset(int x, int size, float startx, float starty, char middle, int tilexchar, int tileychar, long long unsigned int level);
 
 void rendertileset(tile* t, int x);
 

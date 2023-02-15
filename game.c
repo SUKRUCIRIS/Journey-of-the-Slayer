@@ -3,14 +3,14 @@
 #include "character.h"
 #include <raylib.h>
 #include "button.h"
+#include "enemy.h"
 
 void maingameloop(void) {
+	loadenemytextures();
 	loadtiletextures();
 	loadskillbuttontextures();
-	tile* tileset = createtileset(7, 192, 0, 0, 1, 3, 0);
-	character* mainc = createcharacter(3, 0, 48, tileset, 7);
-	tilesetintro(tileset, 25, 7, 0.85f);
-	char nextlevelexit = 0;
+	character* oldchar = 0;
+	char nextlevelexit = 1;
 	char exit = 0;
 	RenderTexture2D target = LoadRenderTexture(1920, 1080);
 	SetTextureFilter(target.texture, TEXTURE_FILTER_POINT);
@@ -43,6 +43,17 @@ void maingameloop(void) {
 	};
 	char escpressed = 0;
 	char enemyturn = 0;
+	tile* tileset = 0;
+	character* mainc = 0;
+	long long unsigned int level= 0;
+levelstart:
+	tileset = createtileset(7, 192, 0, 0, 1, 3, 0, level);
+	mainc = createcharacter(3, 0, 48, tileset, 7);
+	if (oldchar) {
+		transfercharacter(mainc, oldchar);
+		destroycharacter(oldchar);
+	}
+	tilesetintro(tileset, 25, 7, 0.85f);
 	while (!WindowShouldClose()) {
 		BeginTextureMode(target);
 		ClearBackground(BLACK);
@@ -63,7 +74,8 @@ void maingameloop(void) {
 			}
 		}
 		else {
-			enemyturn = 0;//düþman hareketleri burada olucak
+			playallenemies();
+			enemyturn = 0;
 		}
 		renderallmapobjects();
 		rendercharacterinfo(mainc, &myfont);
@@ -87,6 +99,7 @@ void maingameloop(void) {
 					break;
 				}
 				if (renderbutton(&menubutton, &myfont)) {
+					nextlevelexit = 0;
 					exit = 1;
 					break;
 				}
@@ -117,9 +130,16 @@ void maingameloop(void) {
 	if (nextlevelexit) {
 		tilesetoutro(tileset, 25, 7, 0.15f);
 	}
-	UnloadRenderTexture(target);
 	destroytileset(tileset);
+	destroyallenemies();
+	if (nextlevelexit) {
+		oldchar = mainc;
+		level++;
+		goto levelstart;
+	}
 	destroycharacter(mainc);
+	UnloadRenderTexture(target);
 	unloadskillbuttontextures();
 	deletetiletextures();
+	unloadenemytextures();
 }

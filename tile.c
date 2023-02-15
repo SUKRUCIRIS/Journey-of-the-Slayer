@@ -3,6 +3,9 @@
 #include "map_object.h"
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
+#include "skillbutton.h"
+#include "enemy.h"
 
 Vector2 a, b, c, d, e;
 
@@ -47,7 +50,7 @@ void tile_render(tile* t) {
 	DrawTexturePro(*(t->texture), tile_source, t->position, a, 0, WHITE);
 }
 
-tile* createtileset(int x, int size, float startx, float starty, char middle, int tilexchar, int tileychar) {
+tile* createtileset(int x, int size, float startx, float starty, char middle, int tilexchar, int tileychar, long long unsigned int level) {
 	tile* t = malloc(sizeof(tile) * x * x);
 	if (middle == 1) {
 		startx = ((1920 - (size * x)) / 2.0f) + (((x - 1) / 2.0f) * size);
@@ -55,6 +58,7 @@ tile* createtileset(int x, int size, float startx, float starty, char middle, in
 	}
 	srand((unsigned int)time(0));
 	int seatilen = 0;
+	int enemyn = 0;
 	int* rows = malloc(sizeof(int) * x);
 	int* columns = malloc(sizeof(int) * x);
 	for (int i = 0; i < x; i++) {
@@ -72,7 +76,7 @@ tile* createtileset(int x, int size, float startx, float starty, char middle, in
 			t[(i * x) + i2].absposition.y = t[(i * x) + i2].position.y;
 			t[(i * x) + i2].absposition.width = t[(i * x) + i2].position.width;
 			t[(i * x) + i2].absposition.height = t[(i * x) + i2].position.height;
-			if (rand() % 2 == 0 && max(abs(tilexchar - i), abs(tileychar - i2)) > 1 && 
+			if (rand() % 2 == 0 && max(abs(tilexchar - i), abs(tileychar - i2)) > 1 &&
 				seatilen < (x * x) / 3.0f && rows[i] < 3 && columns[i2] < 4) {
 				t[(i * x) + i2].texture = &seatile;
 				t[(i * x) + i2].type = 2;
@@ -83,11 +87,27 @@ tile* createtileset(int x, int size, float startx, float starty, char middle, in
 			else {
 				t[(i * x) + i2].texture = &grasstile;
 				t[(i * x) + i2].type = 1;
+				if (x != 7 && max(abs(tilexchar - i), abs(tileychar - i2)) > 0 && rand() % 3 == 1 && enemyn < 3) {
+					createrandomenemy(i, i2, 48, t, x, 0);
+					enemyn++;
+				}
 			}
 		}
 	}
 	free(rows);
 	free(columns);
+	if (x == 7) {
+		int loop = 0;
+		while (enemyn < (level / 3 + 2) && loop < 100) {
+			seatilen = rand() % 3 + 4;
+			x = rand() % 7;
+			if (t[x * 7 + seatilen].obstacle == 0 && t[x * 7 + seatilen].type != 2) {
+				createrandomenemy(x, seatilen, 48, t, 7, 0);
+				enemyn++;
+			}
+			loop++;
+		}
+	}
 	return t;
 }
 

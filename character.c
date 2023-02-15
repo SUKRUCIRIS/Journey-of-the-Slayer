@@ -34,6 +34,26 @@ char apblink = 0;
 Color blink = { 96, 0, 148,255 };
 //rendercharacterinfo
 
+void transfercharacter(character* now, character* old) {
+	now->maxhealth = old->maxhealth;
+	now->health = old->health;
+	now->maxactionpoint = old->maxactionpoint;
+	now->actionpoint = old->actionpoint;
+	now->moveskill = old->moveskill;
+	now->jumpskill = old->jumpskill;
+	now->weaponinfo = old->weaponinfo;
+	now->headarmor = old->headarmor;
+	now->torsoarmor = old->torsoarmor;
+	now->armarmor = old->armarmor;
+	now->legarmor = old->legarmor;
+	now->lifesteal = old->lifesteal;
+	now->liferegen = old->liferegen;
+	now->damageincperc = old->damageincperc;
+	now->protectperc = old->protectperc;
+	now->dodgeperc = old->dodgeperc;
+	now->critichitchance = old->critichitchance;
+}
+
 character* createcharacter(int tilex, int tiley, float size, tile* tileset, int x) {
 	character* c = malloc(sizeof(character));
 	if (c) {
