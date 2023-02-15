@@ -4,6 +4,7 @@
 #include "skillbutton.h"
 #include "weapon.h"
 #include "armor.h"
+#include "enemy.h"
 
 typedef struct character{
 	map_object* m;
@@ -38,3 +39,11 @@ void rendercharacterinfo(character* c, Font* myfont);
 void setcharacterapblink(char ap);
 
 void transfercharacter(character* now, character* old);
+
+char ishappened(float percentage);
+
+void charactertakedamage(character* c, float x);
+
+void charactergivedamage(character* c, float x, enemy* e);
+
+void characterheal(character* c, float x);

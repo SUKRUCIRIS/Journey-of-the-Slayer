@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <time.h>
+#include "enemy.h"
 
 Texture2D texture;
 
@@ -296,4 +298,32 @@ void rendercharacterinfo(character* c, Font* myfont) {
 
 void setcharacterapblink(char ap) {
 	apblink = ap;
+}
+
+char ishappened(float percentage) {
+	srand((unsigned int)time(0));
+	return (rand() / (float)RAND_MAX) * 100 <= percentage;
+}
+
+void charactertakedamage(character* c, float x) {
+	if (!ishappened(c->dodgeperc)) {
+		x = x * ((100 - c->protectperc) / 100);
+		c->health -= x;
+	}
+}
+
+void charactergivedamage(character* c, float x, enemy* e) {
+	x *= ((100 + c->damageincperc) / 100);
+	if (ishappened(c->critichitchance)) {
+		x *= 2;
+	}
+	enemytakedamage(e, x);
+	characterheal(c, x * (c->lifesteal / 100));
+}
+
+void characterheal(character* c, float x) {
+	c->health += x;
+	if (c->health > c->maxhealth) {
+		c->health = c->maxhealth;
+	}
 }
