@@ -15,6 +15,7 @@ typedef struct enemy {
 	float critichitchance;
 	int range;
 	float damage;
+	char attackap;
 	char name[20];
 }enemy;
 
@@ -29,9 +30,11 @@ void destroyenemy(enemy* c);
 
 void destroyallenemies(void);
 
-void playenemy(enemy* c);
+void moveenemy(enemy* c, int targetx, int targety, tile* tileset, int x);
 
-void playallenemies(void);
+void playenemy(void* mainc, void* tileset, enemy* c);
+
+void playallenemies(void* mainc, void* tileset, void* font);
 
 enemy** getallenemies(void);
 
@@ -42,3 +45,5 @@ void enemytakedamage(enemy* c, float x);
 void enemygivedamage(enemy* c, float x, void* e);
 
 void enemyheal(enemy* c, float x);
+
+void enemynextturn(enemy* c);

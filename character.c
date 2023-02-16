@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <time.h>
 #include "enemy.h"
+#include <math.h>
 
 Texture2D texture;
 
@@ -36,6 +37,14 @@ char apblink = 0;
 Color blink = { 96, 0, 148,255 };
 //rendercharacterinfo
 
+void loadcharactertextures(void) {
+	texture = LoadTexture("data/characters/character.png");
+}
+
+void unloadcharactertextures(void) {
+	UnloadTexture(texture);
+}
+
 void transfercharacter(character* now, character* old) {
 	now->maxhealth = old->maxhealth;
 	now->health = old->health;
@@ -59,7 +68,6 @@ void transfercharacter(character* now, character* old) {
 character* createcharacter(int tilex, int tiley, float size, tile* tileset, int x) {
 	character* c = malloc(sizeof(character));
 	if (c) {
-		texture = LoadTexture("data/characters/character.png");
 		c->m = createmapobject(&texture, tilex, tiley, size, tileset, x, 0, 0, 16, 16);
 		c->maxhealth = 100;
 		c->health = 100;
@@ -93,11 +101,10 @@ void movecharacter(character* c, int targetx, int targety, tile* tileset, int x)
 void destroycharacter(character* c) {
 	destroymapobject(c->m);
 	free(c);
-	UnloadTexture(texture);
 }
 
 void rendercharacterinfo(character* c, Font* myfont) {
-	healthfront.width = (c->health / c->maxhealth) * healthfront.width;
+	healthfront.width = (c->health / c->maxhealth) * 290;
 	DrawRectangleRounded(charinfoback, 0.4f, 0, backcolor);
 	DrawTexturePro(*(c->m->texture), c->m->source, charinfodes, origin, 0, WHITE);
 	DrawRectangleRounded(healthfront, 0.3f, 0, RED);
@@ -325,5 +332,34 @@ void characterheal(character* c, float x) {
 	c->health += x;
 	if (c->health > c->maxhealth) {
 		c->health = c->maxhealth;
+	}
+}
+
+void characternextturn(character* c) {
+	characterheal(c, c->liferegen);
+	c->actionpoint = c->maxactionpoint;
+}
+
+void setattackanimation(map_object* attacker, map_object* attacked, tile* tileset) {
+	Vector2* attackerpoints = malloc(sizeof(Vector2) * 2);
+	Vector2* attackedpoints = malloc(sizeof(Vector2) * 4);
+	if (attackerpoints && attackedpoints) {
+		calculateposmapobject(&(tileset[(7 * (int)attacker->tileposition.x) + (int)attacker->tileposition.y]), attacker, &(attackerpoints[1]), 1);
+		calculateposmapobject(&(tileset[(7 * (int)attacked->tileposition.x) + (int)attacked->tileposition.y]), attacked, &(attackedpoints[1]), 1);
+		calculateposmapobject(&(tileset[(7 * (int)attacked->tileposition.x) + (int)attacked->tileposition.y]), attacked, &(attackedpoints[3]), 1);
+		attackerpoints[0].x = attackerpoints[1].x + (attackedpoints[1].x - attackerpoints[1].x) * 50 /
+			(fabsf(attackedpoints[1].x - attackerpoints[1].x) + fabsf(attackedpoints[1].y - attackerpoints[1].y));
+		attackerpoints[0].y = attackerpoints[1].y + (attackedpoints[1].y - attackerpoints[1].y) * 50 /
+			(fabsf(attackedpoints[1].x - attackerpoints[1].x) + fabsf(attackedpoints[1].y - attackerpoints[1].y));
+		attackedpoints[0].x = attackedpoints[1].x - (attackerpoints[1].x - attackedpoints[1].x) * 25 /
+			(fabsf(attackedpoints[1].x - attackerpoints[1].x) + fabsf(attackedpoints[1].y - attackerpoints[1].y));
+		attackedpoints[0].y = attackedpoints[1].y - (attackerpoints[1].y - attackedpoints[1].y) * 25 /
+			(fabsf(attackedpoints[1].x - attackerpoints[1].x) + fabsf(attackedpoints[1].y - attackerpoints[1].y));
+		attackedpoints[2].x = attackedpoints[1].x + (attackerpoints[1].x - attackedpoints[1].x) * 25 /
+			(fabsf(attackedpoints[1].x - attackerpoints[1].x) + fabsf(attackedpoints[1].y - attackerpoints[1].y));
+		attackedpoints[2].y = attackedpoints[1].y + (attackerpoints[1].y - attackedpoints[1].y) * 25 /
+			(fabsf(attackedpoints[1].x - attackerpoints[1].x) + fabsf(attackedpoints[1].y - attackerpoints[1].y));
+		addanimationmapobject(attacker, attackerpoints, 2);
+		addanimationmapobject(attacked, attackedpoints, 4);
 	}
 }

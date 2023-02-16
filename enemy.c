@@ -1,6 +1,7 @@
 #include "enemy.h"
 #include <stdlib.h>
 #include "character.h"
+#include <math.h>
 
 enemy** allenemies = 0;
 
@@ -33,6 +34,7 @@ enemy* createrandomenemy(int tilex, int tiley, float size, tile* tileset, int x,
 			c->critichitchance = rand() % 5 + 1.0f;
 			c->range = 1;
 			c->damage = 10;
+			c->attackap = 2;
 			strcpy(c->name, "Hell Slime");
 			tileset[(tilex * x) + tiley].obstacle = 1;
 		}
@@ -80,12 +82,123 @@ void destroyallenemies(void) {
 	enemynumber = 0;
 }
 
-void playenemy(enemy* c) {
-
+void playenemy(void* mainc, void* tileset, enemy* c) {
+	if (c->actionpoint == 0) {
+		return;
+	}
+	character* m = mainc;
+	tile* t = tileset;
+	int* distance = 0;
+	int optimized = 0;
+	int optimizedi = 0;
+	if (max(abs((int)m->m->tileposition.x - (int)c->m->tileposition.x), abs((int)m->m->tileposition.y - (int)c->m->tileposition.y)) <= c->range) {
+		if (c->actionpoint >= c->attackap) {
+			setattackanimation(c->m, m->m, t);
+			enemygivedamage(c, c->damage, mainc);
+			c->actionpoint -= c->attackap;
+		}
+		else if (c->health <= (2 * c->maxhealth) / 3) {
+			distance = calculatedistance((int)c->m->tileposition.x, (int)c->m->tileposition.y, tileset);
+			for (int i = 0; i < 49; i++) {
+				if (distance[i] <= c->actionpoint &&
+					max(abs((int)m->m->tileposition.x - i / 7), abs((int)m->m->tileposition.y - i % 7)) >
+					max(abs((int)m->m->tileposition.x - (int)c->m->tileposition.x), abs((int)m->m->tileposition.y - (int)c->m->tileposition.y))) {
+					if (optimized < max(abs((int)m->m->tileposition.x - i / 7), abs((int)m->m->tileposition.y - i % 7))) {
+						optimized = max(abs((int)m->m->tileposition.x - i / 7), abs((int)m->m->tileposition.y - i % 7));
+						optimizedi = i;
+					}
+				}
+			}
+			addanimationmapobject(c->m, setmoveanimationpoints(optimizedi / 7, optimizedi % 7, tileset, mainc, 1), distance[optimizedi]);
+			c->actionpoint -= distance[optimizedi];
+			moveenemy(c, optimizedi / 7, optimizedi % 7, tileset, 7);
+		}
+	}
+	else {
+		optimized = 1453;
+		distance = calculatedistance((int)c->m->tileposition.x, (int)c->m->tileposition.y, tileset);
+		int loop = 0;
+		while (optimized == 1453) {
+			for (int i = 0; i < 49; i++) {
+				if (distance[i] <= c->actionpoint &&
+					max(abs((int)m->m->tileposition.x - i / 7), abs((int)m->m->tileposition.y - i % 7)) == c->range + loop) {
+					if (optimized > distance[i]) {
+						optimized = distance[i];
+						optimizedi = i;
+					}
+				}
+			}
+			loop++;
+		}
+		addanimationmapobject(c->m, setmoveanimationpoints(optimizedi / 7, optimizedi % 7, tileset, mainc, 1), distance[optimizedi]);
+		c->actionpoint -= distance[optimizedi];
+		moveenemy(c, optimizedi / 7, optimizedi % 7, tileset, 7);
+	}
 }
 
-void playallenemies(void) {
-
+void playallenemies(void* mainc, void* tileset, void* font) {
+	int deneme = 0;
+	RenderTexture2D target = LoadRenderTexture(1920, 1080);
+	SetTextureFilter(target.texture, TEXTURE_FILTER_POINT);
+	Rectangle targetsource = { 0,0,1920,-1080 };
+	Rectangle targetdest = { 0,0,(float)GetRenderWidth(),(float)GetRenderHeight() };
+	Vector2 origin = { 0,0 };
+	char animation = 0;
+	for (int i = 0; i < enemynumber; i++) {
+		enemynextturn(allenemies[i]);
+		deneme = 0;
+	a:
+		BeginTextureMode(target);
+		ClearBackground(BLACK);
+		rendertileset(tileset, 7);
+		renderallmapobjects();
+		rendercharacterinfo(mainc, font);
+		EndTextureMode();
+		BeginDrawing();
+		ClearBackground(BLACK);
+		DrawTexturePro(target.texture, targetsource, targetdest, origin, 0, WHITE);
+		EndDrawing();
+		animation--;
+		if (!isthereanimation() && animation <= 0) {
+			playenemy(mainc, tileset, allenemies[i]);
+		}
+		else {
+			if (animation <= 0) {
+				animation = 30;
+			}
+			goto a;
+		}
+		if (allenemies[i]->actionpoint > 0 && deneme < 10) {
+			deneme++;
+			goto a;
+		}
+	}
+	while (isthereanimation()) {
+		BeginTextureMode(target);
+		ClearBackground(BLACK);
+		rendertileset(tileset, 7);
+		renderallmapobjects();
+		rendercharacterinfo(mainc, font);
+		EndTextureMode();
+		BeginDrawing();
+		ClearBackground(BLACK);
+		DrawTexturePro(target.texture, targetsource, targetdest, origin, 0, WHITE);
+		EndDrawing();
+	}
+	for (int i = 0; i < 30; i++) {
+		BeginTextureMode(target);
+		ClearBackground(BLACK);
+		rendertileset(tileset, 7);
+		renderallmapobjects();
+		rendercharacterinfo(mainc, font);
+		EndTextureMode();
+		BeginDrawing();
+		ClearBackground(BLACK);
+		DrawTexturePro(target.texture, targetsource, targetdest, origin, 0, WHITE);
+		EndDrawing();
+	}
+	UnloadRenderTexture(target);
+	characternextturn(mainc);
 }
 
 enemy** getallenemies(void) {
@@ -117,4 +230,15 @@ void enemyheal(enemy* c, float x) {
 	if (c->health > c->maxhealth) {
 		c->health = c->maxhealth;
 	}
+}
+
+void moveenemy(enemy* c, int targetx, int targety, tile* tileset, int x) {
+	tileset[((int)c->m->tileposition.x * x) + (int)c->m->tileposition.y].obstacle = 0;
+	movemapobject(c->m, targetx, targety, tileset, x);
+	tileset[((int)c->m->tileposition.x * x) + (int)c->m->tileposition.y].obstacle = 1;
+}
+
+void enemynextturn(enemy* c) {
+	enemyheal(c, c->liferegen);
+	c->actionpoint = c->maxactionpoint;
 }

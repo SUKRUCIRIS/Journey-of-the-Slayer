@@ -181,6 +181,7 @@ char tilesetoutromainmenu(tile* t, int speed, int x, float ratio, Font* f, Vecto
 char mainmenu(void) {
 	loadtiletextures();
 	loadenemytextures();
+	loadcharactertextures();
 	Font myfont = LoadFontEx("data/fonts/font1.ttf", 70, 0, 0);
 	tile* tileset = createtileset(4, 192, 0, 0, 1, 1, 1, 5);
 	character* mainc = createcharacter(1, 1, 48, tileset, 4);
@@ -213,6 +214,7 @@ char mainmenu(void) {
 	UnloadFont(myfont);
 	unloadenemytextures();
 	destroyallenemies();
+	unloadcharactertextures();
 	return x;
 }
 

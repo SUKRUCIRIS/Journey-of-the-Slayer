@@ -28,6 +28,10 @@ typedef struct character{
 	char name[20];
 }character;
 
+void loadcharactertextures(void);
+
+void unloadcharactertextures(void);
+
 character* createcharacter(int tilex, int tiley, float size, tile* tileset, int x);
 
 void destroycharacter(character* c);
@@ -47,3 +51,7 @@ void charactertakedamage(character* c, float x);
 void charactergivedamage(character* c, float x, enemy* e);
 
 void characterheal(character* c, float x);
+
+void characternextturn(character* c);
+
+void setattackanimation(map_object* attacker, map_object* attacked, tile* tileset);

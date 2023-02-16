@@ -9,6 +9,7 @@ void maingameloop(void) {
 	loadenemytextures();
 	loadtiletextures();
 	loadskillbuttontextures();
+	loadcharactertextures();
 	character* oldchar = 0;
 	char nextlevelexit = 1;
 	char exit = 0;
@@ -70,12 +71,12 @@ levelstart:
 			}
 			if (renderbutton(&endturnbutton, &myfont)) {
 				enemyturn = 1;
-				mainc->actionpoint = mainc->maxactionpoint;
 			}
 		}
 		else {
-			playallenemies();
+			playallenemies(mainc, tileset, &myfont);
 			enemyturn = 0;
+			continue;
 		}
 		renderallmapobjects();
 		rendercharacterinfo(mainc, &myfont);
@@ -142,4 +143,5 @@ levelstart:
 	unloadskillbuttontextures();
 	deletetiletextures();
 	unloadenemytextures();
+	unloadcharactertextures();
 }
