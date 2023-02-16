@@ -12,12 +12,12 @@ Texture2D texture;
 Vector2 origin = { 0,0 };
 Rectangle charinfodes = { 60,60,60,60 };
 Rectangle charinfoback = { 40,40,100,100 };
-Color backcolor = { 96, 0, 148,255 };
+Color backcolor = { 48,0,74,255 };
 Rectangle healthback = { 157,47,286,25 };
 Rectangle healthfront = { 155,45,290,29 };
 Vector2 center = { 170,104 };
-char charinfodet[200] = { 0 };
-Rectangle charinfodetback = { 145,40,350,400 };
+char charinfodet[250] = { 0 };
+Rectangle charinfodetback = { 145,40,350,300 };
 Rectangle weaponrect = { 20,200,150,150 };
 Rectangle weaponimrect = { 55,235,80,80 };
 Rectangle helmetrect = { 20,360,150,150 };
@@ -34,7 +34,7 @@ Rectangle chestplateinforect = { 175,520,200,300 };
 Rectangle gauntletsinforect = { 175,680,200,300 };
 Rectangle leggingsinforect = { 175,775,200,300 };
 char apblink = 0;
-Color blink = { 96, 0, 148,255 };
+Color blink = { 48, 131, 74,255 };
 //rendercharacterinfo
 
 void loadcharactertextures(void) {
@@ -111,6 +111,7 @@ void rendercharacterinfo(character* c, Font* myfont) {
 	DrawRectangleRoundedLines(healthback, 0.3f, 0, 4, WHITE);
 	center.y = 104;
 	blink.a -= 10;
+	backcolor.g = 131;
 	for (int i = 0; i < c->maxactionpoint; i++) {
 		center.x = 170 + i * 45.0f;
 		if (i < c->actionpoint) {
@@ -123,6 +124,7 @@ void rendercharacterinfo(character* c, Font* myfont) {
 		}
 		DrawRing(center, 15, 20, 0, 360, 0, WHITE);
 	}
+	backcolor.g = 0;
 	DrawRectangleRec(weaponrect, backcolor);
 	center = MeasureTextEx(*myfont, "Weapon", 30, 0);
 	center.x = weaponrect.x + ((weaponrect.width - center.x) / 2);
@@ -203,13 +205,10 @@ void rendercharacterinfo(character* c, Font* myfont) {
 		center.x = charinfodetback.x + ((charinfodetback.width - center.x) / 2);
 		center.y = charinfodetback.y + 2;
 		DrawTextPro(*myfont, c->name, center, origin, 0, 30, 0, WHITE);
-		sprintf(charinfodet, "Health: %.1f/%.1f\nAction Point: %d/%d\nDamage Reduction: %.1f%%\
-			\nDodge Chance: %.1f%%\nCritical Hit Chance: %.1f%%\nDamage Bonus: %.1f%%\nLife Steal: %.1f%%\nHealth Regeneration: %.1f",
+		sprintf(charinfodet, "Health: %.1f/%.1f\nAction Point: %d/%d\nDamage Reduction: %.1f%%\nDodge Chance: %.1f%%\nCritical Hit Chance: %.1f%%\nDamage Bonus: %.1f%%\nLife Steal: %.1f%%\nHealth Regeneration: %.1f",
 			c->health, c->maxhealth, c->actionpoint, c->maxactionpoint, c->protectperc,
 			c->dodgeperc, c->critichitchance, c->damageincperc, c->lifesteal, c->liferegen);
-		center.x = charinfodetback.x + 5;
-		center.y = charinfodetback.y + 40;
-		DrawTextPro(*myfont, charinfodet, center, origin, 0, 30, 0, WHITE);
+		writeinfo(myfont, charinfodet, charinfodetback.x + 10, charinfodetback.y + 40, 30, &WHITE);
 	}
 	else if (CheckCollisionPointRec(center, weaponrect)) {
 		DrawRectangleRec(weaponinforect, backcolor);
@@ -361,5 +360,17 @@ void setattackanimation(map_object* attacker, map_object* attacked, tile* tilese
 			(fabsf(attackedpoints[1].x - attackerpoints[1].x) + fabsf(attackedpoints[1].y - attackerpoints[1].y));
 		addanimationmapobject(attacker, attackerpoints, 2);
 		addanimationmapobject(attacked, attackedpoints, 4);
+	}
+}
+
+void writeinfo(Font* font, const char* text, float x, float y, float size, Color* color) {
+	int count = 0;
+	const char** splitted = TextSplit(text, '\n', &count);
+	float spaceheight = MeasureTextEx(*font, " ", size, 0).y;
+	center.x = x;
+	center.y = y;
+	for (int i = 0; i < count; i++) {
+		DrawTextEx(*font, splitted[i], center, size, 0, *color);
+		center.y += spaceheight;
 	}
 }

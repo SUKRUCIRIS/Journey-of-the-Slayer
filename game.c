@@ -81,6 +81,7 @@ levelstart:
 		renderallmapobjects();
 		rendercharacterinfo(mainc, &myfont);
 		renderwarning(&myfont);
+		renderchosenenemyinfo(&myfont);
 		//game logic end
 		EndTextureMode();
 
@@ -118,6 +119,7 @@ levelstart:
 				mainc->weaponinfo->skill1->pressed = 0;
 				mainc->weaponinfo->skill2->pressed = 0;
 			}
+			setcharacterapblink(0);
 		}
 
 		BeginDrawing();

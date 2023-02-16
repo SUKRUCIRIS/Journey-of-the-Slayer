@@ -47,3 +47,7 @@ void enemygivedamage(enemy* c, float x, void* e);
 void enemyheal(enemy* c, float x);
 
 void enemynextturn(enemy* c);
+
+void renderenemyinfo(enemy* c, Font* myfont);
+
+void renderchosenenemyinfo(Font* myfont);

@@ -2,12 +2,22 @@
 #include <stdlib.h>
 #include "character.h"
 #include <math.h>
+#include <stdio.h>
+#include <string.h>
 
 enemy** allenemies = 0;
 
 int enemynumber = 0;
 
 Texture2D hellslimetexture;
+
+//renderenemyinfo
+Rectangle enemyinfoback = { 1500,660,400,400 };
+Color backcolore = { 48,0,74,255 };
+char enemyinfo[300] = { 0 };
+Vector2 position;
+Rectangle portrait = { 1800,700,64,64 };
+//renderenemyinfo
 
 void loadenemytextures(void) {
 	hellslimetexture = LoadTexture("data/characters/slime.png");
@@ -117,18 +127,45 @@ void playenemy(void* mainc, void* tileset, enemy* c) {
 	else {
 		optimized = 1453;
 		distance = calculatedistance((int)c->m->tileposition.x, (int)c->m->tileposition.y, tileset);
-		int loop = 0;
-		while (optimized == 1453) {
-			for (int i = 0; i < 49; i++) {
-				if (distance[i] <= c->actionpoint &&
-					max(abs((int)m->m->tileposition.x - i / 7), abs((int)m->m->tileposition.y - i % 7)) == c->range + loop) {
-					if (optimized > distance[i]) {
+		for (int i = 0; i < 49; i++) {
+			if (distance[i] <= c->actionpoint &&
+				max(abs((int)m->m->tileposition.x - i / 7), abs((int)m->m->tileposition.y - i % 7)) == c->range) {
+				if (optimized > distance[i]) {
+					optimized = distance[i];
+					optimizedi = i;
+				}
+			}
+		}
+		if (optimized == 1453) {
+			int loop = 0;
+			int distance2[49] = { 0 };
+			memcpy(distance2, distance, sizeof(int) * 49);
+			distance = calculatedistance((int)m->m->tileposition.x, (int)m->m->tileposition.y, tileset);
+			while (optimized == 1453 && loop < 100) {
+				for (int i = 0; i < 49; i++) {
+					if (distance2[i] <= c->actionpoint && distance[i] < optimized) {
 						optimized = distance[i];
 						optimizedi = i;
 					}
 				}
+				loop++;
 			}
-			loop++;
+			memcpy(distance, distance2, sizeof(int) * 49);
+		}
+		if (optimized == 1453) {
+			int loop = 0;
+			while (optimized == 1453) {
+				for (int i = 0; i < 49; i++) {
+					if (distance[i] <= c->actionpoint &&
+						max(abs((int)m->m->tileposition.x - i / 7), abs((int)m->m->tileposition.y - i % 7)) == c->range + loop) {
+						if (optimized > distance[i]) {
+							optimized = distance[i];
+							optimizedi = i;
+						}
+					}
+				}
+				loop++;
+			}
 		}
 		addanimationmapobject(c->m, setmoveanimationpoints(optimizedi / 7, optimizedi % 7, tileset, mainc, 1), distance[optimizedi]);
 		c->actionpoint -= distance[optimizedi];
@@ -144,6 +181,8 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 	Rectangle targetdest = { 0,0,(float)GetRenderWidth(),(float)GetRenderHeight() };
 	Vector2 origin = { 0,0 };
 	char animation = 0;
+	Vector2 v1, v2, v3;
+	int lasti = 0;
 	for (int i = 0; i < enemynumber; i++) {
 		enemynextturn(allenemies[i]);
 		deneme = 0;
@@ -153,6 +192,14 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 		rendertileset(tileset, 7);
 		renderallmapobjects();
 		rendercharacterinfo(mainc, font);
+		renderenemyinfo(allenemies[lasti], font);
+		v1.x = allenemies[lasti]->m->position.x + allenemies[lasti]->m->position.width / 2;
+		v1.y = allenemies[lasti]->m->position.y - 5;
+		v2.x = allenemies[lasti]->m->position.x + 5;
+		v2.y = v1.y - allenemies[lasti]->m->position.width / 2;
+		v3.x = allenemies[lasti]->m->position.x + allenemies[lasti]->m->position.width - 5;
+		v3.y = v2.y;
+		DrawTriangle(v3, v2, v1, RED);
 		EndTextureMode();
 		BeginDrawing();
 		ClearBackground(BLACK);
@@ -161,10 +208,11 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 		animation--;
 		if (!isthereanimation() && animation <= 0) {
 			playenemy(mainc, tileset, allenemies[i]);
+			lasti = i;
 		}
 		else {
 			if (animation <= 0) {
-				animation = 30;
+				animation = 60;
 			}
 			goto a;
 		}
@@ -179,6 +227,14 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 		rendertileset(tileset, 7);
 		renderallmapobjects();
 		rendercharacterinfo(mainc, font);
+		renderenemyinfo(allenemies[lasti], font);
+		v1.x = allenemies[lasti]->m->position.x + allenemies[lasti]->m->position.width / 2;
+		v1.y = allenemies[lasti]->m->position.y - 5;
+		v2.x = allenemies[lasti]->m->position.x + 5;
+		v2.y = v1.y - allenemies[lasti]->m->position.width / 2;
+		v3.x = allenemies[lasti]->m->position.x + allenemies[lasti]->m->position.width - 5;
+		v3.y = v2.y;
+		DrawTriangle(v3, v2, v1, RED);
 		EndTextureMode();
 		BeginDrawing();
 		ClearBackground(BLACK);
@@ -191,6 +247,14 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 		rendertileset(tileset, 7);
 		renderallmapobjects();
 		rendercharacterinfo(mainc, font);
+		renderenemyinfo(allenemies[lasti], font);
+		v1.x = allenemies[lasti]->m->position.x + allenemies[lasti]->m->position.width / 2;
+		v1.y = allenemies[lasti]->m->position.y - 5;
+		v2.x = allenemies[lasti]->m->position.x + 5;
+		v2.y = v1.y - allenemies[lasti]->m->position.width / 2;
+		v3.x = allenemies[lasti]->m->position.x + allenemies[lasti]->m->position.width - 5;
+		v3.y = v2.y;
+		DrawTriangle(v3, v2, v1, RED);
 		EndTextureMode();
 		BeginDrawing();
 		ClearBackground(BLACK);
@@ -241,4 +305,28 @@ void moveenemy(enemy* c, int targetx, int targety, tile* tileset, int x) {
 void enemynextturn(enemy* c) {
 	enemyheal(c, c->liferegen);
 	c->actionpoint = c->maxactionpoint;
+}
+
+void renderenemyinfo(enemy* c, Font* myfont) {
+	DrawRectangleRec(enemyinfoback, backcolore);
+	DrawRectangleLinesEx(enemyinfoback, 1, WHITE);
+	sprintf(enemyinfo, "Health: %.1f/%.1f\nAction Point: %d/%d\nBase Damage: %.1f\nBase Range: %d\nAttack Cost: %dAP\nDamage Reduction: %.1f%%\nDodge Chance: %.1f%%\nCritical Hit Chance: %.1f%%\nDamage Bonus: %.1f%%\nLife Steal: %.1f%%\nHealth Regeneration: %.1f",
+		c->health, c->maxhealth, c->actionpoint, c->maxactionpoint, c->damage, c->range, c->attackap, c->protectperc,
+		c->dodgeperc, c->critichitchance, c->damageincperc, c->lifesteal, c->liferegen);
+	position = MeasureTextEx(*myfont, c->name, 30, 0);
+	position.x = enemyinfoback.x + ((enemyinfoback.width - position.x) / 2);
+	position.y = enemyinfoback.y + 2;
+	DrawTextEx(*myfont, c->name, position, 30, 0, WHITE);
+	writeinfo(myfont, enemyinfo, enemyinfoback.x + 10, enemyinfoback.y + 40, 30, &WHITE);
+	position.x = 0;
+	position.y = 0;
+	DrawTexturePro(*(c->m->texture), c->m->source, portrait, position, 0, WHITE);
+}
+
+void renderchosenenemyinfo(Font* myfont) {
+	for (int i = 0; i < enemynumber; i++) {
+		if (tile_status(allenemies[i]->m->tileon) == 2) {
+			renderenemyinfo(allenemies[i], myfont);
+		}
+	}
 }
