@@ -84,6 +84,7 @@ levelstart:
 		rendercharacterinfo(mainc, &myfont);
 		renderwarning(&myfont);
 		renderchosenenemyinfo(&myfont);
+		renderenemybars();
 		renderwarinfo();
 		//game logic end
 		EndTextureMode();

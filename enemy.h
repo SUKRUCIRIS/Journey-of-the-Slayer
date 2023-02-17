@@ -51,3 +51,5 @@ void enemynextturn(enemy* c);
 void renderenemyinfo(enemy* c, Font* myfont);
 
 void renderchosenenemyinfo(Font* myfont);
+
+void renderenemybars(void);

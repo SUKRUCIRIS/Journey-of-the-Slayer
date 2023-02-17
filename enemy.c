@@ -200,6 +200,7 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 		v3.x = allenemies[lasti]->m->position.x + allenemies[lasti]->m->position.width - 5;
 		v3.y = v2.y;
 		DrawTriangle(v3, v2, v1, RED);
+		renderenemybars();
 		renderwarinfo();
 		EndTextureMode();
 		BeginDrawing();
@@ -223,6 +224,7 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 		v3.x = allenemies[lasti]->m->position.x + allenemies[lasti]->m->position.width - 5;
 		v3.y = v2.y;
 		DrawTriangle(v3, v2, v1, RED);
+		renderenemybars();
 		renderwarinfo();
 		EndTextureMode();
 		BeginDrawing();
@@ -259,6 +261,7 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 		v3.x = allenemies[lasti]->m->position.x + allenemies[lasti]->m->position.width - 5;
 		v3.y = v2.y;
 		DrawTriangle(v3, v2, v1, RED);
+		renderenemybars();
 		renderwarinfo();
 		EndTextureMode();
 		BeginDrawing();
@@ -280,6 +283,7 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 		v3.x = allenemies[lasti]->m->position.x + allenemies[lasti]->m->position.width - 5;
 		v3.y = v2.y;
 		DrawTriangle(v3, v2, v1, RED);
+		renderenemybars();
 		renderwarinfo();
 		EndTextureMode();
 		BeginDrawing();
@@ -366,5 +370,16 @@ void renderchosenenemyinfo(Font* myfont) {
 		if (tile_status(allenemies[i]->m->tileon) == 2) {
 			renderenemyinfo(allenemies[i], myfont);
 		}
+	}
+}
+
+void renderenemybars(void) {
+	for (int i = 0; i < enemynumber; i++) {
+		DrawRectangle(allenemies[i]->m->position.x - 5, allenemies[i]->m->position.y + allenemies[i]->m->position.height + 5,
+			allenemies[i]->m->position.width + 10, 10, BLACK);
+		DrawRectangle(allenemies[i]->m->position.x - 5, allenemies[i]->m->position.y + allenemies[i]->m->position.height + 5,
+			(allenemies[i]->m->position.width + 10) * (allenemies[i]->health / allenemies[i]->maxhealth), 10, RED);
+		DrawRectangleLines(allenemies[i]->m->position.x - 5, allenemies[i]->m->position.y + allenemies[i]->m->position.height + 5,
+			allenemies[i]->m->position.width + 10, 10, WHITE);
 	}
 }
