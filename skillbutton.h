@@ -34,3 +34,7 @@ void renderskillbutton(skillbutton* s, void* mainc, void* tileset);
 skillbutton* getjumpskillbutton(void);
 
 skillbutton* getmoveskillbutton(void);
+
+skillbutton* getfist1skillbutton(void);
+
+skillbutton* getfist2skillbutton(void);

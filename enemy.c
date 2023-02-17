@@ -12,7 +12,7 @@ int enemynumber = 0;
 Texture2D hellslimetexture;
 
 //renderenemyinfo
-Rectangle enemyinfoback = { 1500,660,400,400 };
+Rectangle enemyinfoback = { 1500,680,400,380 };
 Color backcolore = { 48,0,74,255 };
 char enemyinfo[300] = { 0 };
 Vector2 position;

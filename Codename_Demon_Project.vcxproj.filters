@@ -42,6 +42,9 @@
     <ClCompile Include="enemy.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="weapon.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">

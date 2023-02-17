@@ -10,6 +10,7 @@ void maingameloop(void) {
 	loadtiletextures();
 	loadskillbuttontextures();
 	loadcharactertextures();
+	loadweapontextures();
 	character* oldchar = 0;
 	char nextlevelexit = 1;
 	char exit = 0;
@@ -146,4 +147,5 @@ levelstart:
 	deletetiletextures();
 	unloadenemytextures();
 	unloadcharactertextures();
+	unloadweapontextures();
 }

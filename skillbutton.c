@@ -17,10 +17,14 @@ char x;
 
 Rectangle moveskillposition = { 1740,40,128,128 };
 Rectangle jumpskillposition = { 1740,200,128,128 };
+Rectangle skill1position = { 1740,360,128,128 };
+Rectangle skill2position = { 1740,520,128,128 };
 Color skillbackcolor = { 48, 0, 74,255 };
 Color skillfrontcolor = { 96, 0, 148,255 };
 Texture2D jumpskilltexture;
 Texture2D moveskilltexture;
+Texture2D fist1texture;
+Texture2D fist2texture;
 
 int distance[49] = { 0 };
 
@@ -206,6 +210,28 @@ skillbutton moveskillbutton = {
 	.function = &move
 };
 
+skillbutton fist1 = {
+	.position = &skill1position,
+	.name = "Uppercut",
+	.texture = &fist1texture,
+	.passive = 0,
+	.pressed = 0,
+	.mouseon = 0,
+	.explanation = "Use 2 action points to give 10 damage in 1 unit range to an enemy.",
+	.function = 0
+};
+
+skillbutton fist2 = {
+	.position = &skill2position,
+	.name = "Push",
+	.texture = &fist2texture,
+	.passive = 0,
+	.pressed = 0,
+	.mouseon = 0,
+	.explanation = "Use 3 action points to push an enemy and give 5 damage in 1 unit range. If there is no place to push, you give extra 10 damage. If there is another demon behind it, you give 10 damage to it too.",
+	.function = 0
+};
+
 Vector2* setmoveanimationpoints(int x, int y, void* tileset, void* mainc, char abs) {
 	int max = distance[7 * x + y];
 	Vector2* result = malloc(sizeof(Vector2) * max);
@@ -348,6 +374,34 @@ void renderwarning(Font* font) {
 	}
 }
 
+float calculateheight(Font* font, const char* text, float x, float y, float w, float size, float borderwidth) {
+	int count = 0;
+	const char** splitted = TextSplit(text, ' ', &count);
+	float xlast = x + borderwidth;
+	float ylast = y + borderwidth;
+	float spacewidth = MeasureTextEx(*font, " ", size, 0).x;
+	float spaceheight = MeasureTextEx(*font, " ", size, 0).y;
+	float width = 0;
+	e.x = 0;
+	e.y = 0;
+	for (int i = 0; i < count; i++) {
+		width = MeasureTextEx(*font, splitted[i], size, 0).x;
+		if (xlast + width > x + w - borderwidth) {
+			xlast = x + borderwidth;
+			ylast = ylast + spaceheight;
+			e2.x = xlast;
+			e2.y = ylast;
+			xlast = xlast + width + spacewidth;
+		}
+		else {
+			e2.x = xlast;
+			e2.y = ylast;
+			xlast = xlast + width + spacewidth;
+		}
+	}
+	return ylast + spaceheight - y + 20;
+}
+
 void writeinrectangle(Font* font, const char* text, float x, float y, float w, float size, float borderwidth, Color* color) {
 	int count = 0;
 	const char** splitted = TextSplit(text, ' ', &count);
@@ -422,8 +476,9 @@ void renderskillbutton(skillbutton* s, void* mainc, void* tileset) {
 	e.x = 0;
 	e.y = 0;
 	if (s->mouseon) {
-		DrawRectangle((int)s->position->x - 215, (int)s->position->y - 10, 200, 300, skillfrontcolor);
-		DrawRectangleLines((int)s->position->x - 215, (int)s->position->y - 10, 200, 300, WHITE);
+		e2.x = calculateheight(&myfont, s->explanation, s->position->x - 215, s->position->y + 30, 200, 30, 10);
+		DrawRectangle((int)s->position->x - 215, (int)s->position->y - 10, 200, (int)e2.x + 40, skillfrontcolor);
+		DrawRectangleLines((int)s->position->x - 215, (int)s->position->y - 10, 200, (int)e2.x + 40, WHITE);
 
 		e2 = MeasureTextEx(myfont, s->name, 40, 0);
 		e2.x = s->position->x - 215 + (200 - e2.x) / 2;
@@ -438,12 +493,16 @@ void renderskillbutton(skillbutton* s, void* mainc, void* tileset) {
 void loadskillbuttontextures(void) {
 	jumpskilltexture = LoadTexture("data/skills/jumpskill.png");
 	moveskilltexture = LoadTexture("data/skills/moveskill.png");
+	fist1texture = LoadTexture("data/skills/fist1.png");
+	fist2texture = LoadTexture("data/skills/fist2.png");
 	myfont = LoadFontEx("data/fonts/font1.ttf", 40, 0, 0);
 }
 
 void unloadskillbuttontextures(void) {
 	UnloadTexture(jumpskilltexture);
 	UnloadTexture(moveskilltexture);
+	UnloadTexture(fist1texture);
+	UnloadTexture(fist2texture);
 	UnloadFont(myfont);
 }
 
@@ -453,4 +512,12 @@ skillbutton* getjumpskillbutton(void) {
 
 skillbutton* getmoveskillbutton(void) {
 	return &moveskillbutton;
+}
+
+skillbutton* getfist1skillbutton(void) {
+	return &fist1;
+}
+
+skillbutton* getfist2skillbutton(void) {
+	return &fist2;
 }

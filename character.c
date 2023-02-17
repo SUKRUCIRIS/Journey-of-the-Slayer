@@ -5,6 +5,7 @@
 #include <time.h>
 #include "enemy.h"
 #include <math.h>
+#include "weapon.h"
 
 Texture2D texture;
 
@@ -75,7 +76,7 @@ character* createcharacter(int tilex, int tiley, float size, tile* tileset, int 
 		c->actionpoint = 5;
 		c->moveskill = getmoveskillbutton();
 		c->jumpskill = getjumpskillbutton();
-		c->weaponinfo = 0;
+		c->weaponinfo = getfistweapon();
 		c->headarmor = 0;
 		c->torsoarmor = 0;
 		c->armarmor = 0;
@@ -151,7 +152,7 @@ void rendercharacterinfo(character* c, Font* myfont) {
 	center.y = leggingsrect.y + 2;
 	DrawTextPro(*myfont, "Leggings", center, origin, 0, 30, 0, WHITE);
 	if (c->weaponinfo) {
-		DrawTexturePro(*(c->weaponinfo->texture), c->weaponinfo->source, weaponimrect, origin, 0, WHITE);
+		DrawTexturePro(*(c->weaponinfo->texture), *(c->weaponinfo->source), weaponimrect, origin, 0, WHITE);
 	}
 	else {
 		center = MeasureTextEx(*myfont, "EMPTY", 30, 0);

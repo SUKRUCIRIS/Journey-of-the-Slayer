@@ -150,6 +150,7 @@
     <ClCompile Include="menus.c" />
     <ClCompile Include="skillbutton.c" />
     <ClCompile Include="tile.c" />
+    <ClCompile Include="weapon.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="armor.h" />
