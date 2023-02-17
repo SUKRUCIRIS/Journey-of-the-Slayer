@@ -57,3 +57,9 @@ void characternextturn(character* c);
 void setattackanimation(map_object* attacker, map_object* attacked, tile* tileset);
 
 void writeinfo(Font* font, const char* text, float x, float y, float size, Color* color);
+
+void setwarinfo(const char* text, map_object* m);
+
+void setwarinfofont(Font* font);
+
+void renderwarinfo(void);

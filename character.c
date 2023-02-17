@@ -8,6 +8,12 @@
 #include "weapon.h"
 
 Texture2D texture;
+Font* fontc;
+#define warinfonumber 6
+Color warinfo[warinfonumber];
+Vector2 warinfopos[warinfonumber];
+char info[warinfonumber][100];
+int i = 0;
 
 //rendercharacterinfo
 Vector2 origin = { 0,0 };
@@ -316,6 +322,12 @@ void charactertakedamage(character* c, float x) {
 	if (!ishappened(c->dodgeperc)) {
 		x = x * ((100 - c->protectperc) / 100);
 		c->health -= x;
+		char text[20] = { 0 };
+		sprintf(text, "%.1f Damage", x);
+		setwarinfo(text, c->m);
+	}
+	else {
+		setwarinfo("Dodged", c->m);
 	}
 }
 
@@ -323,6 +335,7 @@ void charactergivedamage(character* c, float x, enemy* e) {
 	x *= ((100 + c->damageincperc) / 100);
 	if (ishappened(c->critichitchance)) {
 		x *= 2;
+		setwarinfo("CRITICAL HIT", e->m);
 	}
 	enemytakedamage(e, x);
 	characterheal(c, x * (c->lifesteal / 100));
@@ -330,6 +343,11 @@ void charactergivedamage(character* c, float x, enemy* e) {
 
 void characterheal(character* c, float x) {
 	c->health += x;
+	if (x > 0) {
+		char text[20] = { 0 };
+		sprintf(text, "%.1f Heal", x);
+		setwarinfo(text, c->m);
+	}
 	if (c->health > c->maxhealth) {
 		c->health = c->maxhealth;
 	}
@@ -373,5 +391,37 @@ void writeinfo(Font* font, const char* text, float x, float y, float size, Color
 	for (int i = 0; i < count; i++) {
 		DrawTextEx(*font, splitted[i], center, size, 0, *color);
 		center.y += spaceheight;
+	}
+}
+
+void setwarinfo(const char* text, map_object* m) {
+	if (i >= warinfonumber) {
+		i = 0;
+	}
+	strcpy(info[i], text);
+	warinfopos[i] = MeasureTextEx(*fontc, info[i], 30, 0);
+	warinfopos[i].x = m->position.x + (m->position.width - warinfopos[i].x) / 2;
+	warinfopos[i].y = m->position.y - 40;
+	warinfo[i].a = 255;
+	i++;
+}
+
+void setwarinfofont(Font* font) {
+	fontc = font;
+	for (int i2 = 0; i2 < warinfonumber; i2++) {
+		warinfo[i2].r = 231;
+		warinfo[i2].g = 131;
+		warinfo[i2].b = 231;
+		warinfo[i2].a = 0;
+	}
+}
+
+void renderwarinfo(void) {
+	for (int i2 = 0; i2 < warinfonumber; i2++) {
+		if (warinfo[i2].a > 0) {
+			warinfo[i2].a--;
+			warinfopos[i2].y--;
+		}
+		DrawTextEx(*fontc, info[i2], warinfopos[i2], 30, 0, warinfo[i2]);
 	}
 }

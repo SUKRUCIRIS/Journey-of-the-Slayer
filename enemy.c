@@ -185,6 +185,29 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 	int lasti = 0;
 	for (int i = 0; i < enemynumber; i++) {
 		enemynextturn(allenemies[i]);
+	}
+	for (int i = 0; i < 30; i++) {
+		BeginTextureMode(target);
+		ClearBackground(BLACK);
+		rendertileset(tileset, 7);
+		renderallmapobjects();
+		rendercharacterinfo(mainc, font);
+		renderenemyinfo(allenemies[lasti], font);
+		v1.x = allenemies[lasti]->m->position.x + allenemies[lasti]->m->position.width / 2;
+		v1.y = allenemies[lasti]->m->position.y - 5;
+		v2.x = allenemies[lasti]->m->position.x + 5;
+		v2.y = v1.y - allenemies[lasti]->m->position.width / 2;
+		v3.x = allenemies[lasti]->m->position.x + allenemies[lasti]->m->position.width - 5;
+		v3.y = v2.y;
+		DrawTriangle(v3, v2, v1, RED);
+		renderwarinfo();
+		EndTextureMode();
+		BeginDrawing();
+		ClearBackground(BLACK);
+		DrawTexturePro(target.texture, targetsource, targetdest, origin, 0, WHITE);
+		EndDrawing();
+	}
+	for (int i = 0; i < enemynumber; i++) {
 		deneme = 0;
 	a:
 		BeginTextureMode(target);
@@ -200,6 +223,7 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 		v3.x = allenemies[lasti]->m->position.x + allenemies[lasti]->m->position.width - 5;
 		v3.y = v2.y;
 		DrawTriangle(v3, v2, v1, RED);
+		renderwarinfo();
 		EndTextureMode();
 		BeginDrawing();
 		ClearBackground(BLACK);
@@ -235,6 +259,7 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 		v3.x = allenemies[lasti]->m->position.x + allenemies[lasti]->m->position.width - 5;
 		v3.y = v2.y;
 		DrawTriangle(v3, v2, v1, RED);
+		renderwarinfo();
 		EndTextureMode();
 		BeginDrawing();
 		ClearBackground(BLACK);
@@ -255,6 +280,7 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 		v3.x = allenemies[lasti]->m->position.x + allenemies[lasti]->m->position.width - 5;
 		v3.y = v2.y;
 		DrawTriangle(v3, v2, v1, RED);
+		renderwarinfo();
 		EndTextureMode();
 		BeginDrawing();
 		ClearBackground(BLACK);
@@ -277,6 +303,12 @@ void enemytakedamage(enemy* c, float x) {
 	if (!ishappened(c->dodgeperc)) {
 		x = x * ((100 - c->protectperc) / 100);
 		c->health -= x;
+		char text[20] = { 0 };
+		sprintf(text, "%.1f Damage", x);
+		setwarinfo(text, c->m);
+	}
+	else {
+		setwarinfo("Dodged", c->m);
 	}
 }
 
@@ -284,6 +316,7 @@ void enemygivedamage(enemy* c, float x, void* e) {
 	x *= ((100 + c->damageincperc) / 100);
 	if (ishappened(c->critichitchance)) {
 		x *= 2;
+		setwarinfo("CRITICAL HIT", ((character*)e)->m);
 	}
 	charactertakedamage(e, x);
 	enemyheal(c, x * (c->lifesteal / 100));
@@ -291,6 +324,11 @@ void enemygivedamage(enemy* c, float x, void* e) {
 
 void enemyheal(enemy* c, float x) {
 	c->health += x;
+	if (x > 0) {
+		char text[20] = { 0 };
+		sprintf(text, "%.1f Heal", x);
+		setwarinfo(text, c->m);
+	}
 	if (c->health > c->maxhealth) {
 		c->health = c->maxhealth;
 	}

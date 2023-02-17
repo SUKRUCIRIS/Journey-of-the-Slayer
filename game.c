@@ -22,6 +22,7 @@ void maingameloop(void) {
 	Rectangle screen = { 0,0,1920,1080 };
 	Color pausecolor = { 0,0,0,200 };
 	Font myfont = LoadFontEx("data/fonts/font1.ttf", 70, 0, 0);
+	setwarinfofont(&myfont);
 	button menubutton = {
 		.backcolor = {48, 0, 74,255},
 		.frontcolor = {96, 0, 148,255},
@@ -83,6 +84,7 @@ levelstart:
 		rendercharacterinfo(mainc, &myfont);
 		renderwarning(&myfont);
 		renderchosenenemyinfo(&myfont);
+		renderwarinfo();
 		//game logic end
 		EndTextureMode();
 
@@ -148,4 +150,5 @@ levelstart:
 	unloadenemytextures();
 	unloadcharactertextures();
 	unloadweapontextures();
+	UnloadFont(myfont);
 }
