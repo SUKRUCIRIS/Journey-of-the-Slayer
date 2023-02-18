@@ -314,7 +314,6 @@ void setcharacterapblink(char ap) {
 }
 
 char ishappened(float percentage) {
-	srand((unsigned int)time(0));
 	return (rand() / (float)RAND_MAX) * 100 <= percentage;
 }
 
@@ -358,13 +357,13 @@ void characternextturn(character* c) {
 	c->actionpoint = c->maxactionpoint;
 }
 
-void setattackanimation(map_object* attacker, map_object* attacked, tile* tileset) {
+void setattackanimation(map_object* attacker, map_object* attacked) {
 	Vector2* attackerpoints = malloc(sizeof(Vector2) * 2);
 	Vector2* attackedpoints = malloc(sizeof(Vector2) * 4);
 	if (attackerpoints && attackedpoints) {
-		calculateposmapobject(&(tileset[(7 * (int)attacker->tileposition.x) + (int)attacker->tileposition.y]), attacker, &(attackerpoints[1]), 1);
-		calculateposmapobject(&(tileset[(7 * (int)attacked->tileposition.x) + (int)attacked->tileposition.y]), attacked, &(attackedpoints[1]), 1);
-		calculateposmapobject(&(tileset[(7 * (int)attacked->tileposition.x) + (int)attacked->tileposition.y]), attacked, &(attackedpoints[3]), 1);
+		calculateposmapobject(attacker->tileon, attacker, &(attackerpoints[1]), 1);
+		calculateposmapobject(attacked->tileon, attacked, &(attackedpoints[1]), 1);
+		calculateposmapobject(attacked->tileon, attacked, &(attackedpoints[3]), 1);
 		attackerpoints[0].x = attackerpoints[1].x + (attackedpoints[1].x - attackerpoints[1].x) * 50 /
 			(fabsf(attackedpoints[1].x - attackerpoints[1].x) + fabsf(attackedpoints[1].y - attackerpoints[1].y));
 		attackerpoints[0].y = attackerpoints[1].y + (attackedpoints[1].y - attackerpoints[1].y) * 50 /
@@ -403,15 +402,20 @@ void setwarinfo(const char* text, map_object* m) {
 	warinfopos[i].x = m->position.x + (m->position.width - warinfopos[i].x) / 2;
 	warinfopos[i].y = m->position.y - 40;
 	warinfo[i].a = 255;
+	if ((i - 1 > -1 && fabsf(warinfopos[i].x - warinfopos[i - 1].x) < 10 && fabsf(warinfopos[i].y - warinfopos[i - 1].y) < 10) ||
+		(fabsf(warinfopos[i].x - warinfopos[warinfonumber - 1].x) < 10 && fabsf(warinfopos[i].y - warinfopos[warinfonumber - 1].y) < 10)||
+		(i - 2 > -1 && fabsf(warinfopos[i].x - warinfopos[i - 2].x) < 10 && fabsf(warinfopos[i].y - warinfopos[i - 2].y) < 10)) {
+		warinfopos[i].y += 40;
+	}
 	i++;
 }
 
 void setwarinfofont(Font* font) {
 	fontc = font;
 	for (int i2 = 0; i2 < warinfonumber; i2++) {
-		warinfo[i2].r = 231;
-		warinfo[i2].g = 131;
-		warinfo[i2].b = 231;
+		warinfo[i2].r = 255;
+		warinfo[i2].g = 130;
+		warinfo[i2].b = 0;
 		warinfo[i2].a = 0;
 	}
 }

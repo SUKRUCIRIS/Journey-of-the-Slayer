@@ -15,7 +15,7 @@ void maingameloop(void) {
 	char nextlevelexit = 1;
 	char exit = 0;
 	RenderTexture2D target = LoadRenderTexture(1920, 1080);
-	SetTextureFilter(target.texture, TEXTURE_FILTER_POINT);
+	SetTextureFilter(target.texture, TEXTURE_FILTER_ANISOTROPIC_16X);
 	Rectangle targetsource = { 0,0,1920,-1080 };
 	Rectangle targetdest = { 0,0,(float)GetRenderWidth(),(float)GetRenderHeight() };
 	Vector2 origin = { 0,0 };

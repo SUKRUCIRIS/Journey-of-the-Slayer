@@ -103,7 +103,7 @@ void playenemy(void* mainc, void* tileset, enemy* c) {
 	int optimizedi = 0;
 	if (max(abs((int)m->m->tileposition.x - (int)c->m->tileposition.x), abs((int)m->m->tileposition.y - (int)c->m->tileposition.y)) <= c->range) {
 		if (c->actionpoint >= c->attackap) {
-			setattackanimation(c->m, m->m, t);
+			setattackanimation(c->m, m->m);
 			enemygivedamage(c, c->damage, mainc);
 			c->actionpoint -= c->attackap;
 		}

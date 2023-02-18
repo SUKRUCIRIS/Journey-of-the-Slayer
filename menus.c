@@ -193,7 +193,6 @@ char mainmenu(void) {
 	a.x = (1920 - a.x) / 2;
 	a.y = 100;
 	while (!WindowShouldClose() && x == 111) {
-		srand((unsigned int)time(0));
 		x = tilesetintromainmenu(tileset, 25, tilex, 0.85f, &myfont, &a);
 		if (WindowShouldClose() || x != 111) {
 			break;

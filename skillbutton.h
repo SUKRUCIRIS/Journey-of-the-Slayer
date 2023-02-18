@@ -9,7 +9,7 @@ typedef struct skillbutton {
 	char pressed;
 	char mouseon;
 	const char* explanation;
-	char(*function)(void*, void*);//0 ap yok, 1 oldu, -1 yanlýþ hedef, 2 input bekle
+	char(*function)(void*, void*);//0 ap yok, 1 oldu, -1 yanlýþ hedef, 2 input bekle, -2 input bekle
 }skillbutton;
 
 void renderrange(int x, int y, int range, char which, int max, void* tileset, char obstacle);

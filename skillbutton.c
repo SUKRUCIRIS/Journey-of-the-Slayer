@@ -29,6 +29,8 @@ Texture2D fist2texture;
 int distance[49] = { 0 };
 
 Rectangle shadowpos;
+Rectangle shadowskill = { 500,45,64,64 };
+float shadowskillanim = -1;
 
 //warning
 char warning[100] = { 0 };
@@ -188,6 +190,117 @@ char move(tile* tileset, character* mainc) {
 	return 2;
 }
 
+int enemyselector(char range, character* mainc, tile* tileset, char ap) {
+	enemy** enemies = getallenemies();
+	for (int i = 0; i < getenemynumber(); i++) {
+		if (abs(enemies[i]->m->tileposition.x - mainc->m->tileposition.x) <= range &&
+			abs(enemies[i]->m->tileposition.y - mainc->m->tileposition.y) <= range) {
+			warningcolor.a = 255;
+			warningcolor.b = 231;
+			warningcolor.r = 31;
+			e.x = enemies[i]->m->tileon->position.x + enemies[i]->m->tileon->position.width / 2;
+			e.y = enemies[i]->m->tileon->position.y + enemies[i]->m->tileon->position.height / 6;
+			e2.x = enemies[i]->m->tileon->position.x + enemies[i]->m->tileon->position.width / 3;
+			e2.y = enemies[i]->m->tileon->position.y + enemies[i]->m->tileon->position.height / 4;
+			DrawLineEx(e, e2, 3, warningcolor);
+			e = e2;
+			e2.x = enemies[i]->m->tileon->position.x + enemies[i]->m->tileon->position.width / 2;
+			e2.y = enemies[i]->m->tileon->position.y + enemies[i]->m->tileon->position.height / 3;
+			DrawLineEx(e, e2, 3, warningcolor);
+			e = e2;
+			e2.x = enemies[i]->m->tileon->position.x + 2 * enemies[i]->m->tileon->position.width / 3;
+			e2.y = enemies[i]->m->tileon->position.y + enemies[i]->m->tileon->position.height / 4;
+			DrawLineEx(e, e2, 3, warningcolor);
+			e = e2;
+			e2.x = enemies[i]->m->tileon->position.x + enemies[i]->m->tileon->position.width / 2;
+			e2.y = enemies[i]->m->tileon->position.y + enemies[i]->m->tileon->position.height / 6;
+			DrawLineEx(e, e2, 3, warningcolor);
+			warningcolor.a = 0;
+			warningcolor.b = 31;
+			warningcolor.r = 231;
+			if (tile_status(enemies[i]->m->tileon) == 2) {
+				setcharacterapblink(ap);
+			}
+			if (tile_status(enemies[i]->m->tileon) == 3) {
+				return i;
+			}
+		}
+	}
+	for (int i = 0; i < 49; i++) {
+		if (tile_status(&(tileset[i])) == 3) {
+			return -1;
+		}
+	}
+	return -2;
+}
+
+char fist1skill(tile* tileset, character* mainc) {
+	setcharacterapblink(0);
+	if (mainc->actionpoint >= 2) {
+		int x = enemyselector(1, mainc, tileset, 2);
+		if (x >= 0) {
+			charactergivedamage(mainc, 10, getallenemies()[x]);
+			mainc->actionpoint -= 2;
+			setattackanimation(mainc->m, getallenemies()[x]->m);
+			return 1;
+		}
+		else {
+			return x;
+		}
+	}
+	else {
+		return 0;
+	}
+	return 2;
+}
+
+char fist2skill(tile* tileset, character* mainc) {
+	setcharacterapblink(0);
+	if (mainc->actionpoint >= 3) {
+		int x = enemyselector(1, mainc, tileset, 3);
+		if (x >= 0) {
+			charactergivedamage(mainc, 5, getallenemies()[x]);
+			mainc->actionpoint -= 3;
+			setattackanimation(mainc->m, getallenemies()[x]->m);
+			int xnext = getallenemies()[x]->m->tileposition.x * 2 - mainc->m->tileposition.x;
+			int ynext = getallenemies()[x]->m->tileposition.y * 2 - mainc->m->tileposition.y;
+			if (xnext > -1 && xnext < 7 && ynext > -1 && ynext < 7 &&
+				tileset[xnext * 7 + ynext].type != 2) {
+				char found = 0;
+				for (int i = 0; i < getenemynumber(); i++) {
+					if (getallenemies()[i]->m->tileon == &(tileset[xnext * 7 + ynext])) {
+						found = 1;
+						charactergivedamage(mainc, 10, getallenemies()[x]);
+						charactergivedamage(mainc, 10, getallenemies()[i]);
+						setattackanimation(mainc->m, getallenemies()[i]->m);
+						break;
+					}
+				}
+				if (!found && tileset[xnext * 7 + ynext].obstacle == 0) {
+					Vector2* animationpoints = malloc(sizeof(Vector2));
+					calculateposmapobject(&(tileset[xnext * 7 + ynext]), mainc->m, animationpoints, 1);
+					addanimationmapobject(getallenemies()[x]->m, animationpoints, 1);
+					moveenemy(getallenemies()[x], xnext, ynext, tileset, 7);
+				}
+				else if (!found) {
+					charactergivedamage(mainc, 10, getallenemies()[x]);
+				}
+			}
+			else {
+				charactergivedamage(mainc, 10, getallenemies()[x]);
+			}
+			return 1;
+		}
+		else {
+			return x;
+		}
+	}
+	else {
+		return 0;
+	}
+	return 2;
+}
+
 skillbutton jumpskillbutton = {
 	.position = &jumpskillposition,
 	.name = "Jump",
@@ -218,7 +331,7 @@ skillbutton fist1 = {
 	.pressed = 0,
 	.mouseon = 0,
 	.explanation = "Use 2 action points to give 10 damage in 1 unit range to an enemy.",
-	.function = 0
+	.function = &fist1skill
 };
 
 skillbutton fist2 = {
@@ -229,7 +342,7 @@ skillbutton fist2 = {
 	.pressed = 0,
 	.mouseon = 0,
 	.explanation = "Use 3 action points to push an enemy and give 5 damage in 1 unit range. If there is no place to push, you give extra 10 damage. If there is another demon behind it, you give 10 damage to it too.",
-	.function = 0
+	.function = &fist2skill
 };
 
 Vector2* setmoveanimationpoints(int x, int y, void* tileset, void* mainc, char abs) {
@@ -457,7 +570,7 @@ void renderskillbutton(skillbutton* s, void* mainc, void* tileset) {
 	}
 	if (s->pressed && s->function) {
 		x = s->function(tileset, mainc);
-		if (x != 2) {
+		if (x != 2 && x != -2) {
 			s->pressed = 0;
 			if (x == 0) {
 				setwarning("You don't have enough action point.");
@@ -466,6 +579,23 @@ void renderskillbutton(skillbutton* s, void* mainc, void* tileset) {
 				setwarning("Wrong target.");
 			}
 		}
+	}
+	if (s->pressed) {
+		e.x = 0;
+		e.y = 0;
+		e2 = MeasureTextEx(myfont, s->name, 20, 0);
+		e2.x = shadowskill.x + (shadowskill.width - e2.x) / 2;
+		e2.y = shadowskill.y - 30;
+		DrawTextPro(myfont, s->name, e2, e, 0, 20, 0, WHITE);
+		DrawTexturePro(*(s->texture), source, shadowskill, e, 0, WHITE);
+		DrawRectangleLinesEx(shadowskill, 1, WHITE);
+		if (shadowskill.y > 95) {
+			shadowskillanim = -1;
+		}
+		if (shadowskill.y < 45) {
+			shadowskillanim = 1;
+		}
+		shadowskill.y += shadowskillanim;
 	}
 	if (s->mouseon || s->pressed) {
 		DrawRectangle((int)s->position->x - 10, (int)s->position->y - 10, (int)s->position->width + 20, (int)s->position->height + 20, skillfrontcolor);

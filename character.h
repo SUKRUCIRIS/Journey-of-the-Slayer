@@ -54,7 +54,7 @@ void characterheal(character* c, float x);
 
 void characternextturn(character* c);
 
-void setattackanimation(map_object* attacker, map_object* attacked, tile* tileset);
+void setattackanimation(map_object* attacker, map_object* attacked);
 
 void writeinfo(Font* font, const char* text, float x, float y, float size, Color* color);
 

@@ -56,7 +56,6 @@ tile* createtileset(int x, int size, float startx, float starty, char middle, in
 		startx = ((1920 - (size * x)) / 2.0f) + (((x - 1) / 2.0f) * size);
 		starty = (1080 - ((size / 2.0f) * (x - 1)) - size) / 2.0f;
 	}
-	srand((unsigned int)time(0));
 	int seatilen = 0;
 	int enemyn = 0;
 	int* rows = malloc(sizeof(int) * x);

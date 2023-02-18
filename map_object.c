@@ -131,9 +131,11 @@ void renderallmapobjects(void) {
 }
 
 void addanimationmapobject(map_object* m, Vector2* animationpositions, unsigned char maxanimationposition) {
+	free(m->animationpositions);
 	m->animationpositions = animationpositions;
 	m->maxanimationposition = maxanimationposition;
 	m->inanimation = 1;
+	m->inanimationposition = 0;
 }
 
 void setanimationspeedmapobject(map_object* m, float animationspeed) {
