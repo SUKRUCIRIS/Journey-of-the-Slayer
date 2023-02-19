@@ -11,11 +11,18 @@
 
 char reselect = 0;
 
+long long unsigned int maxlevel = 0;
+char maxleveltext[100] = { 0 };
+Vector2 maxlevelpos = { 50,300 };
+Vector2 maxlevelorigin = { 0,0 };
+float maxlevelfontsize = 30;
+float fontsizechange = 1;
+
 button playbutton = {
 	.backcolor = {48, 0, 74,255},
 	.frontcolor = {96, 0, 148,255},
 	.position = {1500,750,400,75},
-	.text = "PLAY",
+	.text = "NEW JOURNEY",
 	.textcolor = {255,255,255,255}
 };
 
@@ -72,7 +79,16 @@ void intromenu(void) {
 }
 
 char mainmenuinput(Font* f, Vector2* a) {
-	DrawTextEx(*f, "Codename Demon Project", *a, 70, 0, WHITE);
+	sprintf(maxleveltext, "Your farthest journey: %lld level", maxlevel);
+	if (maxlevelfontsize > 31) {
+		fontsizechange = -0.02;
+	}
+	if (maxlevelfontsize < 30) {
+		fontsizechange = 0.02;
+	}
+	maxlevelfontsize += fontsizechange;
+	DrawTextPro(*f, maxleveltext, maxlevelpos, maxlevelorigin, -30, maxlevelfontsize, 0, WHITE);
+	DrawTextEx(*f, "Journey of the Slayer", *a, 70, 0, WHITE);
 	if (WindowShouldClose() || renderbutton(&quitbutton, f)) {
 		return 0;
 	}
@@ -178,7 +194,10 @@ char tilesetoutromainmenu(tile* t, int speed, int x, float ratio, Font* f, Vecto
 	return 111;
 }
 
-char mainmenu(void) {
+char mainmenu(long long unsigned int level) {
+	if (level > maxlevel) {
+		maxlevel = level;
+	}
 	loadtiletextures();
 	loadenemytextures();
 	loadcharactertextures();
@@ -189,7 +208,7 @@ char mainmenu(void) {
 	int tilex = 4;
 	int tilexchar = 1;
 	int tileychar = 1;
-	Vector2 a = MeasureTextEx(myfont, "Codename Demon Project", 70, 0);
+	Vector2 a = MeasureTextEx(myfont, "Journey of the Slayer", 70, 0);
 	a.x = (1920 - a.x) / 2;
 	a.y = 100;
 	while (!WindowShouldClose() && x == 111) {

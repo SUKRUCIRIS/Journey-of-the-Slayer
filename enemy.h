@@ -23,7 +23,7 @@ void loadenemytextures(void);
 
 void unloadenemytextures(void);
 
-enemy* createrandomenemy(int tilex, int tiley, float size, tile* tileset, int x, int type);
+enemy* createrandomenemy(int tilex, int tiley, float size, tile* tileset, int x, int type, long long unsigned int level);
 //type 0 hell slime
 
 void destroyenemy(enemy* c);
@@ -53,3 +53,7 @@ void renderenemyinfo(enemy* c, Font* myfont);
 void renderchosenenemyinfo(Font* myfont);
 
 void renderenemybars(void);
+
+void killenemy(enemy* c);
+
+char areallenemiesdead(void);

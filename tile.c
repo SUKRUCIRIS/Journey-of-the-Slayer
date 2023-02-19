@@ -87,7 +87,7 @@ tile* createtileset(int x, int size, float startx, float starty, char middle, in
 				t[(i * x) + i2].texture = &grasstile;
 				t[(i * x) + i2].type = 1;
 				if (x != 7 && max(abs(tilexchar - i), abs(tileychar - i2)) > 0 && rand() % 3 == 1 && enemyn < 3) {
-					createrandomenemy(i, i2, 48, t, x, 0);
+					createrandomenemy(i, i2, 48, t, x, 0, level);
 					enemyn++;
 				}
 			}
@@ -101,7 +101,7 @@ tile* createtileset(int x, int size, float startx, float starty, char middle, in
 			seatilen = rand() % 3 + 4;
 			x = rand() % 7;
 			if (t[x * 7 + seatilen].obstacle == 0 && t[x * 7 + seatilen].type != 2) {
-				createrandomenemy(x, seatilen, 48, t, 7, 0);
+				createrandomenemy(x, seatilen, 48, t, 7, 0, level);
 				enemyn++;
 			}
 			loop++;
@@ -169,6 +169,9 @@ void tilesetoutro(tile* t, int speed, int x, float ratio) {
 	Rectangle targetsource = { 0,0,1920,-1080 };
 	Rectangle targetdest = { 0,0,(float)GetRenderWidth(),(float)GetRenderHeight() };
 	Vector2 origin = { 0,0 };
+	for (int i = 0; i < x * x; i++) {
+		t[i].position = t[i].absposition;
+	}
 	while (t[0].position.y <= t[0].absposition.y + 1080) {
 		BeginTextureMode(target);
 		ClearBackground(BLACK);

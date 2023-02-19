@@ -194,7 +194,8 @@ int enemyselector(char range, character* mainc, tile* tileset, char ap) {
 	enemy** enemies = getallenemies();
 	for (int i = 0; i < getenemynumber(); i++) {
 		if (abs(enemies[i]->m->tileposition.x - mainc->m->tileposition.x) <= range &&
-			abs(enemies[i]->m->tileposition.y - mainc->m->tileposition.y) <= range) {
+			abs(enemies[i]->m->tileposition.y - mainc->m->tileposition.y) <= range &&
+			enemies[i]->m->tileon) {
 			warningcolor.a = 255;
 			warningcolor.b = 231;
 			warningcolor.r = 31;
@@ -241,7 +242,9 @@ char fist1skill(tile* tileset, character* mainc) {
 		if (x >= 0) {
 			charactergivedamage(mainc, 10, getallenemies()[x]);
 			mainc->actionpoint -= 2;
-			setattackanimation(mainc->m, getallenemies()[x]->m);
+			if (getallenemies()[x]->health > 0) {
+				setattackanimation(mainc->m, getallenemies()[x]->m);
+			}
 			return 1;
 		}
 		else {
@@ -261,7 +264,9 @@ char fist2skill(tile* tileset, character* mainc) {
 		if (x >= 0) {
 			charactergivedamage(mainc, 5, getallenemies()[x]);
 			mainc->actionpoint -= 3;
-			setattackanimation(mainc->m, getallenemies()[x]->m);
+			if (getallenemies()[x]->health > 0) {
+				setattackanimation(mainc->m, getallenemies()[x]->m);
+			}
 			int xnext = getallenemies()[x]->m->tileposition.x * 2 - mainc->m->tileposition.x;
 			int ynext = getallenemies()[x]->m->tileposition.y * 2 - mainc->m->tileposition.y;
 			if (xnext > -1 && xnext < 7 && ynext > -1 && ynext < 7 &&
@@ -272,11 +277,13 @@ char fist2skill(tile* tileset, character* mainc) {
 						found = 1;
 						charactergivedamage(mainc, 10, getallenemies()[x]);
 						charactergivedamage(mainc, 10, getallenemies()[i]);
-						setattackanimation(mainc->m, getallenemies()[i]->m);
+						if (getallenemies()[i]->health > 0) {
+							setattackanimation(mainc->m, getallenemies()[i]->m);
+						}
 						break;
 					}
 				}
-				if (!found && tileset[xnext * 7 + ynext].obstacle == 0) {
+				if (!found && tileset[xnext * 7 + ynext].obstacle == 0 && getallenemies()[x]->health > 0) {
 					Vector2* animationpoints = malloc(sizeof(Vector2));
 					calculateposmapobject(&(tileset[xnext * 7 + ynext]), mainc->m, animationpoints, 1);
 					addanimationmapobject(getallenemies()[x]->m, animationpoints, 1);

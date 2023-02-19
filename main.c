@@ -15,10 +15,11 @@ int main() {
 	SetExitKey(KEY_NULL);
 	SetTargetFPS(60);
 	intromenu();
-	mainm:
-	char a = mainmenu();
+	long long unsigned int level = 0;
+mainm:
+	char a = mainmenu(level);
 	if (a == 1) {
-		maingameloop();
+		level = maingameloop(0);
 		goto mainm;
 	}
 	else if (a == 2) {

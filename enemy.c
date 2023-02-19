@@ -27,12 +27,12 @@ void unloadenemytextures(void) {
 	UnloadTexture(hellslimetexture);
 }
 
-enemy* createrandomenemy(int tilex, int tiley, float size, tile* tileset, int x, int type) {
+enemy* createrandomenemy(int tilex, int tiley, float size, tile* tileset, int x, int type, long long unsigned int level) {
 	enemy* c = malloc(sizeof(enemy));
 	if (c) {
 		if (type == 0) {
 			c->m = createmapobject(&hellslimetexture, tilex, tiley, size, tileset, x, 0, 0, 16, 16);
-			c->maxhealth = rand() % 50 + 20.0f;
+			c->maxhealth = rand() % 20 + 15.0f + level;
 			c->health = c->maxhealth;
 			c->maxactionpoint = 4;
 			c->actionpoint = c->maxactionpoint;
@@ -43,7 +43,7 @@ enemy* createrandomenemy(int tilex, int tiley, float size, tile* tileset, int x,
 			c->dodgeperc = rand() % 20 + 5.0f;
 			c->critichitchance = rand() % 5 + 1.0f;
 			c->range = 1;
-			c->damage = 10;
+			c->damage = 10.0f + level / 5;
 			c->attackap = 2;
 			strcpy(c->name, "Hell Slime");
 			tileset[(tilex * x) + tiley].obstacle = 1;
@@ -93,7 +93,7 @@ void destroyallenemies(void) {
 }
 
 void playenemy(void* mainc, void* tileset, enemy* c) {
-	if (c->actionpoint == 0) {
+	if (c->actionpoint == 0 || c->health <= 0) {
 		return;
 	}
 	character* m = mainc;
@@ -184,7 +184,9 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 	Vector2 v1, v2, v3;
 	int lasti = 0;
 	for (int i = 0; i < enemynumber; i++) {
-		enemynextturn(allenemies[i]);
+		if (allenemies[i]->health > 0) {
+			enemynextturn(allenemies[i]);
+		}
 	}
 	for (int i = 0; i < 30; i++) {
 		BeginTextureMode(target);
@@ -209,42 +211,44 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 		EndDrawing();
 	}
 	for (int i = 0; i < enemynumber; i++) {
-		deneme = 0;
-	a:
-		BeginTextureMode(target);
-		ClearBackground(BLACK);
-		rendertileset(tileset, 7);
-		renderallmapobjects();
-		rendercharacterinfo(mainc, font);
-		renderenemyinfo(allenemies[lasti], font);
-		v1.x = allenemies[lasti]->m->position.x + allenemies[lasti]->m->position.width / 2;
-		v1.y = allenemies[lasti]->m->position.y - 5;
-		v2.x = allenemies[lasti]->m->position.x + 5;
-		v2.y = v1.y - allenemies[lasti]->m->position.width / 2;
-		v3.x = allenemies[lasti]->m->position.x + allenemies[lasti]->m->position.width - 5;
-		v3.y = v2.y;
-		DrawTriangle(v3, v2, v1, RED);
-		renderenemybars();
-		renderwarinfo();
-		EndTextureMode();
-		BeginDrawing();
-		ClearBackground(BLACK);
-		DrawTexturePro(target.texture, targetsource, targetdest, origin, 0, WHITE);
-		EndDrawing();
-		animation--;
-		if (!isthereanimation() && animation <= 0) {
-			playenemy(mainc, tileset, allenemies[i]);
-			lasti = i;
-		}
-		else {
-			if (animation <= 0) {
-				animation = 60;
+		if (allenemies[i]->health > 0) {
+			deneme = 0;
+		a:
+			BeginTextureMode(target);
+			ClearBackground(BLACK);
+			rendertileset(tileset, 7);
+			renderallmapobjects();
+			rendercharacterinfo(mainc, font);
+			renderenemyinfo(allenemies[lasti], font);
+			v1.x = allenemies[lasti]->m->position.x + allenemies[lasti]->m->position.width / 2;
+			v1.y = allenemies[lasti]->m->position.y - 5;
+			v2.x = allenemies[lasti]->m->position.x + 5;
+			v2.y = v1.y - allenemies[lasti]->m->position.width / 2;
+			v3.x = allenemies[lasti]->m->position.x + allenemies[lasti]->m->position.width - 5;
+			v3.y = v2.y;
+			DrawTriangle(v3, v2, v1, RED);
+			renderenemybars();
+			renderwarinfo();
+			EndTextureMode();
+			BeginDrawing();
+			ClearBackground(BLACK);
+			DrawTexturePro(target.texture, targetsource, targetdest, origin, 0, WHITE);
+			EndDrawing();
+			animation--;
+			if (!isthereanimation() && animation <= 0) {
+				playenemy(mainc, tileset, allenemies[i]);
+				lasti = i;
 			}
-			goto a;
-		}
-		if (allenemies[i]->actionpoint > 0 && deneme < 10) {
-			deneme++;
-			goto a;
+			else {
+				if (animation <= 0) {
+					animation = 60;
+				}
+				goto a;
+			}
+			if (allenemies[i]->actionpoint > 0 && deneme < 10) {
+				deneme++;
+				goto a;
+			}
 		}
 	}
 	while (isthereanimation()) {
@@ -303,6 +307,19 @@ int getenemynumber(void) {
 	return enemynumber;
 }
 
+void killenemy(enemy* c) {
+	c->health = 0;
+	if (c->m->tileon) {
+		c->m->tileon->obstacle = 0;
+	}
+	c->m->position.x = -100;
+	c->m->position.x = -100;
+	c->m->tileposition.x = -100;
+	c->m->tileposition.y = -100;
+	removeanimation(c->m);
+	c->m->tileon = 0;
+}
+
 void enemytakedamage(enemy* c, float x) {
 	if (!ishappened(c->dodgeperc)) {
 		x = x * ((100 - c->protectperc) / 100);
@@ -310,6 +327,9 @@ void enemytakedamage(enemy* c, float x) {
 		char text[20] = { 0 };
 		sprintf(text, "%.1f Damage", x);
 		setwarinfo(text, c->m);
+		if (c->health <= 0) {
+			killenemy(c);
+		}
 	}
 	else {
 		setwarinfo("Dodged", c->m);
@@ -350,24 +370,26 @@ void enemynextturn(enemy* c) {
 }
 
 void renderenemyinfo(enemy* c, Font* myfont) {
-	DrawRectangleRec(enemyinfoback, backcolore);
-	DrawRectangleLinesEx(enemyinfoback, 1, WHITE);
-	sprintf(enemyinfo, "Health: %.1f/%.1f\nAction Point: %d/%d\nBase Damage: %.1f\nBase Range: %d\nAttack Cost: %dAP\nDamage Reduction: %.1f%%\nDodge Chance: %.1f%%\nCritical Hit Chance: %.1f%%\nDamage Bonus: %.1f%%\nLife Steal: %.1f%%\nHealth Regeneration: %.1f",
-		c->health, c->maxhealth, c->actionpoint, c->maxactionpoint, c->damage, c->range, c->attackap, c->protectperc,
-		c->dodgeperc, c->critichitchance, c->damageincperc, c->lifesteal, c->liferegen);
-	position = MeasureTextEx(*myfont, c->name, 30, 0);
-	position.x = enemyinfoback.x + ((enemyinfoback.width - position.x) / 2);
-	position.y = enemyinfoback.y + 2;
-	DrawTextEx(*myfont, c->name, position, 30, 0, WHITE);
-	writeinfo(myfont, enemyinfo, enemyinfoback.x + 10, enemyinfoback.y + 40, 30, &WHITE);
-	position.x = 0;
-	position.y = 0;
-	DrawTexturePro(*(c->m->texture), c->m->source, portrait, position, 0, WHITE);
+	if (c->health > 0) {
+		DrawRectangleRec(enemyinfoback, backcolore);
+		DrawRectangleLinesEx(enemyinfoback, 1, WHITE);
+		sprintf(enemyinfo, "Health: %.1f/%.1f\nAction Point: %d/%d\nBase Damage: %.1f\nBase Range: %d\nAttack Cost: %dAP\nDamage Reduction: %.1f%%\nDodge Chance: %.1f%%\nCritical Hit Chance: %.1f%%\nDamage Bonus: %.1f%%\nLife Steal: %.1f%%\nHealth Regeneration: %.1f",
+			c->health, c->maxhealth, c->actionpoint, c->maxactionpoint, c->damage, c->range, c->attackap, c->protectperc,
+			c->dodgeperc, c->critichitchance, c->damageincperc, c->lifesteal, c->liferegen);
+		position = MeasureTextEx(*myfont, c->name, 30, 0);
+		position.x = enemyinfoback.x + ((enemyinfoback.width - position.x) / 2);
+		position.y = enemyinfoback.y + 2;
+		DrawTextEx(*myfont, c->name, position, 30, 0, WHITE);
+		writeinfo(myfont, enemyinfo, enemyinfoback.x + 10, enemyinfoback.y + 40, 30, &WHITE);
+		position.x = 0;
+		position.y = 0;
+		DrawTexturePro(*(c->m->texture), c->m->source, portrait, position, 0, WHITE);
+	}
 }
 
 void renderchosenenemyinfo(Font* myfont) {
 	for (int i = 0; i < enemynumber; i++) {
-		if (tile_status(allenemies[i]->m->tileon) == 2) {
+		if (allenemies[i]->m->tileon && tile_status(allenemies[i]->m->tileon) == 2) {
 			renderenemyinfo(allenemies[i], myfont);
 		}
 	}
@@ -382,4 +404,13 @@ void renderenemybars(void) {
 		DrawRectangleLines(allenemies[i]->m->position.x - 5, allenemies[i]->m->position.y + allenemies[i]->m->position.height + 5,
 			allenemies[i]->m->position.width + 10, 10, WHITE);
 	}
+}
+
+char areallenemiesdead(void) {
+	for (int i = 0; i < enemynumber; i++) {
+		if (allenemies[i]->health > 0) {
+			return 0;
+		}
+	}
+	return 1;
 }

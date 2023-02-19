@@ -33,3 +33,5 @@ void setanimationspeedmapobject(map_object* m, float animationspeed);
 void calculateposmapobject(tile* t, map_object* m, Vector2* v, char abs);
 
 char isthereanimation(void);
+
+void removeanimation(map_object* m);

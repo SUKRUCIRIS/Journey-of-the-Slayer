@@ -68,7 +68,9 @@ void destroymapobject(map_object* m) {
 
 void rendermapobject(map_object* m) {
 	if (!m->inanimation) {
-		calculateposmapobject(m->tileon, m, &(m->position), 0);
+		if (m->tileon) {
+			calculateposmapobject(m->tileon, m, &(m->position), 0);
+		}
 	}
 	else {
 		a.x = m->position.x + (m->animationspeed * GetFrameTime() * (m->animationpositions[m->inanimationposition].x - m->position.x)) /
@@ -136,6 +138,13 @@ void addanimationmapobject(map_object* m, Vector2* animationpositions, unsigned 
 	m->maxanimationposition = maxanimationposition;
 	m->inanimation = 1;
 	m->inanimationposition = 0;
+}
+
+void removeanimation(map_object* m) {
+	free(m->animationpositions);
+	m->inanimationposition = 0;
+	m->inanimation = 0;
+	m->maxanimationposition = 0;
 }
 
 void setanimationspeedmapobject(map_object* m, float animationspeed) {

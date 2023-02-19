@@ -2,6 +2,6 @@
 
 void intromenu(void);
 
-char mainmenu(void);
+char mainmenu(long long unsigned int level);
 
 void settingsmenu(void);

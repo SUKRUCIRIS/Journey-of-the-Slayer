@@ -1,3 +1,3 @@
 #pragma once
 
-void maingameloop(void);
+long long unsigned int maingameloop(long long unsigned int levelx);

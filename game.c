@@ -4,8 +4,9 @@
 #include <raylib.h>
 #include "button.h"
 #include "enemy.h"
+#include <stdio.h>
 
-void maingameloop(void) {
+long long unsigned int maingameloop(long long unsigned int levelx) {
 	loadenemytextures();
 	loadtiletextures();
 	loadskillbuttontextures();
@@ -48,7 +49,7 @@ void maingameloop(void) {
 	char enemyturn = 0;
 	tile* tileset = 0;
 	character* mainc = 0;
-	long long unsigned int level= 0;
+	long long unsigned int level = levelx;
 levelstart:
 	tileset = createtileset(7, 192, 0, 0, 1, 3, 0, level);
 	mainc = createcharacter(3, 0, 48, tileset, 7);
@@ -130,7 +131,49 @@ levelstart:
 		ClearBackground(BLACK);
 		DrawTexturePro(target.texture, targetsource, targetdest, origin, 0, WHITE);
 		EndDrawing();
-		if (exit) {
+		if (exit || areallenemiesdead() || mainc->health < 0) {
+			if (mainc->health < 0) {
+				Image ss = LoadImageFromScreen();
+				Texture2D sst = LoadTextureFromImage(ss);
+				UnloadImage(ss);
+				Color bg = { 0,0,0,1 };
+				Color text = { 255,255,255,1 };
+				Vector2 e = MeasureTextEx(myfont, "JOURNEY OVER", 100, 0);
+				e.x = (1920 - e.x) / 2;
+				e.y = 300;
+				char leveltext[150] = { 0 };
+				sprintf(leveltext, "Your journey ended at %lld. level. Better luck next time Slayer...", level);
+				Vector2 e2 = MeasureTextEx(myfont, leveltext, 50, 0);
+				e2.x = (1920 - e2.x) / 2;
+				e2.y = e.y + 100;
+				while(1) {
+					BeginTextureMode(target);
+					ClearBackground(BLACK);
+					DrawTexture(sst, 0, 0, WHITE);
+					DrawRectangle(0, 0, 1920, 1080, bg);
+					DrawTextEx(myfont, "JOURNEY OVER", e, 100, 0, text);
+					DrawTextEx(myfont, leveltext, e2, 50, 0, text);
+					if (text.a == 255) {
+						if (renderbutton(&menubutton, &myfont)) {
+							break;
+						}
+					}
+					EndTextureMode();
+
+					BeginDrawing();
+					ClearBackground(BLACK);
+					DrawTexturePro(target.texture, targetsource, targetdest, origin, 0, WHITE);
+					EndDrawing();
+					if (bg.a < 200) {
+						bg.a += 2;
+					}
+					if (text.a < 255) {
+						text.a += 2;
+					}
+				}
+				UnloadTexture(sst);
+				nextlevelexit = 0;
+			}
 			break;
 		}
 	}
@@ -139,9 +182,11 @@ levelstart:
 	}
 	destroytileset(tileset);
 	destroyallenemies();
-	if (nextlevelexit) {
+	if (nextlevelexit && mainc->health > 0) {
+		mainc->actionpoint = mainc->maxactionpoint;
 		oldchar = mainc;
 		level++;
+		setwarinfofont(&myfont);
 		goto levelstart;
 	}
 	destroycharacter(mainc);
@@ -152,4 +197,5 @@ levelstart:
 	unloadcharactertextures();
 	unloadweapontextures();
 	UnloadFont(myfont);
+	return level;
 }
