@@ -6,6 +6,7 @@
 #include "enemy.h"
 #include <math.h>
 #include "weapon.h"
+#include "fx.h"
 
 Texture2D texture;
 Font* fontc;
@@ -379,6 +380,7 @@ void setattackanimation(map_object* attacker, map_object* attacked) {
 		addanimationmapobject(attacker, attackerpoints, 2);
 		addanimationmapobject(attacked, attackedpoints, 4);
 	}
+	addfx(getattackfx(), &(attacked->position));
 }
 
 void writeinfo(Font* font, const char* text, float x, float y, float size, Color* color) {

@@ -144,6 +144,7 @@
     <ClCompile Include="button.c" />
     <ClCompile Include="character.c" />
     <ClCompile Include="enemy.c" />
+    <ClCompile Include="fx.c" />
     <ClCompile Include="game.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="map_object.c" />
@@ -157,6 +158,7 @@
     <ClInclude Include="button.h" />
     <ClInclude Include="character.h" />
     <ClInclude Include="enemy.h" />
+    <ClInclude Include="fx.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="map_object.h" />
     <ClInclude Include="menus.h" />

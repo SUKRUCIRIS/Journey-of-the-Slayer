@@ -5,8 +5,10 @@
 #include "button.h"
 #include "enemy.h"
 #include <stdio.h>
+#include "fx.h"
 
 long long unsigned int maingameloop(long long unsigned int levelx) {
+	loadallfx();
 	loadenemytextures();
 	loadtiletextures();
 	loadskillbuttontextures();
@@ -86,6 +88,7 @@ levelstart:
 		renderwarning(&myfont);
 		renderchosenenemyinfo(&myfont);
 		renderenemybars();
+		renderallfx();
 		renderwarinfo();
 		//game logic end
 		EndTextureMode();
@@ -146,7 +149,7 @@ levelstart:
 				Vector2 e2 = MeasureTextEx(myfont, leveltext, 50, 0);
 				e2.x = (1920 - e2.x) / 2;
 				e2.y = e.y + 100;
-				while(1) {
+				while (1) {
 					BeginTextureMode(target);
 					ClearBackground(BLACK);
 					DrawTexture(sst, 0, 0, WHITE);
@@ -197,5 +200,6 @@ levelstart:
 	unloadcharactertextures();
 	unloadweapontextures();
 	UnloadFont(myfont);
+	destroyallfx();
 	return level;
 }
