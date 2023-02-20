@@ -10,6 +10,8 @@ enemy** allenemies = 0;
 int enemynumber = 0;
 
 Texture2D hellslimetexture;
+Texture2D spitterdemontexture;
+Texture2D cageddemontexture;
 
 //renderenemyinfo
 Rectangle enemyinfoback = { 1500,680,400,380 };
@@ -21,10 +23,14 @@ Rectangle portrait = { 1800,700,64,64 };
 
 void loadenemytextures(void) {
 	hellslimetexture = LoadTexture("data/characters/slime.png");
+	spitterdemontexture = LoadTexture("data/characters/spitterdemon.png");
+	cageddemontexture = LoadTexture("data/characters/cageddemon.png");
 }
 
 void unloadenemytextures(void) {
 	UnloadTexture(hellslimetexture);
+	UnloadTexture(spitterdemontexture);
+	UnloadTexture(cageddemontexture);
 }
 
 enemy* createrandomenemy(int tilex, int tiley, float size, tile* tileset, int x, int type, long long unsigned int level) {
@@ -40,12 +46,48 @@ enemy* createrandomenemy(int tilex, int tiley, float size, tile* tileset, int x,
 			c->liferegen = rand() % 5 + 1.0f;
 			c->damageincperc = rand() % 5 + 1.0f;
 			c->protectperc = rand() % 5 + 1.0f;
-			c->dodgeperc = rand() % 20 + 5.0f;
+			c->dodgeperc = min(rand() % 20 + 5.0f + level / 5, 50);
 			c->critichitchance = rand() % 5 + 1.0f;
 			c->range = 1;
-			c->damage = 10.0f + level / 5;
+			c->damage = min(10.0f + level / 5, 50);
 			c->attackap = 2;
 			strcpy(c->name, "Hell Slime");
+			tileset[(tilex * x) + tiley].obstacle = 1;
+		}
+		else if (type == 1) {
+			c->m = createmapobject(&spitterdemontexture, tilex, tiley, size, tileset, x, 0, 0, 16, 16);
+			c->maxhealth = rand() % 20 + 20.0f + level;
+			c->health = c->maxhealth;
+			c->maxactionpoint = 4;
+			c->actionpoint = c->maxactionpoint;
+			c->lifesteal = rand() % 5 + 1.0f;
+			c->liferegen = rand() % 5 + 1.0f;
+			c->damageincperc = rand() % 5 + 1.0f;
+			c->protectperc = rand() % 5 + 1.0f;
+			c->dodgeperc = min(rand() % 10 + 3.0f + level / 5, 50);
+			c->critichitchance = min(rand() % 10 + 3.0f + level / 5, 50);
+			c->range = 2 + rand() % 2;
+			c->damage = min(10.0f + level / 5, 50);
+			c->attackap = 2;
+			strcpy(c->name, "Spitter Demon");
+			tileset[(tilex * x) + tiley].obstacle = 1;
+		}
+		else if (type == 2) {
+			c->m = createmapobject(&cageddemontexture, tilex, tiley, size, tileset, x, 0, 0, 16, 16);
+			c->maxhealth = rand() % 20 + 30.0f + level;
+			c->health = c->maxhealth;
+			c->maxactionpoint = 4;
+			c->actionpoint = c->maxactionpoint;
+			c->lifesteal = rand() % 5 + 1.0f;
+			c->liferegen = rand() % 5 + 2.0f;
+			c->damageincperc = rand() % 5 + 1.0f;
+			c->protectperc = min(rand() % 20 + 5.0f + level / 5, 50);
+			c->dodgeperc = rand() % 5 + 1.0f;
+			c->critichitchance = rand() % 5 + 1.0f;
+			c->range = 1;
+			c->damage = min(10.0f + level / 5, 50);
+			c->attackap = 2;
+			strcpy(c->name, "Caged Demon");
 			tileset[(tilex * x) + tiley].obstacle = 1;
 		}
 		enemy** allenemies2 = malloc(sizeof(map_object*) * (enemynumber + 1));

@@ -87,7 +87,7 @@ tile* createtileset(int x, int size, float startx, float starty, char middle, in
 				t[(i * x) + i2].texture = &grasstile;
 				t[(i * x) + i2].type = 1;
 				if (x != 7 && max(abs(tilexchar - i), abs(tileychar - i2)) > 0 && rand() % 3 == 1 && enemyn < 3) {
-					createrandomenemy(i, i2, 48, t, x, 0, level);
+					createrandomenemy(i, i2, 48, t, x, rand() % MAX_ENEMY_TYPES, level);
 					enemyn++;
 				}
 			}
@@ -101,7 +101,17 @@ tile* createtileset(int x, int size, float startx, float starty, char middle, in
 			seatilen = rand() % 3 + 4;
 			x = rand() % 7;
 			if (t[x * 7 + seatilen].obstacle == 0 && t[x * 7 + seatilen].type != 2) {
-				createrandomenemy(x, seatilen, 48, t, 7, 0, level);
+				if (MAX_ENEMY_TYPES > level) {
+					if (level == 0) {
+						createrandomenemy(x, seatilen, 48, t, 7, 0, level);
+					}
+					else {
+						createrandomenemy(x, seatilen, 48, t, 7, rand() % level, level);
+					}
+				}
+				else {
+					createrandomenemy(x, seatilen, 48, t, 7, rand() % MAX_ENEMY_TYPES, level);
+				}
 				enemyn++;
 			}
 			loop++;

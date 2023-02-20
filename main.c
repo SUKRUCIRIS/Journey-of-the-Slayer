@@ -14,6 +14,7 @@ int main() {
 		FLAG_WINDOW_UNDECORATED | FLAG_WINDOW_MAXIMIZED | FLAG_FULLSCREEN_MODE | FLAG_MSAA_4X_HINT);
 	SetExitKey(KEY_NULL);
 	SetTargetFPS(60);
+	ToggleFullscreen();
 	intromenu();
 	long long unsigned int level = 0;
 mainm:

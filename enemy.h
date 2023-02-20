@@ -1,6 +1,8 @@
 #pragma once
 #include "map_object.h"
 
+#define MAX_ENEMY_TYPES 3
+
 typedef struct enemy {
 	map_object* m;
 	float maxhealth;
