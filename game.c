@@ -134,8 +134,8 @@ levelstart:
 		ClearBackground(BLACK);
 		DrawTexturePro(target.texture, targetsource, targetdest, origin, 0, WHITE);
 		EndDrawing();
-		if (exit || areallenemiesdead() || mainc->health < 0) {
-			if (mainc->health < 0) {
+		if ((exit || areallenemiesdead() || mainc->health <= 0) && !isthereanimation()) {
+			if (mainc->health <= 0) {
 				Image ss = LoadImageFromScreen();
 				Texture2D sst = LoadTextureFromImage(ss);
 				UnloadImage(ss);

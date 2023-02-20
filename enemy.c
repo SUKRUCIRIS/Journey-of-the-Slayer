@@ -4,6 +4,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
+#include "fx.h"
 
 enemy** allenemies = 0;
 
@@ -245,6 +246,7 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 		v3.y = v2.y;
 		DrawTriangle(v3, v2, v1, RED);
 		renderenemybars();
+		renderallfx();
 		renderwarinfo();
 		EndTextureMode();
 		BeginDrawing();
@@ -252,7 +254,7 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 		DrawTexturePro(target.texture, targetsource, targetdest, origin, 0, WHITE);
 		EndDrawing();
 	}
-	for (int i = 0; i < enemynumber; i++) {
+	for (int i = 0; i < enemynumber && ((character*)mainc)->health>0; i++) {
 		if (allenemies[i]->health > 0) {
 			deneme = 0;
 		a:
@@ -270,6 +272,7 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 			v3.y = v2.y;
 			DrawTriangle(v3, v2, v1, RED);
 			renderenemybars();
+			renderallfx();
 			renderwarinfo();
 			EndTextureMode();
 			BeginDrawing();
@@ -293,6 +296,9 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 			}
 		}
 	}
+	if (((character*)mainc)->health <= 0) {
+		killenemy(mainc);
+	}
 	while (isthereanimation()) {
 		BeginTextureMode(target);
 		ClearBackground(BLACK);
@@ -308,6 +314,7 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 		v3.y = v2.y;
 		DrawTriangle(v3, v2, v1, RED);
 		renderenemybars();
+		renderallfx();
 		renderwarinfo();
 		EndTextureMode();
 		BeginDrawing();
@@ -330,6 +337,7 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 		v3.y = v2.y;
 		DrawTriangle(v3, v2, v1, RED);
 		renderenemybars();
+		renderallfx();
 		renderwarinfo();
 		EndTextureMode();
 		BeginDrawing();
@@ -350,6 +358,9 @@ int getenemynumber(void) {
 }
 
 void killenemy(enemy* c) {
+	Rectangle x = c->m->tileon->absposition;
+	x.y -= 100;
+	addfx(getdeathfx(), &x, 0);
 	c->health = 0;
 	if (c->m->tileon) {
 		c->m->tileon->obstacle = 0;

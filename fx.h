@@ -10,11 +10,13 @@ typedef struct fx {
 	unsigned char* whichframe;
 	unsigned char framedelay;
 	unsigned char* delaycounter;
+	Color color;
+	float* rotation;
 }fx;
 
-fx* createfxfromgif(const char* path, char framedelay);
+fx* createfxfromgif(const char* path, char framedelay, Color color);
 
-void addfx(fx* effect, Rectangle* position);
+void addfx(fx* effect, Rectangle* position, float rotation);
 
 void renderallfx(void);
 
@@ -25,3 +27,7 @@ void destroyallfx(void);
 void loadallfx(void);
 
 fx* getattackfx(void);
+
+fx* getdeathfx(void);
+
+char istherefx(void);

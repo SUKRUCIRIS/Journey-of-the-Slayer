@@ -1,6 +1,7 @@
 #include "map_object.h"
 #include <stdlib.h>
 #include <math.h>
+#include "fx.h"
 
 Vector2 a;
 
@@ -167,6 +168,9 @@ char isthereanimation(void) {
 		if (allmapobjects[i]->inanimation) {
 			return 1;
 		}
+	}
+	if (istherefx()) {
+		return 1;
 	}
 	return 0;
 }

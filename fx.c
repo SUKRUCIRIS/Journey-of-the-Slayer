@@ -4,11 +4,11 @@
 
 Vector2 origin;
 
-#define fx_number 1
+#define fx_number 2
 
 fx* allfx[fx_number];
 
-fx* createfxfromgif(const char* path, char framedelay) {
+fx* createfxfromgif(const char* path, char framedelay, Color color) {
 	fx* r = malloc(sizeof(fx));
 	if (r) {
 		Image x = LoadImageAnim(path, &(r->framenumber));
@@ -29,13 +29,15 @@ fx* createfxfromgif(const char* path, char framedelay) {
 		r->whichframe = 0;
 		r->framedelay = framedelay;
 		r->delaycounter = 0;
+		r->rotation = 0;
+		r->color = color;
 	}
 	return r;
 }
 
-void addfx(fx* effect, Rectangle* position) {
+void addfx(fx* effect, Rectangle* position, float rotation) {
 	if (effect && position) {
-		Rectangle* x = malloc(sizeof(Rectangle) * (effect->positionnumber+1));
+		Rectangle* x = malloc(sizeof(Rectangle) * (effect->positionnumber + 1));
 		for (int i = 0; i < effect->positionnumber; i++) {
 			x[i] = effect->position[i];
 		}
@@ -59,6 +61,14 @@ void addfx(fx* effect, Rectangle* position) {
 		free(effect->delaycounter);
 		effect->delaycounter = x2;
 
+		float* x3 = malloc(sizeof(float) * (effect->positionnumber + 1));
+		for (int i = 0; i < effect->positionnumber; i++) {
+			x3[i] = effect->rotation[i];
+		}
+		x3[effect->positionnumber] = rotation;
+		free(effect->rotation);
+		effect->rotation = x3;
+
 		effect->positionnumber++;
 	}
 }
@@ -78,7 +88,7 @@ void renderallfx(void) {
 					Rectangle* x = malloc(sizeof(Rectangle) * (allfx[i]->positionnumber - 1));
 					char found = 0;
 					for (int i3 = 0; i3 < allfx[i]->positionnumber; i3++) {
-						if (allfx[i]->position[i3].x == allfx[i]->position[i2].x && allfx[i]->position[i3].y == allfx[i]->position[i2].y) {
+						if (i3 == i2) {
 							found = 1;
 							continue;
 						}
@@ -95,7 +105,7 @@ void renderallfx(void) {
 					unsigned char* x2 = malloc(sizeof(unsigned char) * (allfx[i]->positionnumber - 1));
 					found = 0;
 					for (int i3 = 0; i3 < allfx[i]->positionnumber; i3++) {
-						if (allfx[i]->whichframe[i3] == allfx[i]->whichframe[i2]) {
+						if (i3 == i2) {
 							found = 1;
 							continue;
 						}
@@ -112,7 +122,7 @@ void renderallfx(void) {
 					x2 = malloc(sizeof(unsigned char) * (allfx[i]->positionnumber - 1));
 					found = 0;
 					for (int i3 = 0; i3 < allfx[i]->positionnumber; i3++) {
-						if (allfx[i]->delaycounter[i3] == allfx[i]->whichframe[i2]) {
+						if (i3 == i2) {
 							found = 1;
 							continue;
 						}
@@ -125,13 +135,31 @@ void renderallfx(void) {
 					}
 					free(allfx[i]->delaycounter);
 					allfx[i]->delaycounter = x2;
-					
+
+					float* x3 = malloc(sizeof(float) * (allfx[i]->positionnumber - 1));
+					found = 0;
+					for (int i3 = 0; i3 < allfx[i]->positionnumber; i3++) {
+						if (i3 == i2) {
+							found = 1;
+							continue;
+						}
+						if (!found) {
+							x3[i3] = allfx[i]->rotation[i3];
+						}
+						else {
+							x3[i3 - 1] = allfx[i]->rotation[i3];
+						}
+					}
+					free(allfx[i]->rotation);
+					allfx[i]->rotation = x3;
+
 					allfx[i]->positionnumber--;
 					i2--;
 					continue;
 				}
 			}
-			DrawTexturePro(allfx[i]->texture[allfx[i]->whichframe[i2]], allfx[i]->source, allfx[i]->position[i2], origin, 0, WHITE);
+			DrawTexturePro(allfx[i]->texture[allfx[i]->whichframe[i2]], allfx[i]->source, allfx[i]->position[i2], origin,
+				allfx[i]->rotation[i2], allfx[i]->color);
 		}
 	}
 }
@@ -149,12 +177,27 @@ void destroyfx(fx* effect) {
 
 void destroyallfx(void) {
 	destroyfx(allfx[0]);
+	destroyfx(allfx[1]);
 }
 
 void loadallfx(void) {
-	allfx[0] = createfxfromgif("data/effects/attack.gif", 5);
+	allfx[0] = createfxfromgif("data/effects/attack.gif", 4, WHITE);
+	allfx[1] = createfxfromgif("data/effects/death.gif", 4, WHITE);
 }
 
 fx* getattackfx(void) {
 	return allfx[0];
+}
+
+fx* getdeathfx(void) {
+	return allfx[1];
+}
+
+char istherefx(void) {
+	for (int i = 0; i < fx_number; i++) {
+		if (allfx[i]->positionnumber > 0) {
+			return 1;
+		}
+	}
+	return 0;
 }
