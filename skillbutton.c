@@ -273,7 +273,7 @@ char fist2skill(tile* tileset, character* mainc) {
 				tileset[xnext * 7 + ynext].type != 2) {
 				char found = 0;
 				for (int i = 0; i < getenemynumber(); i++) {
-					if (getallenemies()[i]->m->tileon == &(tileset[xnext * 7 + ynext])) {
+					if (getallenemies()[i]->m->tileon && getallenemies()[i]->m->tileon == &(tileset[xnext * 7 + ynext])) {
 						found = 1;
 						charactergivedamage(mainc, 10, getallenemies()[x]);
 						charactergivedamage(mainc, 10, getallenemies()[i]);

@@ -358,19 +358,19 @@ int getenemynumber(void) {
 }
 
 void killenemy(enemy* c) {
-	Rectangle x = c->m->tileon->absposition;
-	x.y -= 100;
-	addfx(getdeathfx(), &x, 0, 0);
-	c->health = 0;
 	if (c->m->tileon) {
+		Rectangle x = c->m->tileon->absposition;
+		x.y -= 100;
+		addfx(getdeathfx(), &x, 0, 0);
+		c->health = 0;
 		c->m->tileon->obstacle = 0;
+		c->m->position.x = -100;
+		c->m->position.x = -100;
+		c->m->tileposition.x = -100;
+		c->m->tileposition.y = -100;
+		removeanimation(c->m);
+		c->m->tileon = 0;
 	}
-	c->m->position.x = -100;
-	c->m->position.x = -100;
-	c->m->tileposition.x = -100;
-	c->m->tileposition.y = -100;
-	removeanimation(c->m);
-	c->m->tileon = 0;
 }
 
 void enemytakedamage(enemy* c, float x) {

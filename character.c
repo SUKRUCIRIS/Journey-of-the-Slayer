@@ -359,34 +359,36 @@ void characternextturn(character* c) {
 }
 
 void setattackanimation(map_object* attacker, map_object* attacked) {
-	Vector2* attackerpoints = malloc(sizeof(Vector2) * 2);
-	Vector2* attackedpoints = malloc(sizeof(Vector2) * 4);
-	if (attackerpoints && attackedpoints) {
-		calculateposmapobject(attacker->tileon, attacker, &(attackerpoints[1]), 1);
-		calculateposmapobject(attacked->tileon, attacked, &(attackedpoints[1]), 1);
-		calculateposmapobject(attacked->tileon, attacked, &(attackedpoints[3]), 1);
-		attackerpoints[0].x = attackerpoints[1].x + (attackedpoints[1].x - attackerpoints[1].x) * 50 /
-			(fabsf(attackedpoints[1].x - attackerpoints[1].x) + fabsf(attackedpoints[1].y - attackerpoints[1].y));
-		attackerpoints[0].y = attackerpoints[1].y + (attackedpoints[1].y - attackerpoints[1].y) * 50 /
-			(fabsf(attackedpoints[1].x - attackerpoints[1].x) + fabsf(attackedpoints[1].y - attackerpoints[1].y));
-		attackedpoints[0].x = attackedpoints[1].x - (attackerpoints[1].x - attackedpoints[1].x) * 25 /
-			(fabsf(attackedpoints[1].x - attackerpoints[1].x) + fabsf(attackedpoints[1].y - attackerpoints[1].y));
-		attackedpoints[0].y = attackedpoints[1].y - (attackerpoints[1].y - attackedpoints[1].y) * 25 /
-			(fabsf(attackedpoints[1].x - attackerpoints[1].x) + fabsf(attackedpoints[1].y - attackerpoints[1].y));
-		attackedpoints[2].x = attackedpoints[1].x + (attackerpoints[1].x - attackedpoints[1].x) * 25 /
-			(fabsf(attackedpoints[1].x - attackerpoints[1].x) + fabsf(attackedpoints[1].y - attackerpoints[1].y));
-		attackedpoints[2].y = attackedpoints[1].y + (attackerpoints[1].y - attackedpoints[1].y) * 25 /
-			(fabsf(attackedpoints[1].x - attackerpoints[1].x) + fabsf(attackedpoints[1].y - attackerpoints[1].y));
-		addanimationmapobject(attacker, attackerpoints, 2);
-		addanimationmapobject(attacked, attackedpoints, 4);
-		Rectangle x = { attackedpoints[1].x - 15, attackedpoints[1].y - 50,attacked->position.width + 40,attacked->position.height + 40 };
-		if (attacked->position.x > attacker->position.x) {
-			x.x += 20;
-			addfx(getattackfx(), &x, 0, 0);
-		}
-		else {
-			x.x -= 20;
-			addfx(getattackfx(), &x, 0, 1);
+	if (attacker && attacked && attacker->tileon && attacked->tileon) {
+		Vector2* attackerpoints = malloc(sizeof(Vector2) * 2);
+		Vector2* attackedpoints = malloc(sizeof(Vector2) * 4);
+		if (attackerpoints && attackedpoints) {
+			calculateposmapobject(attacker->tileon, attacker, &(attackerpoints[1]), 1);
+			calculateposmapobject(attacked->tileon, attacked, &(attackedpoints[1]), 1);
+			calculateposmapobject(attacked->tileon, attacked, &(attackedpoints[3]), 1);
+			attackerpoints[0].x = attackerpoints[1].x + (attackedpoints[1].x - attackerpoints[1].x) * 50 /
+				(fabsf(attackedpoints[1].x - attackerpoints[1].x) + fabsf(attackedpoints[1].y - attackerpoints[1].y));
+			attackerpoints[0].y = attackerpoints[1].y + (attackedpoints[1].y - attackerpoints[1].y) * 50 /
+				(fabsf(attackedpoints[1].x - attackerpoints[1].x) + fabsf(attackedpoints[1].y - attackerpoints[1].y));
+			attackedpoints[0].x = attackedpoints[1].x - (attackerpoints[1].x - attackedpoints[1].x) * 25 /
+				(fabsf(attackedpoints[1].x - attackerpoints[1].x) + fabsf(attackedpoints[1].y - attackerpoints[1].y));
+			attackedpoints[0].y = attackedpoints[1].y - (attackerpoints[1].y - attackedpoints[1].y) * 25 /
+				(fabsf(attackedpoints[1].x - attackerpoints[1].x) + fabsf(attackedpoints[1].y - attackerpoints[1].y));
+			attackedpoints[2].x = attackedpoints[1].x + (attackerpoints[1].x - attackedpoints[1].x) * 25 /
+				(fabsf(attackedpoints[1].x - attackerpoints[1].x) + fabsf(attackedpoints[1].y - attackerpoints[1].y));
+			attackedpoints[2].y = attackedpoints[1].y + (attackerpoints[1].y - attackedpoints[1].y) * 25 /
+				(fabsf(attackedpoints[1].x - attackerpoints[1].x) + fabsf(attackedpoints[1].y - attackerpoints[1].y));
+			addanimationmapobject(attacker, attackerpoints, 2);
+			addanimationmapobject(attacked, attackedpoints, 4);
+			Rectangle x = { attackedpoints[1].x - 15, attackedpoints[1].y - 50,attacked->position.width + 40,attacked->position.height + 40 };
+			if (attacked->position.x > attacker->position.x) {
+				x.x += 20;
+				addfx(getattackfx(), &x, 0, 0);
+			}
+			else {
+				x.x -= 20;
+				addfx(getattackfx(), &x, 0, 1);
+			}
 		}
 	}
 }
