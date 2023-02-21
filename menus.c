@@ -103,7 +103,7 @@ char mainmenuinput(Font* f, Vector2* a) {
 
 char tilesetintromainmenu(tile* t, int speed, int x, float ratio, Font* f, Vector2* a) {
 	for (int i = 0; i < x * x; i++) {
-		t[i].position.y = t[i].absposition.y + GetScreenHeight();
+		t[i].position.y = t[i].absposition.y + 1080;
 	}
 	char y = 111;
 	RenderTexture2D target = LoadRenderTexture(1920, 1080);
@@ -120,7 +120,7 @@ char tilesetintromainmenu(tile* t, int speed, int x, float ratio, Font* f, Vecto
 		}
 		for (int i = 0; i < x * x; i++) {
 			if (t[i].position.y > t[i].absposition.y) {
-				if ((i == 0) || (t[i - 1].position.y <= t[i - 1].absposition.y + (GetScreenHeight() * ratio))) {
+				if ((i == 0) || (t[i - 1].position.y <= t[i - 1].absposition.y + (1080 * ratio))) {
 					t[i].position.y -= speed;
 				}
 			}
@@ -166,7 +166,7 @@ char tilesetoutromainmenu(tile* t, int speed, int x, float ratio, Font* f, Vecto
 	Rectangle targetsource = { 0,0,1920,-1080 };
 	Rectangle targetdest = { 0,0,(float)GetRenderWidth(),(float)GetRenderHeight() };
 	Vector2 origin = { 0,0 };
-	while (t[0].position.y <= t[0].absposition.y + GetScreenHeight()) {
+	while (t[0].position.y <= t[0].absposition.y + 1080) {
 		BeginTextureMode(target);
 		ClearBackground(BLACK);
 		y = mainmenuinput(f, a);
@@ -175,7 +175,7 @@ char tilesetoutromainmenu(tile* t, int speed, int x, float ratio, Font* f, Vecto
 			return y;
 		}
 		for (int i = (x * x) - 1; i >= 0; i--) {
-			if ((i == (x * x) - 1) || (t[i + 1].position.y >= t[i + 1].absposition.y + (GetScreenHeight() * ratio))) {
+			if ((i == (x * x) - 1) || (t[i + 1].position.y >= t[i + 1].absposition.y + (1080 * ratio))) {
 				t[i].position.y += speed;
 			}
 		}
@@ -257,7 +257,9 @@ void settingsmenu(void) {
 	};
 	Vector2 resolutiontextpos = { 100,200 };
 	char restext[20] = { 0 };
-	sprintf(restext, "Default: %dx%d", GetScreenWidth(), GetScreenHeight());
+	int defaultwidth = GetScreenWidth();
+	int defaultheight = GetScreenHeight();
+	sprintf(restext, "Default: %dx%d", defaultwidth, defaultheight);
 	Rectangle restick = { 80,0,840,115 };
 	button defaultres = {
 		.backcolor = {255, 255, 255,255},
@@ -312,6 +314,29 @@ void settingsmenu(void) {
 			DrawRectangleLinesEx(fullscreenbox, 10, _3840x2160res.frontcolor);
 			if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
 				ToggleFullscreen();
+				switch (reselect)
+				{
+				case 0:
+					SetWindowSize(defaultwidth, defaultheight);
+					break;
+				case 1:
+					SetWindowSize(1280, 720);
+					break;
+				case 2:
+					SetWindowSize(1366, 768);
+					break;
+				case 3:
+					SetWindowSize(1920, 1080);
+					break;
+				case 4:
+					SetWindowSize(2560, 1440);
+					break;
+				case 5:
+					SetWindowSize(3840, 2160);
+					break;
+				default:
+					break;
+				}
 			}
 		}
 		else {
@@ -323,27 +348,27 @@ void settingsmenu(void) {
 		if (renderbutton(&backbutton, &myfont)) {
 			break;
 		}
-		if (renderbutton(&defaultres, &myfont)) {
-			SetWindowSize(GetScreenWidth(), GetScreenHeight());
+		else if (renderbutton(&defaultres, &myfont)) {
+			SetWindowSize(defaultwidth, defaultheight);
 			reselect = 0;
 		}
-		if (renderbutton(&_1280x720res, &myfont)) {
+		else if (renderbutton(&_1280x720res, &myfont)) {
 			SetWindowSize(1280, 720);
 			reselect = 1;
 		}
-		if (renderbutton(&_1366x768res, &myfont)) {
+		else if (renderbutton(&_1366x768res, &myfont)) {
 			SetWindowSize(1366, 768);
 			reselect = 2;
 		}
-		if (renderbutton(&_1920x1080res, &myfont)) {
+		else if (renderbutton(&_1920x1080res, &myfont)) {
 			SetWindowSize(1920, 1080);
 			reselect = 3;
 		}
-		if (renderbutton(&_2560x1440res, &myfont)) {
+		else if (renderbutton(&_2560x1440res, &myfont)) {
 			SetWindowSize(2560, 1440);
 			reselect = 4;
 		}
-		if (renderbutton(&_3840x2160res, &myfont)) {
+		else if (renderbutton(&_3840x2160res, &myfont)) {
 			SetWindowSize(3840, 2160);
 			reselect = 5;
 		}

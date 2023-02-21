@@ -138,6 +138,7 @@ levelstart:
 			if (mainc->health <= 0) {
 				Image ss = LoadImageFromScreen();
 				Texture2D sst = LoadTextureFromImage(ss);
+				Rectangle ssource = { 0,0,ss.width,ss.height };
 				UnloadImage(ss);
 				Color bg = { 0,0,0,1 };
 				Color text = { 255,255,255,1 };
@@ -152,7 +153,7 @@ levelstart:
 				while (1) {
 					BeginTextureMode(target);
 					ClearBackground(BLACK);
-					DrawTexture(sst, 0, 0, WHITE);
+					DrawTexturePro(sst, ssource, screen, origin, 0, WHITE);
 					DrawRectangle(0, 0, 1920, 1080, bg);
 					DrawTextEx(myfont, "JOURNEY OVER", e, 100, 0, text);
 					DrawTextEx(myfont, leveltext, e2, 50, 0, text);
