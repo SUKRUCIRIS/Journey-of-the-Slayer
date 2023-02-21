@@ -494,6 +494,10 @@ void renderwarning(Font* font) {
 	}
 }
 
+void removewarning(void) {
+	warningcolor.a = 0;
+}
+
 float calculateheight(Font* font, const char* text, float x, float y, float w, float size, float borderwidth) {
 	int count = 0;
 	const char** splitted = TextSplit(text, ' ', &count);

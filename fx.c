@@ -30,12 +30,13 @@ fx* createfxfromgif(const char* path, char framedelay, Color color) {
 		r->framedelay = framedelay;
 		r->delaycounter = 0;
 		r->rotation = 0;
+		r->inverse = 0;
 		r->color = color;
 	}
 	return r;
 }
 
-void addfx(fx* effect, Rectangle* position, float rotation) {
+void addfx(fx* effect, Rectangle* position, float rotation, unsigned char inverse) {
 	if (effect && position) {
 		Rectangle* x = malloc(sizeof(Rectangle) * (effect->positionnumber + 1));
 		for (int i = 0; i < effect->positionnumber; i++) {
@@ -68,6 +69,14 @@ void addfx(fx* effect, Rectangle* position, float rotation) {
 		x3[effect->positionnumber] = rotation;
 		free(effect->rotation);
 		effect->rotation = x3;
+
+		x2 = malloc(sizeof(unsigned char) * (effect->positionnumber + 1));
+		for (int i = 0; i < effect->positionnumber; i++) {
+			x2[i] = effect->inverse[i];
+		}
+		x2[effect->positionnumber] = inverse;
+		free(effect->inverse);
+		effect->inverse = x2;
 
 		effect->positionnumber++;
 	}
@@ -153,13 +162,36 @@ void renderallfx(void) {
 					free(allfx[i]->rotation);
 					allfx[i]->rotation = x3;
 
+					x2 = malloc(sizeof(unsigned char) * (allfx[i]->positionnumber - 1));
+					found = 0;
+					for (int i3 = 0; i3 < allfx[i]->positionnumber; i3++) {
+						if (i3 == i2) {
+							found = 1;
+							continue;
+						}
+						if (!found) {
+							x2[i3] = allfx[i]->inverse[i3];
+						}
+						else {
+							x2[i3 - 1] = allfx[i]->inverse[i3];
+						}
+					}
+					free(allfx[i]->inverse);
+					allfx[i]->inverse = x2;
+
 					allfx[i]->positionnumber--;
 					i2--;
 					continue;
 				}
 			}
+			if (allfx[i]->inverse[i2]) {
+				allfx[i]->source.width = -allfx[i]->source.width;
+			}
 			DrawTexturePro(allfx[i]->texture[allfx[i]->whichframe[i2]], allfx[i]->source, allfx[i]->position[i2], origin,
 				allfx[i]->rotation[i2], allfx[i]->color);
+			if (allfx[i]->inverse[i2]) {
+				allfx[i]->source.width = -allfx[i]->source.width;
+			}
 		}
 	}
 }
@@ -181,7 +213,7 @@ void destroyallfx(void) {
 }
 
 void loadallfx(void) {
-	allfx[0] = createfxfromgif("data/effects/attack.gif", 4, WHITE);
+	allfx[0] = createfxfromgif("data/effects/attack.gif", 3, WHITE);
 	allfx[1] = createfxfromgif("data/effects/death.gif", 4, WHITE);
 }
 

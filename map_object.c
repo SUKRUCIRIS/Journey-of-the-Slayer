@@ -47,24 +47,27 @@ void movemapobject(map_object* m, int targetx, int targety, tile* tileset, int x
 }
 
 void destroymapobject(map_object* m) {
-	map_object** allmapobjects2 = malloc(sizeof(map_object*) * (arraysize - 1));
-	char found = 0;
-	for (int i = 0; i < arraysize; i++) {
-		if (allmapobjects[i] == m) {
-			found = 1;
-			continue;
+	if (m && arraysize > 0) {
+		map_object** allmapobjects2 = malloc(sizeof(map_object*) * (arraysize - 1));
+		char found = 0;
+		for (int i = 0; i < arraysize; i++) {
+			if (allmapobjects[i] == m) {
+				found = 1;
+				continue;
+			}
+			if (found == 0) {
+				allmapobjects2[i] = allmapobjects[i];
+			}
+			else {
+				allmapobjects2[i - 1] = allmapobjects[i];
+			}
 		}
-		if (found == 0) {
-			allmapobjects2[i] = allmapobjects[i];
-		}
-		else {
-			allmapobjects2[i - 1] = allmapobjects[i];
-		}
+		free(allmapobjects);
+		allmapobjects = allmapobjects2;
+		arraysize--;
+		free(m);
+		m = 0;
 	}
-	free(allmapobjects);
-	allmapobjects = allmapobjects2;
-	arraysize--;
-	free(m);
 }
 
 void rendermapobject(map_object* m) {
@@ -173,4 +176,12 @@ char isthereanimation(void) {
 		return 1;
 	}
 	return 0;
+}
+
+void destroyallmapobjects(void) {
+	while (arraysize > 0) {
+		destroymapobject(allmapobjects[0]);
+	}
+	free(allmapobjects);
+	allmapobjects = 0;
 }

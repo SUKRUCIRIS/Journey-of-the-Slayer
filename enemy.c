@@ -360,7 +360,7 @@ int getenemynumber(void) {
 void killenemy(enemy* c) {
 	Rectangle x = c->m->tileon->absposition;
 	x.y -= 100;
-	addfx(getdeathfx(), &x, 0);
+	addfx(getdeathfx(), &x, 0, 0);
 	c->health = 0;
 	if (c->m->tileon) {
 		c->m->tileon->obstacle = 0;

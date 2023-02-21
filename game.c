@@ -60,7 +60,7 @@ levelstart:
 		destroycharacter(oldchar);
 	}
 	tilesetintro(tileset, 25, 7, 0.85f);
-	while (!WindowShouldClose()) {
+	while (1) {
 		BeginTextureMode(target);
 		ClearBackground(BLACK);
 		rendertileset(tileset, 7);
@@ -180,16 +180,19 @@ levelstart:
 			break;
 		}
 	}
+	removewarning();
+	setwarinfofont(&myfont);
 	if (nextlevelexit) {
 		tilesetoutro(tileset, 25, 7, 0.15f);
 	}
 	destroytileset(tileset);
 	destroyallenemies();
+	destroyallmapobjects();
+	mainc->m = 0;
 	if (nextlevelexit && mainc->health > 0) {
 		mainc->actionpoint = mainc->maxactionpoint;
 		oldchar = mainc;
 		level++;
-		setwarinfofont(&myfont);
 		goto levelstart;
 	}
 	destroycharacter(mainc);

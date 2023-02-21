@@ -379,8 +379,15 @@ void setattackanimation(map_object* attacker, map_object* attacked) {
 			(fabsf(attackedpoints[1].x - attackerpoints[1].x) + fabsf(attackedpoints[1].y - attackerpoints[1].y));
 		addanimationmapobject(attacker, attackerpoints, 2);
 		addanimationmapobject(attacked, attackedpoints, 4);
-		Rectangle x = { attackedpoints[1].x - 20, attackedpoints[1].y - 20,attacked->position.width + 20,attacked->position.height + 20 };
-		addfx(getattackfx(), &x, 0);
+		Rectangle x = { attackedpoints[1].x - 15, attackedpoints[1].y - 50,attacked->position.width + 40,attacked->position.height + 40 };
+		if (attacked->position.x > attacker->position.x) {
+			x.x += 20;
+			addfx(getattackfx(), &x, 0, 0);
+		}
+		else {
+			x.x -= 20;
+			addfx(getattackfx(), &x, 0, 1);
+		}
 	}
 }
 

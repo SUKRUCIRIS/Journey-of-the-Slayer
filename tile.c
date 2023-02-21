@@ -13,6 +13,7 @@ Rectangle tile_source = { 0,0,64,64 };
 
 Texture2D grasstile;
 Texture2D seatile;
+Texture2D tree;
 
 unsigned char tile_status(tile* t) {
 	a.x = t->absposition.x;
@@ -77,8 +78,21 @@ tile* createtileset(int x, int size, float startx, float starty, char middle, in
 			t[(i * x) + i2].absposition.height = t[(i * x) + i2].position.height;
 			if (rand() % 2 == 0 && max(abs(tilexchar - i), abs(tileychar - i2)) > 1 &&
 				seatilen < (x * x) / 3.0f && rows[i] < 3 && columns[i2] < 4) {
-				t[(i * x) + i2].texture = &seatile;
-				t[(i * x) + i2].type = 2;
+				if (rand() % 3 == 1 && !(i == 0 && i2 == 6) && !(i == 6 && i2 == 0)) {
+					t[(i * x) + i2].texture = &grasstile;
+					t[(i * x) + i2].type = 1;
+					if (rand() % 2 == 0) {
+						createmapobject(&tree, i, i2, 48, t, x, 0, 0, 16, 16);
+					}
+					else {
+						createmapobject(&tree, i, i2, 48, t, x, 0, 0, -16, 16);
+					}
+					t[(i * x) + i2].obstacle = 1;
+				}
+				else {
+					t[(i * x) + i2].texture = &seatile;
+					t[(i * x) + i2].type = 2;
+				}
 				seatilen++;
 				rows[i]++;
 				columns[i2]++;
@@ -100,7 +114,7 @@ tile* createtileset(int x, int size, float startx, float starty, char middle, in
 		while (enemyn < (level / 3 + 2) && loop < 100) {
 			seatilen = rand() % 3 + 4;
 			x = rand() % 7;
-			if (t[x * 7 + seatilen].obstacle == 0 && t[x * 7 + seatilen].type != 2) {
+			if (t[x * 7 + seatilen].obstacle == 0 && t[x * 7 + seatilen].type != 2 && !(x == 0 && seatilen == 6)) {
 				if (MAX_ENEMY_TYPES > level) {
 					if (level == 0) {
 						createrandomenemy(x, seatilen, 48, t, 7, 0, level);
@@ -134,11 +148,13 @@ void destroytileset(tile* t) {
 void loadtiletextures(void) {
 	grasstile = LoadTexture("data/map_assets/grass_tile.png");
 	seatile = LoadTexture("data/map_assets/sea_tile.png");
+	tree = LoadTexture("data/map_assets/tree.png");
 }
 
 void deletetiletextures(void) {
 	UnloadTexture(grasstile);
 	UnloadTexture(seatile);
+	UnloadTexture(tree);
 }
 
 void tilesetintro(tile* t, int speed, int x, float ratio) {

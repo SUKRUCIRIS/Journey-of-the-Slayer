@@ -220,6 +220,7 @@ char mainmenu(long long unsigned int level) {
 		destroytileset(tileset);
 		destroycharacter(mainc);
 		destroyallenemies();
+		destroyallmapobjects();
 		tilex = rand() % 3 + 2;
 		tilexchar = rand() % tilex;
 		tileychar = rand() % tilex;
@@ -233,6 +234,7 @@ char mainmenu(long long unsigned int level) {
 	unloadenemytextures();
 	destroyallenemies();
 	unloadcharactertextures();
+	destroyallmapobjects();
 	return x;
 }
 
