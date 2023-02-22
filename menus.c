@@ -81,10 +81,10 @@ void intromenu(void) {
 char mainmenuinput(Font* f, Vector2* a) {
 	sprintf(maxleveltext, "Your farthest journey: %lld level", maxlevel);
 	if (maxlevelfontsize > 31) {
-		fontsizechange = -0.02;
+		fontsizechange = -0.02f;
 	}
 	if (maxlevelfontsize < 30) {
-		fontsizechange = 0.02;
+		fontsizechange = 0.02f;
 	}
 	maxlevelfontsize += fontsizechange;
 	DrawTextPro(*f, maxleveltext, maxlevelpos, maxlevelorigin, -30, maxlevelfontsize, 0, WHITE);
@@ -257,8 +257,8 @@ void settingsmenu(void) {
 	};
 	Vector2 resolutiontextpos = { 100,200 };
 	char restext[20] = { 0 };
-	int defaultwidth = GetScreenWidth();
-	int defaultheight = GetScreenHeight();
+	int defaultwidth = GetMonitorWidth(GetCurrentMonitor());
+	int defaultheight = GetMonitorHeight(GetCurrentMonitor());
 	sprintf(restext, "Default: %dx%d", defaultwidth, defaultheight);
 	Rectangle restick = { 80,0,840,115 };
 	button defaultres = {
@@ -282,24 +282,31 @@ void settingsmenu(void) {
 		.text = "1366x768",
 		.textcolor = {0,0,0,255}
 	};
-	button _1920x1080res = {
+	button _1600x900res = {
 		.backcolor = {255, 255, 255,255},
 		.frontcolor = {96, 0, 148,255},
 		.position = {100,600,800,75},
+		.text = "1600x900",
+		.textcolor = {0,0,0,255}
+	};
+	button _1920x1080res = {
+		.backcolor = {255, 255, 255,255},
+		.frontcolor = {96, 0, 148,255},
+		.position = {100,700,800,75},
 		.text = "1920x1080",
 		.textcolor = {0,0,0,255}
 	};
 	button _2560x1440res = {
 		.backcolor = {255, 255, 255,255},
 		.frontcolor = {96, 0, 148,255},
-		.position = {100,700,800,75},
+		.position = {100,800,800,75},
 		.text = "2560x1440",
 		.textcolor = {0,0,0,255}
 	};
 	button _3840x2160res = {
 		.backcolor = {255, 255, 255,255},
 		.frontcolor = {96, 0, 148,255},
-		.position = {100,800,800,75},
+		.position = {100,900,800,75},
 		.text = "3840x2160",
 		.textcolor = {0,0,0,255}
 	};
@@ -326,12 +333,15 @@ void settingsmenu(void) {
 					SetWindowSize(1366, 768);
 					break;
 				case 3:
-					SetWindowSize(1920, 1080);
+					SetWindowSize(1600, 900);
 					break;
 				case 4:
-					SetWindowSize(2560, 1440);
+					SetWindowSize(1920, 1080);
 					break;
 				case 5:
+					SetWindowSize(2560, 1440);
+					break;
+				case 6:
 					SetWindowSize(3840, 2160);
 					break;
 				default:
@@ -360,17 +370,21 @@ void settingsmenu(void) {
 			SetWindowSize(1366, 768);
 			reselect = 2;
 		}
+		else if (renderbutton(&_1600x900res, &myfont)) {
+			SetWindowSize(1600, 900);
+			reselect = 3;
+		}
 		else if (renderbutton(&_1920x1080res, &myfont)) {
 			SetWindowSize(1920, 1080);
-			reselect = 3;
+			reselect = 4;
 		}
 		else if (renderbutton(&_2560x1440res, &myfont)) {
 			SetWindowSize(2560, 1440);
-			reselect = 4;
+			reselect = 5;
 		}
 		else if (renderbutton(&_3840x2160res, &myfont)) {
 			SetWindowSize(3840, 2160);
-			reselect = 5;
+			reselect = 6;
 		}
 		restick.y = 280 + (reselect * 100.0f);
 		DrawRectangleLinesEx(restick, 10, WHITE);
