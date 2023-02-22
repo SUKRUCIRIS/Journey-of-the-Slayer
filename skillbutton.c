@@ -25,6 +25,7 @@ Texture2D jumpskilltexture;
 Texture2D moveskilltexture;
 Texture2D fist1texture;
 Texture2D fist2texture;
+Rectangle skillinfo;
 
 int distance[49] = { 0 };
 
@@ -599,7 +600,7 @@ void renderskillbutton(skillbutton* s, void* mainc, void* tileset) {
 		e2.y = shadowskill.y - 30;
 		DrawTextPro(myfont, s->name, e2, e, 0, 20, 0, WHITE);
 		DrawTexturePro(*(s->texture), source, shadowskill, e, 0, WHITE);
-		DrawRectangleLinesEx(shadowskill, 1, WHITE);
+		DrawRectangleLinesEx(shadowskill, 2, WHITE);
 		if (shadowskill.y > 95) {
 			shadowskillanim = -1;
 		}
@@ -618,8 +619,12 @@ void renderskillbutton(skillbutton* s, void* mainc, void* tileset) {
 	e.y = 0;
 	if (s->mouseon) {
 		e2.x = calculateheight(&myfont, s->explanation, s->position->x - 215, s->position->y + 30, 200, 30, 10);
-		DrawRectangle((int)s->position->x - 215, (int)s->position->y - 10, 200, (int)e2.x + 40, skillfrontcolor);
-		DrawRectangleLines((int)s->position->x - 215, (int)s->position->y - 10, 200, (int)e2.x + 40, WHITE);
+		skillinfo.x = s->position->x - 215;
+		skillinfo.y = s->position->y - 10;
+		skillinfo.width = 200;
+		skillinfo.height = e2.x + 40;
+		DrawRectangleRec(skillinfo, skillfrontcolor);
+		DrawRectangleLinesEx(skillinfo, 2, WHITE);
 
 		e2 = MeasureTextEx(myfont, s->name, 40, 0);
 		e2.x = s->position->x - 215 + (200 - e2.x) / 2;

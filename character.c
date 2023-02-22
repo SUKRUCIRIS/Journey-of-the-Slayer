@@ -27,15 +27,15 @@ Vector2 center = { 170,104 };
 char charinfodet[250] = { 0 };
 Rectangle charinfodetback = { 145,40,350,300 };
 Rectangle weaponrect = { 20,200,150,150 };
-Rectangle weaponimrect = { 55,235,80,80 };
+Rectangle weaponimrect = { 55,255,80,80 };
 Rectangle helmetrect = { 20,360,150,150 };
-Rectangle helmetimrect = { 55,395,80,80 };
+Rectangle helmetimrect = { 55,415,80,80 };
 Rectangle chestplatetrect = { 20,520,150,150 };
-Rectangle chestplatetimrect = { 55,555,80,80 };
+Rectangle chestplatetimrect = { 55,575,80,80 };
 Rectangle gauntletsrect = { 20,680,150,150 };
-Rectangle gauntletsimrect = { 55,715,80,80 };
+Rectangle gauntletsimrect = { 55,735,80,80 };
 Rectangle leggingsrect = { 20,840,150,150 };
-Rectangle leggingsimrect = { 55,875,80,80 };
+Rectangle leggingsimrect = { 55,895,80,80 };
 Rectangle weaponinforect = { 175,200,200,300 };
 Rectangle helmetinforect = { 175,360,200,300 };
 Rectangle chestplateinforect = { 175,520,200,300 };
@@ -43,6 +43,10 @@ Rectangle gauntletsinforect = { 175,680,200,300 };
 Rectangle leggingsinforect = { 175,775,200,300 };
 char apblink = 0;
 Color blink = { 48, 131, 74,255 };
+Color legendary = { 231,131,31 ,255 };
+Color epic = { 131,31,231 ,255 };
+Color rare = { 0,131,231 ,255 };
+Color common = { 31,231,0 ,255 };
 //rendercharacterinfo
 
 void loadcharactertextures(void) {
@@ -159,7 +163,9 @@ void rendercharacterinfo(character* c, Font* myfont) {
 	center.y = leggingsrect.y + 2;
 	DrawTextPro(*myfont, "Leggings", center, origin, 0, 30, 0, WHITE);
 	if (c->weaponinfo) {
+		DrawRectangleRec(weaponimrect, legendary);
 		DrawTexturePro(*(c->weaponinfo->texture), *(c->weaponinfo->source), weaponimrect, origin, 0, WHITE);
+		DrawRectangleLinesEx(weaponimrect, 2, WHITE);
 	}
 	else {
 		center = MeasureTextEx(*myfont, "EMPTY", 30, 0);
@@ -168,7 +174,20 @@ void rendercharacterinfo(character* c, Font* myfont) {
 		DrawTextPro(*myfont, "EMPTY", center, origin, 0, 30, 0, WHITE);
 	}
 	if (c->headarmor) {
+		if (c->headarmor->rarity == 0) {
+			DrawRectangleRec(helmetimrect, common);
+		}
+		else if (c->headarmor->rarity == 1) {
+			DrawRectangleRec(helmetimrect, rare);
+		}
+		else if (c->headarmor->rarity == 2) {
+			DrawRectangleRec(helmetimrect, epic);
+		}
+		else if (c->headarmor->rarity == 3) {
+			DrawRectangleRec(helmetimrect, legendary);
+		}
 		DrawTexturePro(*(c->headarmor->texture), c->headarmor->source, helmetimrect, origin, 0, WHITE);
+		DrawRectangleLinesEx(helmetimrect, 2, WHITE);
 	}
 	else {
 		center = MeasureTextEx(*myfont, "EMPTY", 30, 0);
@@ -177,7 +196,20 @@ void rendercharacterinfo(character* c, Font* myfont) {
 		DrawTextPro(*myfont, "EMPTY", center, origin, 0, 30, 0, WHITE);
 	}
 	if (c->torsoarmor) {
+		if (c->torsoarmor->rarity == 0) {
+			DrawRectangleRec(chestplatetimrect, common);
+		}
+		else if (c->torsoarmor->rarity == 1) {
+			DrawRectangleRec(chestplatetimrect, rare);
+		}
+		else if (c->torsoarmor->rarity == 2) {
+			DrawRectangleRec(chestplatetimrect, epic);
+		}
+		else if (c->torsoarmor->rarity == 3) {
+			DrawRectangleRec(chestplatetimrect, legendary);
+		}
 		DrawTexturePro(*(c->torsoarmor->texture), c->torsoarmor->source, chestplatetimrect, origin, 0, WHITE);
+		DrawRectangleLinesEx(chestplatetimrect, 2, WHITE);
 	}
 	else {
 		center = MeasureTextEx(*myfont, "EMPTY", 30, 0);
@@ -186,7 +218,20 @@ void rendercharacterinfo(character* c, Font* myfont) {
 		DrawTextPro(*myfont, "EMPTY", center, origin, 0, 30, 0, WHITE);
 	}
 	if (c->armarmor) {
+		if (c->armarmor->rarity == 0) {
+			DrawRectangleRec(gauntletsimrect, common);
+		}
+		else if (c->armarmor->rarity == 1) {
+			DrawRectangleRec(gauntletsimrect, rare);
+		}
+		else if (c->armarmor->rarity == 2) {
+			DrawRectangleRec(gauntletsimrect, epic);
+		}
+		else if (c->armarmor->rarity == 3) {
+			DrawRectangleRec(gauntletsimrect, legendary);
+		}
 		DrawTexturePro(*(c->armarmor->texture), c->armarmor->source, gauntletsimrect, origin, 0, WHITE);
+		DrawRectangleLinesEx(gauntletsimrect, 2, WHITE);
 	}
 	else {
 		center = MeasureTextEx(*myfont, "EMPTY", 30, 0);
@@ -195,7 +240,20 @@ void rendercharacterinfo(character* c, Font* myfont) {
 		DrawTextPro(*myfont, "EMPTY", center, origin, 0, 30, 0, WHITE);
 	}
 	if (c->legarmor) {
+		if (c->legarmor->rarity == 0) {
+			DrawRectangleRec(leggingsimrect, common);
+		}
+		else if (c->legarmor->rarity == 1) {
+			DrawRectangleRec(leggingsimrect, rare);
+		}
+		else if (c->legarmor->rarity == 2) {
+			DrawRectangleRec(leggingsimrect, epic);
+		}
+		else if (c->legarmor->rarity == 3) {
+			DrawRectangleRec(leggingsimrect, legendary);
+		}
 		DrawTexturePro(*(c->legarmor->texture), c->legarmor->source, leggingsimrect, origin, 0, WHITE);
+		DrawRectangleLinesEx(leggingsimrect, 2, WHITE);
 	}
 	else {
 		center = MeasureTextEx(*myfont, "EMPTY", 30, 0);
@@ -208,7 +266,7 @@ void rendercharacterinfo(character* c, Font* myfont) {
 	center.y = GetMousePosition().y * (1080.0f / GetRenderHeight());
 	if (CheckCollisionPointRec(center, charinfoback)) {
 		DrawRectangleRec(charinfodetback, backcolor);
-		DrawRectangleLinesEx(charinfodetback, 1, WHITE);
+		DrawRectangleLinesEx(charinfodetback, 2, WHITE);
 		center = MeasureTextEx(*myfont, c->name, 30, 0);
 		center.x = charinfodetback.x + ((charinfodetback.width - center.x) / 2);
 		center.y = charinfodetback.y + 2;
@@ -220,7 +278,7 @@ void rendercharacterinfo(character* c, Font* myfont) {
 	}
 	else if (CheckCollisionPointRec(center, weaponrect)) {
 		DrawRectangleRec(weaponinforect, backcolor);
-		DrawRectangleLinesEx(weaponinforect, 1, WHITE);
+		DrawRectangleLinesEx(weaponinforect, 2, WHITE);
 		if (c->weaponinfo) {
 			center = MeasureTextEx(*myfont, c->weaponinfo->name, 30, 0);
 			center.x = weaponinforect.x + ((weaponinforect.width - center.x) / 2);
@@ -238,7 +296,7 @@ void rendercharacterinfo(character* c, Font* myfont) {
 	}
 	else if (CheckCollisionPointRec(center, helmetrect)) {
 		DrawRectangleRec(helmetinforect, backcolor);
-		DrawRectangleLinesEx(helmetinforect, 1, WHITE);
+		DrawRectangleLinesEx(helmetinforect, 2, WHITE);
 		if (c->headarmor) {
 			center = MeasureTextEx(*myfont, c->headarmor->name, 30, 0);
 			center.x = helmetinforect.x + ((helmetinforect.width - center.x) / 2);
@@ -256,7 +314,7 @@ void rendercharacterinfo(character* c, Font* myfont) {
 	}
 	else if (CheckCollisionPointRec(center, chestplatetrect)) {
 		DrawRectangleRec(chestplateinforect, backcolor);
-		DrawRectangleLinesEx(chestplateinforect, 1, WHITE);
+		DrawRectangleLinesEx(chestplateinforect, 2, WHITE);
 		if (c->torsoarmor) {
 			center = MeasureTextEx(*myfont, c->torsoarmor->name, 30, 0);
 			center.x = chestplateinforect.x + ((chestplateinforect.width - center.x) / 2);
@@ -274,7 +332,7 @@ void rendercharacterinfo(character* c, Font* myfont) {
 	}
 	else if (CheckCollisionPointRec(center, gauntletsrect)) {
 		DrawRectangleRec(gauntletsinforect, backcolor);
-		DrawRectangleLinesEx(gauntletsinforect, 1, WHITE);
+		DrawRectangleLinesEx(gauntletsinforect, 2, WHITE);
 		if (c->armarmor) {
 			center = MeasureTextEx(*myfont, c->armarmor->name, 30, 0);
 			center.x = gauntletsinforect.x + ((gauntletsinforect.width - center.x) / 2);
@@ -292,7 +350,7 @@ void rendercharacterinfo(character* c, Font* myfont) {
 	}
 	else if (CheckCollisionPointRec(center, leggingsrect)) {
 		DrawRectangleRec(leggingsinforect, backcolor);
-		DrawRectangleLinesEx(leggingsinforect, 1, WHITE);
+		DrawRectangleLinesEx(leggingsinforect, 2, WHITE);
 		if (c->legarmor) {
 			center = MeasureTextEx(*myfont, c->legarmor->name, 30, 0);
 			center.x = leggingsinforect.x + ((leggingsinforect.width - center.x) / 2);

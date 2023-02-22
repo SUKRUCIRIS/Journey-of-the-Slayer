@@ -141,6 +141,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="armor.c" />
     <ClCompile Include="button.c" />
     <ClCompile Include="character.c" />
     <ClCompile Include="enemy.c" />

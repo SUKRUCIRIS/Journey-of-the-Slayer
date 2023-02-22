@@ -22,6 +22,8 @@ Vector2 position;
 Rectangle portrait = { 1800,700,64,64 };
 //renderenemyinfo
 
+Rectangle enemybar;
+
 void loadenemytextures(void) {
 	hellslimetexture = LoadTexture("data/characters/slime.png");
 	spitterdemontexture = LoadTexture("data/characters/spitterdemon.png");
@@ -245,6 +247,7 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 		v3.x = allenemies[lasti]->m->position.x + allenemies[lasti]->m->position.width - 5;
 		v3.y = v2.y;
 		DrawTriangle(v3, v2, v1, RED);
+		renderwarning(font);
 		renderenemybars();
 		renderallfx();
 		renderwarinfo();
@@ -271,6 +274,7 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 			v3.x = allenemies[lasti]->m->position.x + allenemies[lasti]->m->position.width - 5;
 			v3.y = v2.y;
 			DrawTriangle(v3, v2, v1, RED);
+			renderwarning(font);
 			renderenemybars();
 			renderallfx();
 			renderwarinfo();
@@ -313,6 +317,7 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 		v3.x = allenemies[lasti]->m->position.x + allenemies[lasti]->m->position.width - 5;
 		v3.y = v2.y;
 		DrawTriangle(v3, v2, v1, RED);
+		renderwarning(font);
 		renderenemybars();
 		renderallfx();
 		renderwarinfo();
@@ -336,6 +341,7 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 		v3.x = allenemies[lasti]->m->position.x + allenemies[lasti]->m->position.width - 5;
 		v3.y = v2.y;
 		DrawTriangle(v3, v2, v1, RED);
+		renderwarning(font);
 		renderenemybars();
 		renderallfx();
 		renderwarinfo();
@@ -400,14 +406,16 @@ void enemygivedamage(enemy* c, float x, void* e) {
 }
 
 void enemyheal(enemy* c, float x) {
-	c->health += x;
-	if (x > 0) {
-		char text[20] = { 0 };
-		sprintf(text, "%.1f Heal", x);
-		setwarinfo(text, c->m);
-	}
-	if (c->health > c->maxhealth) {
-		c->health = c->maxhealth;
+	if (c->health < c->maxhealth) {
+		c->health += x;
+		if (x > 0) {
+			char text[20] = { 0 };
+			sprintf(text, "%.1f Heal", x);
+			setwarinfo(text, c->m);
+		}
+		if (c->health > c->maxhealth) {
+			c->health = c->maxhealth;
+		}
 	}
 }
 
@@ -425,7 +433,7 @@ void enemynextturn(enemy* c) {
 void renderenemyinfo(enemy* c, Font* myfont) {
 	if (c->health > 0) {
 		DrawRectangleRec(enemyinfoback, backcolore);
-		DrawRectangleLinesEx(enemyinfoback, 1, WHITE);
+		DrawRectangleLinesEx(enemyinfoback, 2, WHITE);
 		sprintf(enemyinfo, "Health: %.1f/%.1f\nAction Point: %d/%d\nBase Damage: %.1f\nBase Range: %d\nAttack Cost: %dAP\nDamage Reduction: %.1f%%\nDodge Chance: %.1f%%\nCritical Hit Chance: %.1f%%\nDamage Bonus: %.1f%%\nLife Steal: %.1f%%\nHealth Regeneration: %.1f",
 			c->health, c->maxhealth, c->actionpoint, c->maxactionpoint, c->damage, c->range, c->attackap, c->protectperc,
 			c->dodgeperc, c->critichitchance, c->damageincperc, c->lifesteal, c->liferegen);
@@ -450,12 +458,13 @@ void renderchosenenemyinfo(Font* myfont) {
 
 void renderenemybars(void) {
 	for (int i = 0; i < enemynumber; i++) {
-		DrawRectangle(allenemies[i]->m->position.x - 5, allenemies[i]->m->position.y + allenemies[i]->m->position.height + 5,
-			allenemies[i]->m->position.width + 10, 10, BLACK);
-		DrawRectangle(allenemies[i]->m->position.x - 5, allenemies[i]->m->position.y + allenemies[i]->m->position.height + 5,
-			(allenemies[i]->m->position.width + 10) * (allenemies[i]->health / allenemies[i]->maxhealth), 10, RED);
-		DrawRectangleLines(allenemies[i]->m->position.x - 5, allenemies[i]->m->position.y + allenemies[i]->m->position.height + 5,
-			allenemies[i]->m->position.width + 10, 10, WHITE);
+		enemybar.x = allenemies[i]->m->position.x - 5;
+		enemybar.y = allenemies[i]->m->position.y + allenemies[i]->m->position.height + 5;
+		enemybar.width = allenemies[i]->m->position.width + 10;
+		enemybar.height = 12;
+		DrawRectangleRec(enemybar, BLACK);
+		DrawRectangle(enemybar.x, enemybar.y, enemybar.width * (allenemies[i]->health / allenemies[i]->maxhealth), enemybar.height, RED);
+		DrawRectangleLinesEx(enemybar, 2, WHITE);
 	}
 }
 

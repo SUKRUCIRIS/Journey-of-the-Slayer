@@ -6,6 +6,7 @@
 #include "enemy.h"
 #include <stdio.h>
 #include "fx.h"
+#include <stdlib.h>
 
 long long unsigned int maingameloop(long long unsigned int levelx) {
 	loadallfx();
@@ -60,6 +61,14 @@ levelstart:
 		destroycharacter(oldchar);
 	}
 	tilesetintro(tileset, 25, 7, 0.85f);
+	if (rand() % 2 == 0) {
+		enemyturn = 1;
+		setwarning("DEMONS WILL PLAY FIRST");
+	}
+	else {
+		enemyturn = 0;
+		setwarning("YOU WILL PLAY FIRST");
+	}
 	while (1) {
 		BeginTextureMode(target);
 		ClearBackground(BLACK);
