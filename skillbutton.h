@@ -33,6 +33,8 @@ void unloadskillbuttontextures(void);
 
 void renderskillbutton(skillbutton* s, void* mainc, void* tileset);
 
+float calculateheight(Font* font, const char* text, float x, float y, float w, float size, float borderwidth);
+
 skillbutton* getjumpskillbutton(void);
 
 skillbutton* getmoveskillbutton(void);

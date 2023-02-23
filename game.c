@@ -15,6 +15,7 @@ long long unsigned int maingameloop(long long unsigned int levelx) {
 	loadskillbuttontextures();
 	loadcharactertextures();
 	loadweapontextures();
+	loadarmortextures();
 	character* oldchar = 0;
 	char nextlevelexit = 1;
 	char exit = 0;
@@ -193,6 +194,73 @@ levelstart:
 	removewarning();
 	setwarinfofont(&myfont);
 	if (nextlevelexit) {
+		armor* newarmor = createrandomarmor(level);
+		Image ss = LoadImageFromScreen();
+		Texture2D sst = LoadTextureFromImage(ss);
+		Rectangle ssource = { 0,0,ss.width,ss.height };
+		Color bg = { 0,0,0,200 };
+		Rectangle armor1rect = { 310,100,600,700 };
+		Rectangle armor2rect = { 1010,100,600,700 };
+		UnloadImage(ss);
+		button keepoldbutton = {
+		.backcolor = {48, 0, 74,255},
+		.frontcolor = {96, 0, 148,255},
+		.position = {310,900,600,75},
+		.text = "Keep Old Item",
+		.textcolor = {255,255,255,255}
+		};
+		button takenewbutton = {
+		.backcolor = {48, 0, 74,255},
+		.frontcolor = {96, 0, 148,255},
+		.position = {1010,900,600,75},
+		.text = "Take New Item",
+		.textcolor = {255,255,255,255}
+		};
+		while (1) {
+			BeginTextureMode(target);
+			ClearBackground(BLACK);
+			DrawTexturePro(sst, ssource, screen, origin, 0, WHITE);
+			DrawRectangle(0, 0, 1920, 1080, bg);
+			if (newarmor->armortype == 0) {
+				renderarmorinfo(mainc->headarmor, &myfont, &armor1rect);
+			}
+			else if (newarmor->armortype == 1) {
+				renderarmorinfo(mainc->torsoarmor, &myfont, &armor1rect);
+			}
+			else if (newarmor->armortype == 2) {
+				renderarmorinfo(mainc->armarmor, &myfont, &armor1rect);
+			}
+			else if (newarmor->armortype == 3) {
+				renderarmorinfo(mainc->legarmor, &myfont, &armor1rect);
+			}
+			renderarmorinfo(newarmor, &myfont, &armor2rect);
+			if (renderbutton(&keepoldbutton, &myfont)) {
+				break;
+			}
+			else if (renderbutton(&takenewbutton, &myfont)) {
+				if (newarmor->armortype == 0) {
+					armortakeoff(mainc, mainc->headarmor);
+				}
+				else if (newarmor->armortype == 1) {
+					armortakeoff(mainc, mainc->torsoarmor);
+				}
+				else if (newarmor->armortype == 2) {
+					armortakeoff(mainc, mainc->armarmor);
+				}
+				else if (newarmor->armortype == 3) {
+					armortakeoff(mainc, mainc->legarmor);
+				}
+				armorputon(mainc, newarmor);
+				break;
+			}
+			EndTextureMode();
+
+			BeginDrawing();
+			ClearBackground(BLACK);
+			DrawTexturePro(target.texture, targetsource, targetdest, origin, 0, WHITE);
+			EndDrawing();
+		}
+		UnloadTexture(sst);
 		tilesetoutro(tileset, 25, 7, 0.15f);
 	}
 	destroytileset(tileset);
@@ -214,5 +282,6 @@ levelstart:
 	unloadweapontextures();
 	UnloadFont(myfont);
 	destroyallfx();
+	unloadarmortextures();
 	return level;
 }

@@ -11,6 +11,9 @@
 
 char reselect = 0;
 
+int defaultwidth;
+int defaultheight;
+
 long long unsigned int maxlevel = 0;
 char maxleveltext[100] = { 0 };
 Vector2 maxlevelpos = { 50,300 };
@@ -257,8 +260,6 @@ void settingsmenu(void) {
 	};
 	Vector2 resolutiontextpos = { 100,200 };
 	char restext[20] = { 0 };
-	int defaultwidth = GetMonitorWidth(GetCurrentMonitor());
-	int defaultheight = GetMonitorHeight(GetCurrentMonitor());
 	sprintf(restext, "Default: %dx%d", defaultwidth, defaultheight);
 	Rectangle restick = { 80,0,840,115 };
 	button defaultres = {
@@ -399,4 +400,9 @@ void settingsmenu(void) {
 	}
 	UnloadFont(myfont);
 	UnloadRenderTexture(target);
+}
+
+void setdeafultwh(int width, int height) {
+	defaultwidth = width;
+	defaultheight = height;
 }

@@ -480,7 +480,7 @@ void setwarning(const char* text) {
 
 void renderwarning(Font* font) {
 	e = MeasureTextEx(*font, warning, 30, 0);
-	e.x = (GetRenderWidth() - e.x) / 2;
+	e.x = (1920 - e.x) / 2;
 	e.y = 200;
 	e2.x = 0;
 	e2.y = 0;

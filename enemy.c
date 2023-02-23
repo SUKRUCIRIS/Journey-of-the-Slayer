@@ -286,6 +286,9 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 			animation--;
 			if (!isthereanimation() && animation <= 0) {
 				playenemy(mainc, tileset, allenemies[i]);
+				if (((character*)mainc)->health <= 0) {
+					break;
+				}
 				lasti = i;
 			}
 			else {
@@ -352,7 +355,9 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 		EndDrawing();
 	}
 	UnloadRenderTexture(target);
-	characternextturn(mainc);
+	if (((character*)mainc)->health > 0) {
+		characternextturn(mainc);
+	}
 }
 
 enemy** getallenemies(void) {

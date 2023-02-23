@@ -63,3 +63,5 @@ void setwarinfo(const char* text, map_object* m);
 void setwarinfofont(Font* font);
 
 void renderwarinfo(void);
+
+Color* getraritycolor(char rarity);

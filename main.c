@@ -10,6 +10,7 @@
 int main() {
 	srand((unsigned int)time(0));
 	InitWindow(GetScreenWidth(), GetScreenHeight(), u8"ÞÜKRÜ ÇÝRÝÞ GAMES");
+	setdeafultwh(GetScreenWidth(), GetScreenHeight());
 	SetWindowState(FLAG_WINDOW_HIGHDPI | FLAG_VSYNC_HINT | FLAG_WINDOW_ALWAYS_RUN |
 		FLAG_WINDOW_UNDECORATED | FLAG_WINDOW_MAXIMIZED | FLAG_FULLSCREEN_MODE | FLAG_MSAA_4X_HINT);
 	SetExitKey(KEY_NULL);
