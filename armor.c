@@ -222,12 +222,12 @@ void renderarmorinfo(armor* arm, Font* myfont, Rectangle* rec) {
 		DrawTexturePro(*(arm->texture), *arm->source, infotexturerect, originarmor, 0, *arm->tint);
 		DrawRectangleLinesEx(infotexturerect, 2, WHITE);
 
-		vector = MeasureTextEx(*myfont, arm->name, 30, 0);
+		vector = MeasureTextEx(*myfont, arm->name, 40, 0);
 		vector.x = rec->x + ((rec->width - vector.x) / 2);
 		vector.y = infotexturerect.y + infotexturerect.width + 10;
-		DrawTextPro(*myfont, arm->name, vector, originarmor, 0, 30, 0, WHITE);
+		DrawTextPro(*myfont, arm->name, vector, originarmor, 0, 40, 0, WHITE);
 
-		writeinrectangle(myfont, arm->explanation, rec->x, vector.y + 40, rec->width, 30, 10, &WHITE);
+		writeinrectangle(myfont, arm->explanation, rec->x, vector.y + 40, rec->width, 35, 10, &WHITE);
 	}
 	else {
 		vector = MeasureTextEx(*myfont, "EMPTY", 30, 0);

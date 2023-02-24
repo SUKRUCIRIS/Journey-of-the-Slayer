@@ -28,6 +28,10 @@ mainm:
 		settingsmenu();
 		goto mainm;
 	}
+	else if (a == 3) {
+		creditsmenu();
+		goto mainm;
+	}
 	CloseWindow();
 	return 0;
 }

@@ -24,7 +24,7 @@ float fontsizechange = 1;
 button playbutton = {
 	.backcolor = {48, 0, 74,255},
 	.frontcolor = {96, 0, 148,255},
-	.position = {1500,750,400,75},
+	.position = {1500,650,400,75},
 	.text = "NEW JOURNEY",
 	.textcolor = {255,255,255,255}
 };
@@ -32,8 +32,16 @@ button playbutton = {
 button settingsbutton = {
 	.backcolor = {48, 0, 74,255},
 	.frontcolor = {96, 0, 148,255},
-	.position = {1500,850,400,75},
+	.position = {1500,750,400,75},
 	.text = "SETTINGS",
+	.textcolor = {255,255,255,255}
+};
+
+button creditbutton = {
+	.backcolor = {48, 0, 74,255},
+	.frontcolor = {96, 0, 148,255},
+	.position = {1500,850,400,75},
+	.text = "CREDITS",
 	.textcolor = {255,255,255,255}
 };
 
@@ -100,6 +108,9 @@ char mainmenuinput(Font* f, Vector2* a) {
 	}
 	else if (renderbutton(&settingsbutton, f)) {
 		return 2;
+	}
+	else if (renderbutton(&creditbutton, f)) {
+		return 3;
 	}
 	return 111;
 }
@@ -405,4 +416,50 @@ void settingsmenu(void) {
 void setdeafultwh(int width, int height) {
 	defaultwidth = width;
 	defaultheight = height;
+}
+
+void creditsmenu(void) {
+	RenderTexture2D target = LoadRenderTexture(1920, 1080);
+	Rectangle targetsource = { 0,0,1920,-1080 };
+	Rectangle targetdest = { 0,0,(float)GetRenderWidth(),(float)GetRenderHeight() };
+	Vector2 origin = { 0,0 };
+	Font myfont = LoadFontEx("data/fonts/font1.ttf", 70, 0, 0);
+	Font myfont2 = LoadFontEx("data/fonts/font1.ttf", 200, 0, 350);
+	button backbutton = {
+	.backcolor = {48, 0, 74,255},
+	.frontcolor = {96, 0, 148,255},
+	.position = {1680,20,220,75},
+	.text = "BACK",
+	.textcolor = {255,255,255,255}
+	};
+	Vector2 vec = MeasureTextEx(myfont2, "-EVERYTHING-", 50, 0);
+	vec.x = (1920 - vec.x) / 2;
+	vec.y = 1080;
+	Vector2 vec2 = MeasureTextEx(myfont2, u8"ÞÜKRÜ ÇÝRÝÞ", 200, 0);
+	vec2.x = (1920 - vec2.x) / 2;
+	vec2.y = 1120;
+	while (!WindowShouldClose()) {
+		BeginTextureMode(target);
+		ClearBackground(BLACK);
+		if (renderbutton(&backbutton, &myfont)) {
+			break;
+		}
+		DrawTextEx(myfont2, "-EVERYTHING-", vec, 50, 0, WHITE);
+		DrawTextEx(myfont2, u8"ÞÜKRÜ ÇÝRÝÞ", vec2, 200, 0, WHITE);
+		EndTextureMode();
+
+		BeginDrawing();
+		ClearBackground(BLACK);
+		targetdest.width = (float)GetRenderWidth();
+		targetdest.height = (float)GetRenderHeight();
+		DrawTexturePro(target.texture, targetsource, targetdest, origin, 0, WHITE);
+		EndDrawing();
+		if (vec.y > 300) {
+			vec.y--;
+			vec2.y--;
+		}
+	}
+	UnloadFont(myfont);
+	UnloadFont(myfont2);
+	UnloadRenderTexture(target);
 }
