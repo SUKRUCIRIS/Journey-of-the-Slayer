@@ -152,6 +152,7 @@
     <ClCompile Include="menus.c" />
     <ClCompile Include="skillbutton.c" />
     <ClCompile Include="tile.c" />
+    <ClCompile Include="village.c" />
     <ClCompile Include="weapon.c" />
   </ItemGroup>
   <ItemGroup>
@@ -165,6 +166,7 @@
     <ClInclude Include="menus.h" />
     <ClInclude Include="skillbutton.h" />
     <ClInclude Include="tile.h" />
+    <ClInclude Include="village.h" />
     <ClInclude Include="weapon.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

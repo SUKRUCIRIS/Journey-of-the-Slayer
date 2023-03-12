@@ -54,6 +54,8 @@ long long unsigned int maingameloop(long long unsigned int levelx) {
 	tile* tileset = 0;
 	character* mainc = 0;
 	long long unsigned int level = levelx;
+	char leveltext[100] = { 0 };
+	Vector2 leveltextpos = { 0,0 };
 levelstart:
 	tileset = createtileset(7, 192, 0, 0, 1, 3, 0, level);
 	mainc = createcharacter(3, 0, 48, tileset, 7);
@@ -101,6 +103,11 @@ levelstart:
 		renderallfx();
 		renderwarinfo();
 		//game logic end
+		sprintf(leveltext, "Level: %lld", level);
+		leveltextpos=MeasureTextEx(myfont, leveltext, 40, 0);
+		leveltextpos.x = (1920 - leveltextpos.x) / 2;
+		leveltextpos.y = 1050 - leveltextpos.y;
+		DrawTextPro(myfont, leveltext, leveltextpos, origin, 0, 40, 0, WHITE);
 		EndTextureMode();
 
 		if (IsKeyPressed(KEY_ESCAPE)) {

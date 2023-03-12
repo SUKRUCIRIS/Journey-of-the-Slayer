@@ -241,6 +241,31 @@ char mainmenu(long long unsigned int level) {
 		tileset = createtileset(tilex, 192, 0, 0, 1, tilexchar, tileychar, 5);
 		mainc = createcharacter(tilexchar, tileychar, 48, tileset, tilex);
 	}
+	if (x == 1) {
+		Image ss = LoadImageFromScreen();
+		Texture2D sst = LoadTextureFromImage(ss);
+		Rectangle ssource = { 0,0,ss.width,ss.height };
+		UnloadImage(ss);
+		RenderTexture2D target = LoadRenderTexture(1920, 1080);
+		Rectangle targetsource = { 0,0,1920,-1080 };
+		Rectangle targetdest = { 0,0,(float)GetRenderWidth(),(float)GetRenderHeight() };
+		Vector2 origin = { 0,0 };
+		Rectangle screen = { 0,0,1920,1080 };
+		for (int i = 0; i < 120; i++) {
+			BeginTextureMode(target);
+			ClearBackground(BLACK);
+			DrawTexturePro(sst, ssource, screen, origin, 0, WHITE);
+			EndTextureMode();
+
+			BeginDrawing();
+			ClearBackground(BLACK);
+			DrawTexturePro(target.texture, targetsource, targetdest, origin, 0, WHITE);
+			EndDrawing();
+			screen.y += 15;
+		}
+		UnloadTexture(sst);
+		UnloadRenderTexture(target);
+	}
 	destroytileset(tileset);
 	destroycharacter(mainc);
 	deletetiletextures();
