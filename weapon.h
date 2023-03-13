@@ -15,3 +15,7 @@ void loadweapontextures(void);
 void unloadweapontextures(void);
 
 weapon* getfistweapon(void);
+
+weapon* getestocweapon(void);
+
+weapon* getbowweapon(void);

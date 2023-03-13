@@ -327,7 +327,7 @@ skillbutton moveskillbutton = {
 	.passive = 0,
 	.pressed = 0,
 	.mouseon = 0,
-	.explanation = "Use 1 action point for every tile you passed on.",
+	.explanation = "Use 1 action point for every tile Slayer passed on.",
 	.function = &move
 };
 
@@ -349,8 +349,52 @@ skillbutton fist2 = {
 	.passive = 0,
 	.pressed = 0,
 	.mouseon = 0,
-	.explanation = "Use 3 action points to push an enemy and give 5 damage in 1 unit range. If there is no place to push, you give extra 10 damage. If there is another demon behind it, you give 10 damage to it too.",
+	.explanation = "Use 3 action points to push an enemy and give 5 damage in 1 unit range. If there is no place to push, Slayer gives extra 10 damage. If there is another demon behind it, Slayer gives 10 damage to it too.",
 	.function = &fist2skill
+};
+
+skillbutton estoc1 = {
+	.position = &skill1position,
+	.name = "Pierce",
+	.texture = 0,
+	.passive = 0,
+	.pressed = 0,
+	.mouseon = 0,
+	.explanation = "Use 2 action points to give 8 damage in 1 unit range to an enemy and heal Slayer 4 health.",
+	.function = 0
+};
+
+skillbutton estoc2 = {
+	.position = &skill2position,
+	.name = "Impale",
+	.texture = 0,
+	.passive = 0,
+	.pressed = 0,
+	.mouseon = 0,
+	.explanation = "Use 5 action points to give 10 damage in 1 unit range. If the demon dies, Slayer heals as much as the demon's maximum health.",
+	.function = 0
+};
+
+skillbutton bow1 = {
+	.position = &skill1position,
+	.name = "Mighty Shot",
+	.texture = 0,
+	.passive = 0,
+	.pressed = 0,
+	.mouseon = 0,
+	.explanation = "Use 2 action points to give 10 damage in 3 unit range.",
+	.function = 0
+};
+
+skillbutton bow2 = {
+	.position = &skill2position,
+	.name = "Head Shot",
+	.texture = 0,
+	.passive = 0,
+	.pressed = 0,
+	.mouseon = 0,
+	.explanation = "Use 4 action points to give 30 damage in 2 unit range.",
+	.function = 0
 };
 
 Vector2* setmoveanimationpoints(int x, int y, void* tileset, void* mainc, char abs) {
@@ -666,4 +710,20 @@ skillbutton* getfist1skillbutton(void) {
 
 skillbutton* getfist2skillbutton(void) {
 	return &fist2;
+}
+
+skillbutton* getestoc1skillbutton(void) {
+	return &estoc1;
+}
+
+skillbutton* getestoc2skillbutton(void) {
+	return &estoc2;
+}
+
+skillbutton* getbow1skillbutton(void) {
+	return &bow1;
+}
+
+skillbutton* getbow2skillbutton(void) {
+	return &bow2;
 }

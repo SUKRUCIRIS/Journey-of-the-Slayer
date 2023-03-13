@@ -42,3 +42,11 @@ skillbutton* getmoveskillbutton(void);
 skillbutton* getfist1skillbutton(void);
 
 skillbutton* getfist2skillbutton(void);
+
+skillbutton* getestoc1skillbutton(void);
+
+skillbutton* getestoc2skillbutton(void);
+
+skillbutton* getbow1skillbutton(void);
+
+skillbutton* getbow2skillbutton(void);
