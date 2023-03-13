@@ -61,7 +61,7 @@ tile* createtileset(int x, int size, float startx, float starty, char middle, in
 	int seatilen = 0;
 	int enemyn = 0;
 	int villagen = 0;
-	int maxvillagen = rand() % 3 + 2;
+	int maxvillagen = rand() % 3 + 1;
 	if (x != 7) {
 		maxvillagen = 2;
 	}
@@ -145,8 +145,8 @@ tile* createtileset(int x, int size, float startx, float starty, char middle, in
 		}
 		loop = 0;
 		while (villagen < maxvillagen && loop < 100) {
-			seatilen = rand() % 3;
-			x = rand() % 7;
+			seatilen = rand() % 5 + 1;
+			x = rand() % 5 + 1;
 			if (t[x * 7 + seatilen].obstacle == 0 && t[x * 7 + seatilen].type != 2 && !(x == 6 && seatilen == 0)) {
 				createvillage(x, seatilen, 48, t, 7, max(100 - level + rand() % 5, 50 + rand() % 5));
 				villagen++;

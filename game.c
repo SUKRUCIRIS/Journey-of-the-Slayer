@@ -27,7 +27,7 @@ long long unsigned int maingameloop(long long unsigned int levelx) {
 	Rectangle targetdest = { 0,0,(float)GetRenderWidth(),(float)GetRenderHeight() };
 	Vector2 origin = { 0,0 };
 	Rectangle screen = { 0,0,1920,1080 };
-	Color pausecolor = { 0,0,0,200 };
+	Color pausecolor = { 0,0,0,230 };
 	Font myfont = LoadFontEx("data/fonts/font1.ttf", 70, 0, 0);
 	setwarinfofont(&myfont);
 	button menubutton = {
@@ -189,7 +189,7 @@ levelstart:
 					ClearBackground(BLACK);
 					DrawTexturePro(target.texture, targetsource, targetdest, origin, 0, WHITE);
 					EndDrawing();
-					if (bg.a < 200) {
+					if (bg.a < 230) {
 						bg.a += 2;
 					}
 					if (text.a < 255) {
@@ -210,7 +210,7 @@ levelstart:
 		Rectangle ssource = { 0,0,ss.width,ss.height };
 		UnloadImage(ss);
 		char endingtext[100] = { 0 };
-		Color bg = { 0,0,0,200 };
+		Color bg = { 0,0,0,230 };
 		if (leftanyvillage()) {
 			sprintf(endingtext, "Surviving villagers want to reward you an item.");
 			armor* newarmor = createrandomarmor(level);

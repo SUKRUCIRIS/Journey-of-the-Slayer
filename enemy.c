@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "fx.h"
+#include "village.h"
 
 enemy** allenemies = 0;
 
@@ -137,6 +138,35 @@ void destroyallenemies(void) {
 	enemynumber = 0;
 }
 
+void calculateoptimized(character* m, enemy* c, tile* t, int* optimized, int* optimizedi) {
+	int* distance = calculatedistance((int)c->m->tileposition.x, (int)c->m->tileposition.y, t);
+	for (int i = 0; i < 49; i++) {
+		if (distance[i] <= c->actionpoint &&
+			max(abs((int)m->m->tileposition.x - i / 7), abs((int)m->m->tileposition.y - i % 7)) == c->range) {
+			if (*optimized > distance[i]) {
+				*optimized = distance[i];
+				*optimizedi = i;
+			}
+		}
+	}
+	if (*optimized == 1453) {
+		int loop = 0;
+		int distance2[49] = { 0 };
+		memcpy(distance2, distance, sizeof(int) * 49);
+		distance = calculatedistance((int)m->m->tileposition.x, (int)m->m->tileposition.y, t);
+		while (*optimized == 1453 && loop < 100) {
+			for (int i = 0; i < 49; i++) {
+				if (distance2[i] <= c->actionpoint && distance[i] < *optimized) {
+					*optimized = distance[i];
+					*optimizedi = i;
+				}
+			}
+			loop++;
+		}
+		memcpy(distance, distance2, sizeof(int) * 49);
+	}
+}
+
 void playenemy(void* mainc, void* tileset, enemy* c) {
 	if (c->actionpoint == 0 || c->health <= 0) {
 		return;
@@ -149,7 +179,7 @@ void playenemy(void* mainc, void* tileset, enemy* c) {
 	if (max(abs((int)m->m->tileposition.x - (int)c->m->tileposition.x), abs((int)m->m->tileposition.y - (int)c->m->tileposition.y)) <= c->range) {
 		if (c->actionpoint >= c->attackap) {
 			setattackanimation(c->m, m->m);
-			enemygivedamage(c, c->damage, mainc);
+			enemygivedamage(c, c->damage, mainc, 0);
 			c->actionpoint -= c->attackap;
 		}
 		else if (c->health <= (2 * c->maxhealth) / 3) {
@@ -168,34 +198,27 @@ void playenemy(void* mainc, void* tileset, enemy* c) {
 			c->actionpoint -= distance[optimizedi];
 			moveenemy(c, optimizedi / 7, optimizedi % 7, tileset, 7);
 		}
+		return;
 	}
-	else {
+	for (int i = 0; i < getvillagenumber(); i++) {
+		if (max(abs((int)getallvillages()[i]->m->tileposition.x - (int)c->m->tileposition.x),
+			abs((int)getallvillages()[i]->m->tileposition.y - (int)c->m->tileposition.y)) <= c->range) {
+			if (c->actionpoint >= c->attackap) {
+				setattackanimation(c->m, getallvillages()[i]->m);
+				enemygivedamage(c, c->damage, getallvillages()[i], 1);
+				c->actionpoint -= c->attackap;
+			}
+			return;
+		}
+	}
+	{
 		optimized = 1453;
 		distance = calculatedistance((int)c->m->tileposition.x, (int)c->m->tileposition.y, tileset);
-		for (int i = 0; i < 49; i++) {
-			if (distance[i] <= c->actionpoint &&
-				max(abs((int)m->m->tileposition.x - i / 7), abs((int)m->m->tileposition.y - i % 7)) == c->range) {
-				if (optimized > distance[i]) {
-					optimized = distance[i];
-					optimizedi = i;
-				}
+		calculateoptimized(m, c, t, &optimized, &optimizedi);
+		for (int i = 0; i < getvillagenumber(); i++) {
+			if (getallvillages()[i]->m->tileon) {
+				calculateoptimized(getallvillages()[i], c, t, &optimized, &optimizedi);
 			}
-		}
-		if (optimized == 1453) {
-			int loop = 0;
-			int distance2[49] = { 0 };
-			memcpy(distance2, distance, sizeof(int) * 49);
-			distance = calculatedistance((int)m->m->tileposition.x, (int)m->m->tileposition.y, tileset);
-			while (optimized == 1453 && loop < 100) {
-				for (int i = 0; i < 49; i++) {
-					if (distance2[i] <= c->actionpoint && distance[i] < optimized) {
-						optimized = distance[i];
-						optimizedi = i;
-					}
-				}
-				loop++;
-			}
-			memcpy(distance, distance2, sizeof(int) * 49);
 		}
 		if (optimized == 1453) {
 			int loop = 0;
@@ -215,6 +238,7 @@ void playenemy(void* mainc, void* tileset, enemy* c) {
 		addanimationmapobject(c->m, setmoveanimationpoints(optimizedi / 7, optimizedi % 7, tileset, mainc, 1), distance[optimizedi]);
 		c->actionpoint -= distance[optimizedi];
 		moveenemy(c, optimizedi / 7, optimizedi % 7, tileset, 7);
+		return;
 	}
 }
 
@@ -404,13 +428,18 @@ void enemytakedamage(enemy* c, float x) {
 	}
 }
 
-void enemygivedamage(enemy* c, float x, void* e) {
+void enemygivedamage(enemy* c, float x, void* e, char isvillage) {
 	x *= ((100 + c->damageincperc) / 100);
 	if (ishappened(c->critichitchance)) {
 		x *= 2;
 		setwarinfo("CRITICAL HIT", ((character*)e)->m);
 	}
-	charactertakedamage(e, x);
+	if (isvillage) {
+		villagetakedamage(e, x);
+	}
+	else {
+		charactertakedamage(e, x);
+	}
 	enemyheal(c, x * (c->lifesteal / 100));
 }
 

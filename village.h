@@ -20,3 +20,9 @@ void rendervillagebars(void);
 void rendervillageinfos(Font* myfont);
 
 char leftanyvillage(void);
+
+village** getallvillages(void);
+
+int getvillagenumber(void);
+
+void villagetakedamage(village* v, float damage);

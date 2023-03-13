@@ -1,6 +1,8 @@
 #include "village.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include "character.h"
+#include "fx.h"
 
 Texture2D villagetexture;
 
@@ -99,4 +101,34 @@ char leftanyvillage(void) {
 		}
 	}
 	return 0;
+}
+
+village** getallvillages(void) {
+	return allvillages;
+}
+
+int getvillagenumber(void) {
+	return villagenumber;
+}
+
+void villagetakedamage(village* v, float damage) {
+	v->health -= damage;
+	char text[20] = { 0 };
+	sprintf(text, "%.1f Damage", damage);
+	setwarinfo(text, v->m);
+	if (v->health <= 0) {
+		if (v->m->tileon) {
+			Rectangle x = v->m->tileon->absposition;
+			x.y -= 100;
+			addfx(getdeathfx(), &x, 0, 0);
+			v->health = 0;
+			v->m->tileon->obstacle = 0;
+			v->m->position.x = -100;
+			v->m->position.x = -100;
+			v->m->tileposition.x = -100;
+			v->m->tileposition.y = -100;
+			removeanimation(v->m);
+			v->m->tileon = 0;
+		}
+	}
 }

@@ -44,7 +44,7 @@ int getenemynumber(void);
 
 void enemytakedamage(enemy* c, float x);
 
-void enemygivedamage(enemy* c, float x, void* e);
+void enemygivedamage(enemy* c, float x, void* e, char isvillage);
 
 void enemyheal(enemy* c, float x);
 
