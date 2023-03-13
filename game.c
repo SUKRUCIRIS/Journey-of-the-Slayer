@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include "fx.h"
 #include <stdlib.h>
+#include "village.h"
 
 long long unsigned int maingameloop(long long unsigned int levelx) {
 	loadallfx();
@@ -16,6 +17,7 @@ long long unsigned int maingameloop(long long unsigned int levelx) {
 	loadcharactertextures();
 	loadweapontextures();
 	loadarmortextures();
+	loadvillagetextures();
 	character* oldchar = 0;
 	char nextlevelexit = 1;
 	char exit = 0;
@@ -100,11 +102,13 @@ levelstart:
 		renderwarning(&myfont);
 		renderchosenenemyinfo(&myfont);
 		renderenemybars();
+		rendervillagebars();
+		rendervillageinfos(&myfont);
 		renderallfx();
 		renderwarinfo();
 		//game logic end
 		sprintf(leveltext, "Level: %lld", level);
-		leveltextpos=MeasureTextEx(myfont, leveltext, 40, 0);
+		leveltextpos = MeasureTextEx(myfont, leveltext, 40, 0);
 		leveltextpos.x = (1920 - leveltextpos.x) / 2;
 		leveltextpos.y = 1050 - leveltextpos.y;
 		DrawTextPro(myfont, leveltext, leveltextpos, origin, 0, 40, 0, WHITE);
@@ -201,77 +205,105 @@ levelstart:
 	removewarning();
 	setwarinfofont(&myfont);
 	if (nextlevelexit) {
-		armor* newarmor = createrandomarmor(level);
 		Image ss = LoadImageFromScreen();
 		Texture2D sst = LoadTextureFromImage(ss);
 		Rectangle ssource = { 0,0,ss.width,ss.height };
-		Color bg = { 0,0,0,200 };
-		Rectangle armor1rect = { 310,100,600,700 };
-		Rectangle armor2rect = { 1010,100,600,700 };
 		UnloadImage(ss);
-		button keepoldbutton = {
-		.backcolor = {48, 0, 74,255},
-		.frontcolor = {96, 0, 148,255},
-		.position = {310,900,600,75},
-		.text = "Keep Old Item",
-		.textcolor = {255,255,255,255}
-		};
-		button takenewbutton = {
-		.backcolor = {48, 0, 74,255},
-		.frontcolor = {96, 0, 148,255},
-		.position = {1010,900,600,75},
-		.text = "Take New Item",
-		.textcolor = {255,255,255,255}
-		};
-		while (1) {
-			BeginTextureMode(target);
-			ClearBackground(BLACK);
-			DrawTexturePro(sst, ssource, screen, origin, 0, WHITE);
-			DrawRectangle(0, 0, 1920, 1080, bg);
-			if (newarmor->armortype == 0) {
-				renderarmorinfo(mainc->headarmor, &myfont, &armor1rect);
-			}
-			else if (newarmor->armortype == 1) {
-				renderarmorinfo(mainc->torsoarmor, &myfont, &armor1rect);
-			}
-			else if (newarmor->armortype == 2) {
-				renderarmorinfo(mainc->armarmor, &myfont, &armor1rect);
-			}
-			else if (newarmor->armortype == 3) {
-				renderarmorinfo(mainc->legarmor, &myfont, &armor1rect);
-			}
-			renderarmorinfo(newarmor, &myfont, &armor2rect);
-			if (renderbutton(&keepoldbutton, &myfont)) {
-				break;
-			}
-			else if (renderbutton(&takenewbutton, &myfont)) {
+		char endingtext[100] = { 0 };
+		Color bg = { 0,0,0,200 };
+		if (leftanyvillage()) {
+			sprintf(endingtext, "Surviving villagers want to reward you an item.");
+			armor* newarmor = createrandomarmor(level);
+			Rectangle armor1rect = { 310,100,600,700 };
+			Rectangle armor2rect = { 1010,100,600,700 };
+			button keepoldbutton = {
+			.backcolor = {48, 0, 74,255},
+			.frontcolor = {96, 0, 148,255},
+			.position = {310,900,600,75},
+			.text = "Keep Old Item",
+			.textcolor = {255,255,255,255}
+			};
+			button takenewbutton = {
+			.backcolor = {48, 0, 74,255},
+			.frontcolor = {96, 0, 148,255},
+			.position = {1010,900,600,75},
+			.text = "Take New Item",
+			.textcolor = {255,255,255,255}
+			};
+			while (1) {
+				BeginTextureMode(target);
+				ClearBackground(BLACK);
+				DrawTexturePro(sst, ssource, screen, origin, 0, WHITE);
+				DrawRectangle(0, 0, 1920, 1080, bg);
 				if (newarmor->armortype == 0) {
-					armortakeoff(mainc, mainc->headarmor);
+					renderarmorinfo(mainc->headarmor, &myfont, &armor1rect);
 				}
 				else if (newarmor->armortype == 1) {
-					armortakeoff(mainc, mainc->torsoarmor);
+					renderarmorinfo(mainc->torsoarmor, &myfont, &armor1rect);
 				}
 				else if (newarmor->armortype == 2) {
-					armortakeoff(mainc, mainc->armarmor);
+					renderarmorinfo(mainc->armarmor, &myfont, &armor1rect);
 				}
 				else if (newarmor->armortype == 3) {
-					armortakeoff(mainc, mainc->legarmor);
+					renderarmorinfo(mainc->legarmor, &myfont, &armor1rect);
 				}
-				armorputon(mainc, newarmor);
-				break;
-			}
-			EndTextureMode();
+				renderarmorinfo(newarmor, &myfont, &armor2rect);
+				if (renderbutton(&keepoldbutton, &myfont)) {
+					break;
+				}
+				else if (renderbutton(&takenewbutton, &myfont)) {
+					if (newarmor->armortype == 0) {
+						armortakeoff(mainc, mainc->headarmor);
+					}
+					else if (newarmor->armortype == 1) {
+						armortakeoff(mainc, mainc->torsoarmor);
+					}
+					else if (newarmor->armortype == 2) {
+						armortakeoff(mainc, mainc->armarmor);
+					}
+					else if (newarmor->armortype == 3) {
+						armortakeoff(mainc, mainc->legarmor);
+					}
+					armorputon(mainc, newarmor);
+					break;
+				}
+				leveltextpos = MeasureTextEx(myfont, endingtext, 40, 0);
+				leveltextpos.x = (1920 - leveltextpos.x) / 2;
+				leveltextpos.y = 40;
+				DrawTextEx(myfont, endingtext, leveltextpos, 40, 0, WHITE);
+				EndTextureMode();
 
-			BeginDrawing();
-			ClearBackground(BLACK);
-			DrawTexturePro(target.texture, targetsource, targetdest, origin, 0, WHITE);
-			EndDrawing();
+				BeginDrawing();
+				ClearBackground(BLACK);
+				DrawTexturePro(target.texture, targetsource, targetdest, origin, 0, WHITE);
+				EndDrawing();
+			}
+		}
+		else {
+			sprintf(endingtext, "All villagers died.");
+			for (int i = 0; i < 180; i++) {
+				BeginTextureMode(target);
+				ClearBackground(BLACK);
+				DrawTexturePro(sst, ssource, screen, origin, 0, WHITE);
+				DrawRectangle(0, 0, 1920, 1080, bg);
+				leveltextpos = MeasureTextEx(myfont, endingtext, 40, 0);
+				leveltextpos.x = (1920 - leveltextpos.x) / 2;
+				leveltextpos.y = (1080 - leveltextpos.y) / 2;
+				DrawTextEx(myfont, endingtext, leveltextpos, 40, 0, WHITE);
+				EndTextureMode();
+
+				BeginDrawing();
+				ClearBackground(BLACK);
+				DrawTexturePro(target.texture, targetsource, targetdest, origin, 0, WHITE);
+				EndDrawing();
+			}
 		}
 		UnloadTexture(sst);
 		tilesetoutro(tileset, 25, 7, 0.15f);
 	}
 	destroytileset(tileset);
 	destroyallenemies();
+	destroyallvillages();
 	destroyallmapobjects();
 	mainc->m = 0;
 	if (nextlevelexit && mainc->health > 0) {
@@ -290,5 +322,6 @@ levelstart:
 	UnloadFont(myfont);
 	destroyallfx();
 	unloadarmortextures();
+	unloadvillagetextures();
 	return level;
 }

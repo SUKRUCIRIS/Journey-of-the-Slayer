@@ -215,6 +215,7 @@ char mainmenu(long long unsigned int level) {
 	loadtiletextures();
 	loadenemytextures();
 	loadcharactertextures();
+	loadvillagetextures();
 	Font myfont = LoadFontEx("data/fonts/font1.ttf", 70, 0, 0);
 	tile* tileset = createtileset(4, 192, 0, 0, 1, 1, 1, 5);
 	character* mainc = createcharacter(1, 1, 48, tileset, 4);
@@ -234,6 +235,7 @@ char mainmenu(long long unsigned int level) {
 		destroytileset(tileset);
 		destroycharacter(mainc);
 		destroyallenemies();
+		destroyallvillages();
 		destroyallmapobjects();
 		tilex = rand() % 3 + 2;
 		tilexchar = rand() % tilex;
@@ -272,8 +274,10 @@ char mainmenu(long long unsigned int level) {
 	UnloadFont(myfont);
 	unloadenemytextures();
 	destroyallenemies();
+	destroyallvillages();
 	unloadcharactertextures();
 	destroyallmapobjects();
+	unloadvillagetextures();
 	return x;
 }
 

@@ -6,6 +6,7 @@
 #include <math.h>
 #include "skillbutton.h"
 #include "enemy.h"
+#include "village.h"
 
 Vector2 a, b, c, d, e;
 
@@ -59,6 +60,11 @@ tile* createtileset(int x, int size, float startx, float starty, char middle, in
 	}
 	int seatilen = 0;
 	int enemyn = 0;
+	int villagen = 0;
+	int maxvillagen = rand() % 3 + 2;
+	if (x != 7) {
+		maxvillagen = 2;
+	}
 	int* rows = malloc(sizeof(int) * x);
 	int* columns = malloc(sizeof(int) * x);
 	for (int i = 0; i < x; i++) {
@@ -104,6 +110,10 @@ tile* createtileset(int x, int size, float startx, float starty, char middle, in
 					createrandomenemy(i, i2, 48, t, x, rand() % MAX_ENEMY_TYPES, level);
 					enemyn++;
 				}
+				else if (x != 7 && rand() % 3 == 1 && villagen < maxvillagen && max(abs(tilexchar - i), abs(tileychar - i2)) > 0) {
+					createvillage(i, i2, 48, t, x, max(100 - level + rand() % 5, 50 + rand() % 5));
+					villagen++;
+				}
 			}
 		}
 	}
@@ -119,6 +129,9 @@ tile* createtileset(int x, int size, float startx, float starty, char middle, in
 					if (level == 0) {
 						createrandomenemy(x, seatilen, 48, t, 7, 0, level);
 					}
+					else if (level == 1) {
+						createrandomenemy(x, seatilen, 48, t, 7, rand() % 2, level);
+					}
 					else {
 						createrandomenemy(x, seatilen, 48, t, 7, rand() % level, level);
 					}
@@ -127,6 +140,16 @@ tile* createtileset(int x, int size, float startx, float starty, char middle, in
 					createrandomenemy(x, seatilen, 48, t, 7, rand() % MAX_ENEMY_TYPES, level);
 				}
 				enemyn++;
+			}
+			loop++;
+		}
+		loop = 0;
+		while (villagen < maxvillagen && loop < 100) {
+			seatilen = rand() % 3;
+			x = rand() % 7;
+			if (t[x * 7 + seatilen].obstacle == 0 && t[x * 7 + seatilen].type != 2 && !(x == 6 && seatilen == 0)) {
+				createvillage(x, seatilen, 48, t, 7, max(100 - level + rand() % 5, 50 + rand() % 5));
+				villagen++;
 			}
 			loop++;
 		}

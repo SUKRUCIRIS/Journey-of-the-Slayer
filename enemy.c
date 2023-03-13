@@ -249,6 +249,7 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 		DrawTriangle(v3, v2, v1, RED);
 		renderwarning(font);
 		renderenemybars();
+		rendervillagebars();
 		renderallfx();
 		renderwarinfo();
 		EndTextureMode();
@@ -276,6 +277,7 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 			DrawTriangle(v3, v2, v1, RED);
 			renderwarning(font);
 			renderenemybars();
+			rendervillagebars();
 			renderallfx();
 			renderwarinfo();
 			EndTextureMode();
@@ -322,6 +324,7 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 		DrawTriangle(v3, v2, v1, RED);
 		renderwarning(font);
 		renderenemybars();
+		rendervillagebars();
 		renderallfx();
 		renderwarinfo();
 		EndTextureMode();
@@ -346,6 +349,7 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 		DrawTriangle(v3, v2, v1, RED);
 		renderwarning(font);
 		renderenemybars();
+		rendervillagebars();
 		renderallfx();
 		renderwarinfo();
 		EndTextureMode();

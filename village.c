@@ -31,6 +31,7 @@ village* createvillage(int tilex, int tiley, float size, tile* tileset, int x, f
 		vil->m = createmapobject(&villagetexture, tilex, tiley, size, tileset, x, 0, 0, 16, 16);
 		vil->health = health;
 		vil->maxhealth = health;
+		vil->m->tileon->obstacle = 1;
 		village** allvillages2 = malloc(sizeof(village*) * (villagenumber + 1));
 		if (allvillages2) {
 			for (int i = 0; i < villagenumber; i++) {
@@ -89,4 +90,13 @@ void rendervillageinfos(Font* myfont) {
 			}
 		}
 	}
+}
+
+char leftanyvillage(void) {
+	for (int i = 0; i < villagenumber; i++) {
+		if (allvillages[i]->health > 0) {
+			return 1;
+		}
+	}
+	return 0;
 }

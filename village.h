@@ -18,3 +18,5 @@ void destroyallvillages(void);
 void rendervillagebars(void);
 
 void rendervillageinfos(Font* myfont);
+
+char leftanyvillage(void);
