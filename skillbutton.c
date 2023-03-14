@@ -309,6 +309,98 @@ char fist2skill(tile* tileset, character* mainc) {
 	return 2;
 }
 
+char estoc1skill(tile* tileset, character* mainc) {
+	setcharacterapblink(0);
+	if (mainc->actionpoint >= 2) {
+		int x = enemyselector(1, mainc, tileset, 2);
+		if (x >= 0) {
+			charactergivedamage(mainc, 8, getallenemies()[x]);
+			characterheal(mainc, 4);
+			mainc->actionpoint -= 2;
+			if (getallenemies()[x]->health > 0) {
+				setattackanimation(mainc->m, getallenemies()[x]->m);
+			}
+			return 1;
+		}
+		else {
+			return x;
+		}
+	}
+	else {
+		return 0;
+	}
+	return 2;
+}
+
+char estoc2skill(tile* tileset, character* mainc) {
+	setcharacterapblink(0);
+	if (mainc->actionpoint >= 5) {
+		int x = enemyselector(1, mainc, tileset, 5);
+		if (x >= 0) {
+			charactergivedamage(mainc, 10, getallenemies()[x]);
+			if (getallenemies()[x]->health <= 0) {
+				characterheal(mainc, getallenemies()[x]->maxhealth);
+			}
+			mainc->actionpoint -= 5;
+			if (getallenemies()[x]->health > 0) {
+				setattackanimation(mainc->m, getallenemies()[x]->m);
+			}
+			return 1;
+		}
+		else {
+			return x;
+		}
+	}
+	else {
+		return 0;
+	}
+	return 2;
+}
+
+char bow1skill(tile* tileset, character* mainc) {
+	setcharacterapblink(0);
+	if (mainc->actionpoint >= 2) {
+		int x = enemyselector(3, mainc, tileset, 2);
+		if (x >= 0) {
+			charactergivedamage(mainc, 8, getallenemies()[x]);
+			mainc->actionpoint -= 2;
+			if (getallenemies()[x]->health > 0) {
+				setattackanimation(mainc->m, getallenemies()[x]->m);
+			}
+			return 1;
+		}
+		else {
+			return x;
+		}
+	}
+	else {
+		return 0;
+	}
+	return 2;
+}
+
+char bow2skill(tile* tileset, character* mainc) {
+	setcharacterapblink(0);
+	if (mainc->actionpoint >= 4) {
+		int x = enemyselector(2, mainc, tileset, 4);
+		if (x >= 0) {
+			charactergivedamage(mainc, 24, getallenemies()[x]);
+			mainc->actionpoint -= 4;
+			if (getallenemies()[x]->health > 0) {
+				setattackanimation(mainc->m, getallenemies()[x]->m);
+			}
+			return 1;
+		}
+		else {
+			return x;
+		}
+	}
+	else {
+		return 0;
+	}
+	return 2;
+}
+
 skillbutton jumpskillbutton = {
 	.position = &jumpskillposition,
 	.name = "Jump",
@@ -361,7 +453,7 @@ skillbutton estoc1 = {
 	.pressed = 0,
 	.mouseon = 0,
 	.explanation = "Use 2 action points to give 8 damage in 1 unit range to an enemy and heal Slayer 4 health.",
-	.function = 0
+	.function = &estoc1skill
 };
 
 skillbutton estoc2 = {
@@ -372,7 +464,7 @@ skillbutton estoc2 = {
 	.pressed = 0,
 	.mouseon = 0,
 	.explanation = "Use 5 action points to give 10 damage in 1 unit range. If the demon dies, Slayer heals as much as the demon's maximum health.",
-	.function = 0
+	.function = &estoc2skill
 };
 
 skillbutton bow1 = {
@@ -382,8 +474,8 @@ skillbutton bow1 = {
 	.passive = 0,
 	.pressed = 0,
 	.mouseon = 0,
-	.explanation = "Use 2 action points to give 10 damage in 3 unit range.",
-	.function = 0
+	.explanation = "Use 2 action points to give 8 damage in 3 unit range.",
+	.function = &bow1skill
 };
 
 skillbutton bow2 = {
@@ -393,8 +485,8 @@ skillbutton bow2 = {
 	.passive = 0,
 	.pressed = 0,
 	.mouseon = 0,
-	.explanation = "Use 4 action points to give 30 damage in 2 unit range.",
-	.function = 0
+	.explanation = "Use 4 action points to give 24 damage in 2 unit range.",
+	.function = &bow2skill
 };
 
 Vector2* setmoveanimationpoints(int x, int y, void* tileset, void* mainc, char abs) {
