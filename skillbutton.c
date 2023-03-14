@@ -25,6 +25,10 @@ Texture2D jumpskilltexture;
 Texture2D moveskilltexture;
 Texture2D fist1texture;
 Texture2D fist2texture;
+Texture2D estoc1texture;
+Texture2D estoc2texture;
+Texture2D bow1texture;
+Texture2D bow2texture;
 Rectangle skillinfo;
 
 int distance[49] = { 0 };
@@ -448,7 +452,7 @@ skillbutton fist2 = {
 skillbutton estoc1 = {
 	.position = &skill1position,
 	.name = "Pierce",
-	.texture = 0,
+	.texture = &estoc1texture,
 	.passive = 0,
 	.pressed = 0,
 	.mouseon = 0,
@@ -459,7 +463,7 @@ skillbutton estoc1 = {
 skillbutton estoc2 = {
 	.position = &skill2position,
 	.name = "Impale",
-	.texture = 0,
+	.texture = &estoc2texture,
 	.passive = 0,
 	.pressed = 0,
 	.mouseon = 0,
@@ -470,7 +474,7 @@ skillbutton estoc2 = {
 skillbutton bow1 = {
 	.position = &skill1position,
 	.name = "Mighty Shot",
-	.texture = 0,
+	.texture = &bow1texture,
 	.passive = 0,
 	.pressed = 0,
 	.mouseon = 0,
@@ -481,7 +485,7 @@ skillbutton bow1 = {
 skillbutton bow2 = {
 	.position = &skill2position,
 	.name = "Head Shot",
-	.texture = 0,
+	.texture = &bow2texture,
 	.passive = 0,
 	.pressed = 0,
 	.mouseon = 0,
@@ -777,6 +781,10 @@ void loadskillbuttontextures(void) {
 	moveskilltexture = LoadTexture("data/skills/moveskill.png");
 	fist1texture = LoadTexture("data/skills/fist1.png");
 	fist2texture = LoadTexture("data/skills/fist2.png");
+	estoc1texture = LoadTexture("data/skills/estoc1.png");
+	estoc2texture = LoadTexture("data/skills/estoc2.png");
+	bow1texture = LoadTexture("data/skills/bow1.png");
+	bow2texture = LoadTexture("data/skills/bow2.png");
 	myfont = LoadFontEx("data/fonts/font1.ttf", 40, 0, 0);
 }
 
@@ -785,6 +793,10 @@ void unloadskillbuttontextures(void) {
 	UnloadTexture(moveskilltexture);
 	UnloadTexture(fist1texture);
 	UnloadTexture(fist2texture);
+	UnloadTexture(estoc1texture);
+	UnloadTexture(estoc2texture);
+	UnloadTexture(bow1texture);
+	UnloadTexture(bow2texture);
 	UnloadFont(myfont);
 }
 
