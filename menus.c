@@ -209,9 +209,31 @@ char tilesetoutromainmenu(tile* t, int speed, int x, float ratio, Font* f, Vecto
 	return 111;
 }
 
+long long unsigned int readsavefile(void) {
+	FILE* f = 0;
+	f = fopen("data/savefile/slayer.save", "rb");
+	long long unsigned int x = 0;
+	fscanf(f, "%llu", &x);
+	fclose(f);
+	return x;
+}
+
+void writesavefile(long long unsigned int level) {
+	FILE* f = 0;
+	f = fopen("data/savefile/slayer.save", "wb");
+	fprintf(f, "%llu", level);
+	fclose(f);
+}
+
 char mainmenu(long long unsigned int level) {
 	if (level > maxlevel) {
 		maxlevel = level;
+	}
+	if (readsavefile() > maxlevel) {
+		maxlevel = readsavefile();
+	}
+	else {
+		writesavefile(maxlevel);
 	}
 	loadtiletextures();
 	loadenemytextures();
