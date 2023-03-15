@@ -19,3 +19,7 @@ weapon* getfistweapon(void);
 weapon* getestocweapon(void);
 
 weapon* getbowweapon(void);
+
+weapon* getrandomweaponwithoutfist(void);
+
+void renderweaponinfo(weapon* w, Font* myfont, Rectangle* rec, void* mainc, void* tileset);

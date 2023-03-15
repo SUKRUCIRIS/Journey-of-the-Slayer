@@ -42,7 +42,7 @@ enemy** getallenemies(void);
 
 int getenemynumber(void);
 
-void enemytakedamage(enemy* c, float x);
+float enemytakedamage(enemy* c, float x);
 
 void enemygivedamage(enemy* c, float x, void* e, char isvillage);
 

@@ -702,7 +702,8 @@ void renderskillbutton(skillbutton* s, void* mainc, void* tileset) {
 	s->mouseon = 0;
 	if (CheckCollisionPointRec(e, *(s->position))) {
 		s->mouseon = 1;
-		if (!(s->passive) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+		if (!(s->passive) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && (s->position == &jumpskillposition || s->position == &moveskillposition ||
+			s->position == &skill1position || s->position == &skill2position)) {
 			s->pressed = 1;
 			if (((character*)mainc)->jumpskill != s) {
 				((character*)mainc)->jumpskill->pressed = 0;
@@ -763,15 +764,18 @@ void renderskillbutton(skillbutton* s, void* mainc, void* tileset) {
 		skillinfo.y = s->position->y - 10;
 		skillinfo.width = 200;
 		skillinfo.height = e2.x + 40;
+		if (skillinfo.y + skillinfo.height >= 1080) {
+			skillinfo.y = 1060 - skillinfo.height;
+		}
 		DrawRectangleRec(skillinfo, skillfrontcolor);
 		DrawRectangleLinesEx(skillinfo, 2, WHITE);
 
 		e2 = MeasureTextEx(myfont, s->name, 40, 0);
-		e2.x = s->position->x - 215 + (200 - e2.x) / 2;
-		e2.y = s->position->y - 8;
+		e2.x = skillinfo.x + (200 - e2.x) / 2;
+		e2.y = skillinfo.y + 2;
 		DrawTextPro(myfont, s->name, e2, e, 0, 40, 0, WHITE);
 
-		writeinrectangle(&myfont, s->explanation, s->position->x - 215, s->position->y + 30, 200, 30, 10, &WHITE);
+		writeinrectangle(&myfont, s->explanation, skillinfo.x, skillinfo.y + 40, 200, 30, 10, &WHITE);
 	}
 	DrawTexturePro(*(s->texture), source, *(s->position), e, 0, WHITE);
 }

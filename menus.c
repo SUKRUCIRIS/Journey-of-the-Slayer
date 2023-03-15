@@ -8,6 +8,7 @@
 #include "button.h"
 #include <stdio.h>
 #include "enemy.h"
+#include "village.h"
 
 char reselect = 0;
 

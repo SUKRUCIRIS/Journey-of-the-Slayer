@@ -42,58 +42,56 @@ enemy* createrandomenemy(int tilex, int tiley, float size, tile* tileset, int x,
 	if (c) {
 		if (type == 0) {
 			c->m = createmapobject(&hellslimetexture, tilex, tiley, size, tileset, x, 0, 0, 16, 16);
-			c->maxhealth = rand() % 20 + 15.0f + level;
+			c->maxhealth = rand() % 10 + 11.0f + level;
 			c->health = c->maxhealth;
 			c->maxactionpoint = 4;
 			c->actionpoint = c->maxactionpoint;
-			c->lifesteal = rand() % 5 + 1.0f;
-			c->liferegen = rand() % 5 + 1.0f;
-			c->damageincperc = rand() % 5 + 1.0f;
-			c->protectperc = rand() % 5 + 1.0f;
-			c->dodgeperc = min(rand() % 20 + 5.0f + level / 5.0f, 50);
+			c->lifesteal = rand() % 3 + 1.0f;
+			c->liferegen = rand() % 3 + 1.0f;
+			c->damageincperc = rand() % 3 + 1.0f;
+			c->protectperc = rand() % 3 + 1.0f;
+			c->dodgeperc = min(rand() % 3 + 5.0f + level / 5.0f, 50 + rand() % 2);
 			c->critichitchance = rand() % 5 + 1.0f;
 			c->range = 1;
-			c->damage = min(3.0f + (level / 5.0f) + rand() % 4, 50 + rand() % 4);
+			c->damage = min(3.0f + (level / 5.0f) + rand() % 4, 45 + rand() % 4);
 			c->attackap = 2;
 			strcpy(c->name, "Hell Slime");
-			tileset[(tilex * x) + tiley].obstacle = 1;
 		}
 		else if (type == 1) {
 			c->m = createmapobject(&spitterdemontexture, tilex, tiley, size, tileset, x, 0, 0, 16, 16);
-			c->maxhealth = rand() % 20 + 20.0f + level;
+			c->maxhealth = rand() % 10 + 15.0f + level;
 			c->health = c->maxhealth;
 			c->maxactionpoint = 4;
 			c->actionpoint = c->maxactionpoint;
-			c->lifesteal = rand() % 5 + 1.0f;
-			c->liferegen = rand() % 5 + 1.0f;
-			c->damageincperc = rand() % 5 + 1.0f;
-			c->protectperc = rand() % 5 + 1.0f;
-			c->dodgeperc = min(rand() % 10 + 3.0f + level / 5.0f, 50);
-			c->critichitchance = min(rand() % 10 + 3.0f + level / 5.0f, 50);
+			c->lifesteal = rand() % 3 + 1.0f;
+			c->liferegen = rand() % 3 + 1.0f;
+			c->damageincperc = rand() % 3 + 1.0f;
+			c->protectperc = rand() % 3 + 1.0f;
+			c->dodgeperc = min(rand() % 3 + 3.0f + level / 5.0f, 50 + rand() % 2);
+			c->critichitchance = min(rand() % 3 + 3.0f + level / 5.0f, 50 + rand() % 2);
 			c->range = 2 + rand() % 2;
 			c->damage = min(3.0f + (level / 5.0f) + rand() % 4, 50 + rand() % 4);
 			c->attackap = 2;
 			strcpy(c->name, "Spitter Demon");
-			tileset[(tilex * x) + tiley].obstacle = 1;
 		}
 		else if (type == 2) {
 			c->m = createmapobject(&cageddemontexture, tilex, tiley, size, tileset, x, 0, 0, 16, 16);
-			c->maxhealth = rand() % 20 + 30.0f + level;
+			c->maxhealth = rand() % 10 + 20.0f + level;
 			c->health = c->maxhealth;
 			c->maxactionpoint = 4;
 			c->actionpoint = c->maxactionpoint;
-			c->lifesteal = rand() % 5 + 1.0f;
-			c->liferegen = rand() % 5 + 2.0f;
-			c->damageincperc = rand() % 5 + 1.0f;
-			c->protectperc = min(rand() % 20 + 5.0f + level / 5.0f, 50);
-			c->dodgeperc = rand() % 5 + 1.0f;
-			c->critichitchance = rand() % 5 + 1.0f;
+			c->lifesteal = rand() % 3 + 1.0f;
+			c->liferegen = rand() % 3 + 2.0f;
+			c->damageincperc = rand() % 3 + 1.0f;
+			c->protectperc = min(rand() % 3 + 5.0f + level / 5.0f, 50 + rand() % 2);
+			c->dodgeperc = rand() % 3 + 1.0f;
+			c->critichitchance = rand() % 3 + 1.0f;
 			c->range = 1;
-			c->damage = min(3.0f + (level / 5.0f) + rand() % 4, 50 + rand() % 4);
+			c->damage = min(3.0f + (level / 5.0f) + rand() % 4, 40 + rand() % 4);
 			c->attackap = 2;
 			strcpy(c->name, "Caged Demon");
-			tileset[(tilex * x) + tiley].obstacle = 1;
 		}
+		tileset[(tilex * x) + tiley].obstacle = 1;
 		enemy** allenemies2 = malloc(sizeof(map_object*) * (enemynumber + 1));
 		for (int i = 0; i < enemynumber; i++) {
 			allenemies2[i] = allenemies[i];
@@ -412,7 +410,7 @@ void killenemy(enemy* c) {
 	}
 }
 
-void enemytakedamage(enemy* c, float x) {
+float enemytakedamage(enemy* c, float x) {
 	if (!ishappened(c->dodgeperc)) {
 		x = x * ((100 - c->protectperc) / 100);
 		c->health -= x;
@@ -422,9 +420,11 @@ void enemytakedamage(enemy* c, float x) {
 		if (c->health <= 0) {
 			killenemy(c);
 		}
+		return x;
 	}
 	else {
 		setwarinfo("Dodged", c->m);
+		return 0;
 	}
 }
 
@@ -438,7 +438,7 @@ void enemygivedamage(enemy* c, float x, void* e, char isvillage) {
 		villagetakedamage(e, x);
 	}
 	else {
-		charactertakedamage(e, x);
+		x = charactertakedamage(e, x);
 	}
 	enemyheal(c, x * (c->lifesteal / 100));
 }

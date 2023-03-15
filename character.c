@@ -371,16 +371,18 @@ char ishappened(float percentage) {
 	return (rand() / (float)RAND_MAX) * 100 <= percentage;
 }
 
-void charactertakedamage(character* c, float x) {
+float charactertakedamage(character* c, float x) {
 	if (!ishappened(c->dodgeperc)) {
 		x = x * ((100 - c->protectperc) / 100);
 		c->health -= x;
 		char text[20] = { 0 };
 		sprintf(text, "%.1f Damage", x);
 		setwarinfo(text, c->m);
+		return x;
 	}
 	else {
 		setwarinfo("Dodged", c->m);
+		return 0;
 	}
 }
 
@@ -390,19 +392,21 @@ void charactergivedamage(character* c, float x, enemy* e) {
 		x *= 2;
 		setwarinfo("CRITICAL HIT", e->m);
 	}
-	enemytakedamage(e, x);
+	x = enemytakedamage(e, x);
 	characterheal(c, x * (c->lifesteal / 100));
 }
 
 void characterheal(character* c, float x) {
-	c->health += x;
-	if (x > 0) {
-		char text[20] = { 0 };
-		sprintf(text, "%.1f Heal", x);
-		setwarinfo(text, c->m);
-	}
-	if (c->health > c->maxhealth) {
-		c->health = c->maxhealth;
+	if (c->health < c->maxhealth) {
+		c->health += x;
+		if (x > 0) {
+			char text[20] = { 0 };
+			sprintf(text, "%.1f Heal", x);
+			setwarinfo(text, c->m);
+		}
+		if (c->health > c->maxhealth) {
+			c->health = c->maxhealth;
+		}
 	}
 }
 

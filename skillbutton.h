@@ -2,7 +2,7 @@
 #include <raylib.h>
 
 typedef struct skillbutton {
-	const Rectangle* position;
+	Rectangle* position;
 	const char* name;
 	const Texture2D* texture;
 	const char passive;

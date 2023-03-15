@@ -74,6 +74,12 @@ levelstart:
 		enemyturn = 0;
 		setwarning("YOU WILL PLAY FIRST");
 	}
+	mainc->jumpskill->pressed = 0;
+	mainc->moveskill->pressed = 0;
+	if (mainc->weaponinfo) {
+		mainc->weaponinfo->skill1->pressed = 0;
+		mainc->weaponinfo->skill2->pressed = 0;
+	}
 	while (1) {
 		BeginTextureMode(target);
 		ClearBackground(BLACK);
@@ -95,6 +101,12 @@ levelstart:
 		else {
 			playallenemies(mainc, tileset, &myfont);
 			enemyturn = 0;
+			mainc->jumpskill->pressed = 0;
+			mainc->moveskill->pressed = 0;
+			if (mainc->weaponinfo) {
+				mainc->weaponinfo->skill1->pressed = 0;
+				mainc->weaponinfo->skill2->pressed = 0;
+			}
 			continue;
 		}
 		renderallmapobjects();
@@ -205,6 +217,7 @@ levelstart:
 	removewarning();
 	setwarinfofont(&myfont);
 	if (nextlevelexit) {
+		mainc->actionpoint = mainc->maxactionpoint;
 		Image ss = LoadImageFromScreen();
 		Texture2D sst = LoadTextureFromImage(ss);
 		Rectangle ssource = { 0,0,ss.width,ss.height };
@@ -213,7 +226,6 @@ levelstart:
 		Color bg = { 0,0,0,230 };
 		if (leftanyvillage()) {
 			sprintf(endingtext, "Surviving villagers want to reward you an item.");
-			armor* newarmor = createrandomarmor(level);
 			Rectangle armor1rect = { 310,100,600,700 };
 			Rectangle armor2rect = { 1010,100,600,700 };
 			button keepoldbutton = {
@@ -230,7 +242,52 @@ levelstart:
 			.text = "Take New Item",
 			.textcolor = {255,255,255,255}
 			};
-			while (1) {
+			char armorx = 1;
+			weapon* neweapon = getestocweapon();
+			if (level == 3) {
+				armorx = 0;
+			}
+			else if (level == 6) {
+				armorx = 0;
+				neweapon = getbowweapon();
+			}
+			else if (level > 6) {
+				if (mainc->weaponinfo != getfistweapon() && rand() % 25 == 1) {
+					armorx = 0;
+					int loop = 0;
+					while (neweapon == mainc->weaponinfo && loop < 100) {
+						neweapon = getrandomweaponwithoutfist();
+						loop++;
+					}
+				}
+				else if (mainc->weaponinfo == getfistweapon() && rand() % 5 == 1) {
+					armorx = 0;
+					int loop = 0;
+					while (neweapon == mainc->weaponinfo && loop < 100) {
+						neweapon = getrandomweaponwithoutfist();
+						loop++;
+					}
+				}
+			}
+			armor* newarmor = 0;
+			if (armorx) {
+				if (mainc->headarmor == 0) {
+					newarmor = createrandomarmor(level, 0);
+				}
+				else if (mainc->torsoarmor == 0) {
+					newarmor = createrandomarmor(level, 1);
+				}
+				else if (mainc->armarmor == 0) {
+					newarmor = createrandomarmor(level, 2);
+				}
+				else if (mainc->legarmor == 0) {
+					newarmor = createrandomarmor(level, 3);
+				}
+				else {
+					newarmor = createrandomarmor(level, rand() % 4);
+				}
+			}
+			while (armorx) {
 				BeginTextureMode(target);
 				ClearBackground(BLACK);
 				DrawTexturePro(sst, ssource, screen, origin, 0, WHITE);
@@ -271,6 +328,31 @@ levelstart:
 				leveltextpos.x = (1920 - leveltextpos.x) / 2;
 				leveltextpos.y = 40;
 				DrawTextEx(myfont, endingtext, leveltextpos, 40, 0, WHITE);
+				EndTextureMode();
+
+				BeginDrawing();
+				ClearBackground(BLACK);
+				DrawTexturePro(target.texture, targetsource, targetdest, origin, 0, WHITE);
+				EndDrawing();
+			}
+			while (!armorx) {
+				BeginTextureMode(target);
+				ClearBackground(BLACK);
+				DrawTexturePro(sst, ssource, screen, origin, 0, WHITE);
+				DrawRectangle(0, 0, 1920, 1080, bg);
+				if (renderbutton(&keepoldbutton, &myfont)) {
+					break;
+				}
+				else if (renderbutton(&takenewbutton, &myfont)) {
+					mainc->weaponinfo = neweapon;
+					break;
+				}
+				leveltextpos = MeasureTextEx(myfont, endingtext, 40, 0);
+				leveltextpos.x = (1920 - leveltextpos.x) / 2;
+				leveltextpos.y = 40;
+				DrawTextEx(myfont, endingtext, leveltextpos, 40, 0, WHITE);
+				renderweaponinfo(mainc->weaponinfo, &myfont, &armor1rect, mainc, tileset);
+				renderweaponinfo(neweapon, &myfont, &armor2rect, mainc, tileset);
 				EndTextureMode();
 
 				BeginDrawing();

@@ -17,7 +17,7 @@ void loadarmortextures(void);
 
 void unloadarmortextures(void);
 
-armor* createrandomarmor(long long unsigned int levelx);
+armor* createrandomarmor(long long unsigned int levelx, char armortype);
 
 void destroyarmor(armor* arm);
 

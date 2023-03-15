@@ -46,7 +46,7 @@ void transfercharacter(character* now, character* old);
 
 char ishappened(float percentage);
 
-void charactertakedamage(character* c, float x);
+float charactertakedamage(character* c, float x);
 
 void charactergivedamage(character* c, float x, enemy* e);
 

@@ -32,7 +32,7 @@ void unloadarmortextures(void) {
 	UnloadTexture(leggingstexture);
 }
 
-armor* createrandomarmor(long long unsigned int levelx) {
+armor* createrandomarmor(long long unsigned int levelx, char armortype) {
 	armor* arm = malloc(sizeof(armor));
 	if (arm) {
 		if (ishappened(levelx)) {
@@ -75,7 +75,7 @@ armor* createrandomarmor(long long unsigned int levelx) {
 			sprintf(arm->explanation, "+%%4 damage reduction ");
 			arm->tint = &wood;
 		}
-		arm->armortype = rand() % 4;
+		arm->armortype = armortype;
 		if (arm->armortype == 0) {
 			arm->texture = &helmettexture;
 			strcat(arm->name, "Helmet");
