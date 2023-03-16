@@ -11,6 +11,11 @@
 #include "village.h"
 
 char reselect = 0;
+char fullscreen = 0;
+float musicvolume = 0.25f;
+float effectvolume = 1;
+
+Music main_music;
 
 int defaultwidth;
 int defaultheight;
@@ -55,6 +60,9 @@ button quitbutton = {
 };
 
 void intromenu(void) {
+	Music intro_sound = LoadMusicStream("data/sound/intro_sound.mp3");
+	SetMusicVolume(intro_sound, 0);
+	musicvolume = 0;
 	Font myfont = LoadFontEx("data/fonts/font2.ttf", 150, 0, 350);
 	Vector2 a = MeasureTextEx(myfont, u8"A Þükrü Çiriþ Game", 150, 0);
 	Color textc = { 255,255,255,0 };
@@ -67,12 +75,21 @@ void intromenu(void) {
 	Texture2D logo = LoadTexture("data/characters/logo.png");
 	Rectangle logorect = { 810,200,300,300 };
 	Rectangle logosrc = { 0,0,11,11 };
-	for (int i = 0; i < 434; i++) {
+	PlayMusicStream(intro_sound);
+	int intodur = 480;
+	for (int i = 0; i < intodur; i++) {
+		SetMusicVolume(intro_sound, musicvolume);
+		UpdateMusicStream(intro_sound);
 		if (i < 127) {
 			textc.a += 2;
+			musicvolume += 0.002;
 		}
-		else if (i > 307) {
+		else if (i > intodur - 127) {
 			textc.a -= 2;
+			musicvolume -= 0.002;
+			if (musicvolume < 0) {
+				musicvolume = 0;
+			}
 		}
 		BeginTextureMode(target);
 		ClearBackground(BLACK);
@@ -85,9 +102,16 @@ void intromenu(void) {
 		DrawTexturePro(target.texture, targetsource, targetdest, origin, 0, WHITE);
 		EndDrawing();
 	}
+	UnloadMusicStream(intro_sound);
 	UnloadRenderTexture(target);
 	UnloadFont(myfont);
 	UnloadTexture(logo);
+	musicvolume = 0.25f;
+	for (int i = 0; i < 30; i++) {
+		BeginDrawing();
+		ClearBackground(BLACK);
+		EndDrawing();
+	}
 }
 
 char mainmenuinput(Font* f, Vector2* a) {
@@ -126,6 +150,7 @@ char tilesetintromainmenu(tile* t, int speed, int x, float ratio, Font* f, Vecto
 	Rectangle targetdest = { 0,0,(float)GetRenderWidth(),(float)GetRenderHeight() };
 	Vector2 origin = { 0,0 };
 	while (t[(x * x) - 1].position.y != t[(x * x) - 1].absposition.y) {
+		UpdateMusicStream(main_music);
 		BeginTextureMode(target);
 		ClearBackground(BLACK);
 		y = mainmenuinput(f, a);
@@ -153,6 +178,7 @@ char tilesetintromainmenu(tile* t, int speed, int x, float ratio, Font* f, Vecto
 		EndDrawing();
 	}
 	for (int i = 0; i < 30; i++) {
+		UpdateMusicStream(main_music);
 		BeginTextureMode(target);
 		ClearBackground(BLACK);
 		y = mainmenuinput(f, a);
@@ -182,6 +208,7 @@ char tilesetoutromainmenu(tile* t, int speed, int x, float ratio, Font* f, Vecto
 	Rectangle targetdest = { 0,0,(float)GetRenderWidth(),(float)GetRenderHeight() };
 	Vector2 origin = { 0,0 };
 	while (t[0].position.y <= t[0].absposition.y + 1080) {
+		UpdateMusicStream(main_music);
 		BeginTextureMode(target);
 		ClearBackground(BLACK);
 		y = mainmenuinput(f, a);
@@ -276,7 +303,11 @@ char mainmenu(long long unsigned int level) {
 		Rectangle targetdest = { 0,0,(float)GetRenderWidth(),(float)GetRenderHeight() };
 		Vector2 origin = { 0,0 };
 		Rectangle screen = { 0,0,1920,1080 };
+		float volume = musicvolume;
 		for (int i = 0; i < 120; i++) {
+			musicvolume -= (volume / 120);
+			SetMusicVolume(main_music, musicvolume);
+			UpdateMusicStream(main_music);
 			BeginTextureMode(target);
 			ClearBackground(BLACK);
 			DrawTexturePro(sst, ssource, screen, origin, 0, WHITE);
@@ -288,6 +319,7 @@ char mainmenu(long long unsigned int level) {
 			EndDrawing();
 			screen.y += 15;
 		}
+		musicvolume = volume;
 		UnloadTexture(sst);
 		UnloadRenderTexture(target);
 	}
@@ -375,6 +407,7 @@ void settingsmenu(void) {
 		.textcolor = {0,0,0,255}
 	};
 	while (!WindowShouldClose()) {
+		UpdateMusicStream(main_music);
 		BeginTextureMode(target);
 		ClearBackground(BLACK);
 		DrawTextEx(myfont, "Fullscreen:", fullscreentextpos, 70, 0, WHITE);
@@ -384,6 +417,8 @@ void settingsmenu(void) {
 		if (CheckCollisionPointRec(e, fullscreenbox)) {
 			DrawRectangleLinesEx(fullscreenbox, 10, _3840x2160res.frontcolor);
 			if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+				SetSoundVolume(*getclicksound(), geteffectvolume());
+				PlaySound(*getclicksound());
 				ToggleFullscreen();
 				switch (reselect)
 				{
@@ -491,6 +526,7 @@ void creditsmenu(void) {
 	vec2.x = (1920 - vec2.x) / 2;
 	vec2.y = 1120;
 	while (!WindowShouldClose()) {
+		UpdateMusicStream(main_music);
 		BeginTextureMode(target);
 		ClearBackground(BLACK);
 		if (renderbutton(&backbutton, &myfont)) {
@@ -514,4 +550,25 @@ void creditsmenu(void) {
 	UnloadFont(myfont);
 	UnloadFont(myfont2);
 	UnloadRenderTexture(target);
+}
+
+void loadmainmenumusic(void) {
+	if (!main_music.ctxData) {
+		main_music = LoadMusicStream("data/sound/main_sound.mp3");
+		SetMusicVolume(main_music, musicvolume);
+		PlayMusicStream(main_music);
+	}
+}
+
+void unloadmainmenumusic(void) {
+	UnloadMusicStream(main_music);
+	main_music.ctxData = 0;
+}
+
+float getmusicvolume(void) {
+	return musicvolume;
+}
+
+float geteffectvolume(void) {
+	return effectvolume;
 }

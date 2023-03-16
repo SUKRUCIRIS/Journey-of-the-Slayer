@@ -32,7 +32,6 @@ Rectangle infotexturerectwep;
 Color backcolorwep = { 48,0,74,255 };
 Vector2 originwep = { 0,0 };
 Vector2 vectorwep = { 0,0 };
-Color legendarywep = { 231,31,31 ,255 };
 Rectangle* tempskillrect;
 Rectangle tempskillrect2;
 
@@ -83,7 +82,7 @@ void renderweaponinfo(weapon* w, Font* myfont, Rectangle* rec, void* mainc, void
 		infotexturerectwep.y = rec->y + rec->width / 16;
 		infotexturerectwep.width = rec->width / 2;
 		infotexturerectwep.height = rec->width / 2;
-		DrawRectangleRec(infotexturerectwep, legendarywep);
+		DrawRectangleRec(infotexturerectwep, *getraritycolor(3));
 		DrawTexturePro(*(w->texture), *w->source, infotexturerectwep, originwep, 0, WHITE);
 		DrawRectangleLinesEx(infotexturerectwep, 2, WHITE);
 

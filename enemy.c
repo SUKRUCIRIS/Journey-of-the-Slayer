@@ -6,6 +6,8 @@
 #include <string.h>
 #include "fx.h"
 #include "village.h"
+#include "game.h"
+#include "menus.h"
 
 enemy** allenemies = 0;
 
@@ -192,6 +194,7 @@ void playenemy(void* mainc, void* tileset, enemy* c) {
 					}
 				}
 			}
+			setmovesound(1);
 			addanimationmapobject(c->m, setmoveanimationpoints(optimizedi / 7, optimizedi % 7, tileset, mainc, 1), distance[optimizedi]);
 			c->actionpoint -= distance[optimizedi];
 			moveenemy(c, optimizedi / 7, optimizedi % 7, tileset, 7);
@@ -233,6 +236,7 @@ void playenemy(void* mainc, void* tileset, enemy* c) {
 				loop++;
 			}
 		}
+		setmovesound(1);
 		addanimationmapobject(c->m, setmoveanimationpoints(optimizedi / 7, optimizedi % 7, tileset, mainc, 1), distance[optimizedi]);
 		c->actionpoint -= distance[optimizedi];
 		moveenemy(c, optimizedi / 7, optimizedi % 7, tileset, 7);
@@ -256,6 +260,7 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 		}
 	}
 	for (int i = 0; i < 30; i++) {
+		UpdateMusicStream(*getwarmusic());
 		BeginTextureMode(target);
 		ClearBackground(BLACK);
 		rendertileset(tileset, 7);
@@ -284,6 +289,7 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 		if (allenemies[i]->health > 0) {
 			deneme = 0;
 		a:
+			UpdateMusicStream(*getwarmusic());
 			BeginTextureMode(target);
 			ClearBackground(BLACK);
 			rendertileset(tileset, 7);
@@ -331,6 +337,7 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 		killenemy(mainc);
 	}
 	while (isthereanimation()) {
+		UpdateMusicStream(*getwarmusic());
 		BeginTextureMode(target);
 		ClearBackground(BLACK);
 		rendertileset(tileset, 7);
@@ -356,6 +363,7 @@ void playallenemies(void* mainc, void* tileset, void* font) {
 		EndDrawing();
 	}
 	for (int i = 0; i < 30; i++) {
+		UpdateMusicStream(*getwarmusic());
 		BeginTextureMode(target);
 		ClearBackground(BLACK);
 		rendertileset(tileset, 7);
@@ -407,6 +415,8 @@ void killenemy(enemy* c) {
 		c->m->tileposition.y = -100;
 		removeanimation(c->m);
 		c->m->tileon = 0;
+		SetSoundVolume(*getdeathsound(), geteffectvolume());
+		PlaySound(*getdeathsound());
 	}
 }
 

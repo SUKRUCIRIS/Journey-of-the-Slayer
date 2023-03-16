@@ -1,6 +1,9 @@
 #include "button.h"
+#include "menus.h"
 
 Vector2 e;
+
+Sound click;
 
 char renderbutton(button* b, Font* f) {
 	e.x = GetMousePosition().x * (1920.0f / GetRenderWidth());
@@ -12,6 +15,8 @@ char renderbutton(button* b, Font* f) {
 		e.y = b->position.y + (b->position.height - e.y) / 2.0f;
 		DrawTextEx(*f, b->text, e, (float)f->baseSize, 0, b->textcolor);
 		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+			SetSoundVolume(click, geteffectvolume());
+			PlaySound(click);
 			return 1;
 		}
 	}
@@ -23,4 +28,16 @@ char renderbutton(button* b, Font* f) {
 		DrawTextEx(*f, b->text, e, (float)f->baseSize, 0, b->textcolor);
 	}
 	return 0;
+}
+
+void loadclicksound(void) {
+	click = LoadSound("data/sound/click.mp3");
+}
+
+void unloadclicksound(void) {
+	UnloadSound(click);
+}
+
+Sound* getclicksound(void) {
+	return &click;
 }

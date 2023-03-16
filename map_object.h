@@ -37,3 +37,7 @@ char isthereanimation(void);
 void removeanimation(map_object* m);
 
 void destroyallmapobjects(void);
+
+void setmovesound(char x);
+
+void setjumpsound(char x);

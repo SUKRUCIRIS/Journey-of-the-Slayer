@@ -55,6 +55,8 @@ char jumpskill(tile* tileset, character* mainc) {
 						tileset[(7 * x) + y].type != 2) {
 						Vector2* animationpos = malloc(sizeof(Vector2) * 2);
 						if (animationpos) {
+							setmovesound(1);
+							setjumpsound(1);
 							calculateposmapobject(&(tileset[(7 * x) + y]), mainc->m, &(animationpos[1]), 1);
 							animationpos[0].x = (animationpos[1].x + mainc->m->position.x) / 2;
 							animationpos[0].y = ((animationpos[1].y + mainc->m->position.y) / 2) - 100;
@@ -162,6 +164,7 @@ char move(tile* tileset, character* mainc) {
 						warningcolor.b = 31;
 						warningcolor.r = 231;
 						warningcolor.g = 31;
+						setmovesound(1);
 						Vector2* steps = setmoveanimationpoints(x2, y2, tileset, mainc, 0);
 						for (int i = 0; i < distance[7 * x2 + y2]; i++) {
 							steps[i].x += mainc->m->position.width / 2;

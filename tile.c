@@ -7,6 +7,7 @@
 #include "skillbutton.h"
 #include "enemy.h"
 #include "village.h"
+#include "game.h"
 
 Vector2 a, b, c, d, e;
 
@@ -189,6 +190,7 @@ void tilesetintro(tile* t, int speed, int x, float ratio) {
 		t[i].position.y += 1080;
 	}
 	while (t[(x * x) - 1].position.y != t[(x * x) - 1].absposition.y) {
+		UpdateMusicStream(*getwarmusic());
 		BeginTextureMode(target);
 		ClearBackground(BLACK);
 		for (int i = 0; i < x * x; i++) {
@@ -222,6 +224,7 @@ void tilesetoutro(tile* t, int speed, int x, float ratio) {
 		t[i].position = t[i].absposition;
 	}
 	while (t[0].position.y <= t[0].absposition.y + 1080) {
+		UpdateMusicStream(*getwarmusic());
 		BeginTextureMode(target);
 		ClearBackground(BLACK);
 		for (int i = (x * x) - 1; i >= 0; i--) {

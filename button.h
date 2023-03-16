@@ -10,3 +10,9 @@ typedef struct button{
 }button;
 
 char renderbutton(button* b, Font* f);
+
+void loadclicksound(void);
+
+void unloadclicksound(void);
+
+Sound* getclicksound(void);

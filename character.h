@@ -65,3 +65,9 @@ void setwarinfofont(Font* font);
 void renderwarinfo(void);
 
 Color* getraritycolor(char rarity);
+
+Sound* getwalksound();
+
+Sound* getdeathsound();
+
+Sound* getattacksound();

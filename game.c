@@ -8,6 +8,9 @@
 #include "fx.h"
 #include <stdlib.h>
 #include "village.h"
+#include "menus.h"
+
+Music war_music;
 
 long long unsigned int maingameloop(long long unsigned int levelx) {
 	loadallfx();
@@ -58,6 +61,9 @@ long long unsigned int maingameloop(long long unsigned int levelx) {
 	long long unsigned int level = levelx;
 	char leveltext[100] = { 0 };
 	Vector2 leveltextpos = { 0,0 };
+	war_music = LoadMusicStream("data/sound/war_sound.mp3");
+	SetMusicVolume(war_music, getmusicvolume());
+	PlayMusicStream(war_music);
 levelstart:
 	tileset = createtileset(7, 192, 0, 0, 1, 3, 0, level);
 	mainc = createcharacter(3, 0, 48, tileset, 7);
@@ -80,7 +86,9 @@ levelstart:
 		mainc->weaponinfo->skill1->pressed = 0;
 		mainc->weaponinfo->skill2->pressed = 0;
 	}
+	SetMusicVolume(war_music, getmusicvolume());
 	while (1) {
+		UpdateMusicStream(war_music);
 		BeginTextureMode(target);
 		ClearBackground(BLACK);
 		rendertileset(tileset, 7);
@@ -128,9 +136,11 @@ levelstart:
 
 		if (IsKeyPressed(KEY_ESCAPE)) {
 			escpressed = 1;
+			SetMusicVolume(war_music, getmusicvolume() / 2);
 			while (!WindowShouldClose() && !(mainc->jumpskill->pressed) && !(mainc->moveskill->pressed) &&
 				(!(mainc->weaponinfo) || !(mainc->weaponinfo->skill1->pressed)) &&
 				(!(mainc->weaponinfo) || !(mainc->weaponinfo->skill2->pressed))) {
+				UpdateMusicStream(war_music);
 				BeginTextureMode(target);
 				ClearBackground(BLACK);
 				for (int i = 0; i < 49; i++) {
@@ -161,6 +171,7 @@ levelstart:
 				mainc->weaponinfo->skill2->pressed = 0;
 			}
 			setcharacterapblink(0);
+			SetMusicVolume(war_music, getmusicvolume());
 		}
 
 		BeginDrawing();
@@ -183,7 +194,9 @@ levelstart:
 				Vector2 e2 = MeasureTextEx(myfont, leveltext, 50, 0);
 				e2.x = (1920 - e2.x) / 2;
 				e2.y = e.y + 100;
+				SetMusicVolume(war_music, getmusicvolume() / 2);
 				while (1) {
+					UpdateMusicStream(war_music);
 					BeginTextureMode(target);
 					ClearBackground(BLACK);
 					DrawTexturePro(sst, ssource, screen, origin, 0, WHITE);
@@ -287,7 +300,9 @@ levelstart:
 					newarmor = createrandomarmor(level, rand() % 4);
 				}
 			}
+			SetMusicVolume(war_music, getmusicvolume() / 2);
 			while (armorx) {
+				UpdateMusicStream(war_music);
 				BeginTextureMode(target);
 				ClearBackground(BLACK);
 				DrawTexturePro(sst, ssource, screen, origin, 0, WHITE);
@@ -336,6 +351,7 @@ levelstart:
 				EndDrawing();
 			}
 			while (!armorx) {
+				UpdateMusicStream(war_music);
 				BeginTextureMode(target);
 				ClearBackground(BLACK);
 				DrawTexturePro(sst, ssource, screen, origin, 0, WHITE);
@@ -362,8 +378,10 @@ levelstart:
 			}
 		}
 		else {
+			SetMusicVolume(war_music, getmusicvolume() / 2);
 			sprintf(endingtext, "All villagers died.");
 			for (int i = 0; i < 180; i++) {
+				UpdateMusicStream(war_music);
 				BeginTextureMode(target);
 				ClearBackground(BLACK);
 				DrawTexturePro(sst, ssource, screen, origin, 0, WHITE);
@@ -405,5 +423,10 @@ levelstart:
 	destroyallfx();
 	unloadarmortextures();
 	unloadvillagetextures();
+	UnloadMusicStream(war_music);
 	return level;
+}
+
+Music* getwarmusic(void) {
+	return &war_music;
 }

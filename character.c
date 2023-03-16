@@ -7,6 +7,7 @@
 #include <math.h>
 #include "weapon.h"
 #include "fx.h"
+#include "menus.h"
 
 Texture2D texture;
 Font* fontc;
@@ -49,12 +50,25 @@ Color rare = { 0,131,231 ,255 };
 Color common = { 31,231,0 ,255 };
 //rendercharacterinfo
 
+Sound walk_sound;
+Sound attack_sound;
+Sound death_sound;
+
 void loadcharactertextures(void) {
 	texture = LoadTexture("data/characters/character.png");
+	walk_sound = LoadSound("data/sound/walk_sound.wav");
+	attack_sound = LoadSound("data/sound/attack_sound.wav");
+	death_sound = LoadSound("data/sound/death_sound.wav");
+	SetSoundVolume(walk_sound, geteffectvolume());
+	SetSoundVolume(attack_sound, geteffectvolume());
+	SetSoundVolume(death_sound, geteffectvolume());
 }
 
 void unloadcharactertextures(void) {
 	UnloadTexture(texture);
+	UnloadSound(walk_sound);
+	UnloadSound(attack_sound);
+	UnloadSound(death_sound);
 }
 
 void transfercharacter(character* now, character* old) {
@@ -446,6 +460,8 @@ void setattackanimation(map_object* attacker, map_object* attacked) {
 				x.x -= 20;
 				addfx(getattackfx(), &x, 0, 1);
 			}
+			SetSoundVolume(*getattacksound(), geteffectvolume());
+			PlaySound(*getattacksound());
 		}
 	}
 }
@@ -513,4 +529,16 @@ Color* getraritycolor(char rarity) {
 		return &legendary;
 	}
 	return 0;
+}
+
+Sound* getwalksound() {
+	return &walk_sound;
+}
+
+Sound* getdeathsound() {
+	return &death_sound;
+}
+
+Sound* getattacksound() {
+	return &attack_sound;
 }

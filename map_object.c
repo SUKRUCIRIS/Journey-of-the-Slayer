@@ -2,12 +2,18 @@
 #include <stdlib.h>
 #include <math.h>
 #include "fx.h"
+#include "character.h"
+#include "menus.h"
 
 Vector2 a;
 
 map_object** allmapobjects = 0;
 
 int arraysize = 0;
+
+char movestarted = 0;
+
+char isjump = 0;
 
 map_object* createmapobject(Texture2D* texture, int tilex, int tiley, float size, tile* tileset,
 	int x, int sourcex, int sourcey, int sourcewidth, int sourceheight) {
@@ -116,12 +122,18 @@ void rendermapobject(map_object* m) {
 		if (m->position.x == m->animationpositions[m->inanimationposition].x &&
 			m->position.y == m->animationpositions[m->inanimationposition].y) {
 			m->inanimationposition++;
+			if (movestarted && !(isjump && m->inanimationposition == 1)) {
+				SetSoundVolume(*getwalksound(), geteffectvolume());
+				PlaySound(*getwalksound());
+			}
 			if (m->inanimationposition >= m->maxanimationposition) {
 				free(m->animationpositions);
 				m->animationpositions = 0;
 				m->inanimationposition = 0;
 				m->maxanimationposition = 0;
 				m->inanimation = 0;
+				movestarted = 0;
+				isjump = 0;
 			}
 		}
 	}
@@ -184,4 +196,12 @@ void destroyallmapobjects(void) {
 	}
 	free(allmapobjects);
 	allmapobjects = 0;
+}
+
+void setmovesound(char x) {
+	movestarted = x;
+}
+
+void setjumpsound(char x) {
+	isjump = x;
 }
