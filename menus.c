@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include "enemy.h"
 #include "village.h"
+#include "game.h"
 
 char reselect = 0;
 char fullscreen = 0;
@@ -62,7 +63,6 @@ button quitbutton = {
 void intromenu(void) {
 	Music intro_sound = LoadMusicStream("data/sound/intro_sound.mp3");
 	SetMusicVolume(intro_sound, 0);
-	musicvolume = 0;
 	Font myfont = LoadFontEx("data/fonts/font2.ttf", 150, 0, 350);
 	Vector2 a = MeasureTextEx(myfont, u8"A Þükrü Çiriþ Game", 150, 0);
 	Color textc = { 255,255,255,0 };
@@ -77,18 +77,19 @@ void intromenu(void) {
 	Rectangle logosrc = { 0,0,11,11 };
 	PlayMusicStream(intro_sound);
 	int intodur = 480;
+	float musicvolumeintro = 0;
 	for (int i = 0; i < intodur; i++) {
-		SetMusicVolume(intro_sound, musicvolume);
+		SetMusicVolume(intro_sound, musicvolumeintro);
 		UpdateMusicStream(intro_sound);
 		if (i < 127) {
 			textc.a += 2;
-			musicvolume += 0.002;
+			musicvolumeintro += 0.002;
 		}
 		else if (i > intodur - 127) {
 			textc.a -= 2;
-			musicvolume -= 0.002;
-			if (musicvolume < 0) {
-				musicvolume = 0;
+			musicvolumeintro -= 0.002;
+			if (musicvolumeintro < 0) {
+				musicvolumeintro = 0;
 			}
 		}
 		BeginTextureMode(target);
@@ -106,7 +107,6 @@ void intromenu(void) {
 	UnloadRenderTexture(target);
 	UnloadFont(myfont);
 	UnloadTexture(logo);
-	musicvolume = 0.25f;
 	for (int i = 0; i < 30; i++) {
 		BeginDrawing();
 		ClearBackground(BLACK);
@@ -236,20 +236,77 @@ char tilesetoutromainmenu(tile* t, int speed, int x, float ratio, Font* f, Vecto
 	return 111;
 }
 
-long long unsigned int readsavefile(void) {
-	FILE* f = 0;
-	f = fopen("data/savefile/slayer.save", "rb");
-	long long unsigned int x = 0;
-	fscanf(f, "%llu", &x);
-	fclose(f);
-	return x;
-}
-
 void writesavefile(long long unsigned int level) {
 	FILE* f = 0;
 	f = fopen("data/savefile/slayer.save", "wb");
 	fprintf(f, "%llu", level);
 	fclose(f);
+}
+
+long long unsigned int readsavefile(void) {
+	FILE* f = 0;
+	f = fopen("data/savefile/slayer.save", "rb");
+	long long unsigned int x = 0;
+	if (f) {
+		fscanf(f, "%llu", &x);
+		fclose(f);
+	}
+	else {
+		writesavefile(0);
+	}
+	return x;
+}
+
+void writesettingsavefile(void) {
+	FILE* f = fopen("data/savefile/settings.save", "wb");
+	fprintf(f, "%c\n%c\n%f\n%f", reselect, fullscreen, musicvolume, effectvolume);
+	fclose(f);
+}
+
+void readsettingsavefile(void) {
+	FILE* f = 0;
+	f = fopen("data/savefile/settings.save", "rb");
+	if (f) {
+		fscanf(f, "%c\n%c\n%f\n%f", &reselect, &fullscreen, &musicvolume, &effectvolume);
+		fclose(f);
+		switch (reselect)
+		{
+		case 0:
+			SetWindowSize(defaultwidth, defaultheight);
+			break;
+		case 1:
+			SetWindowSize(1280, 720);
+			break;
+		case 2:
+			SetWindowSize(1366, 768);
+			break;
+		case 3:
+			SetWindowSize(1600, 900);
+			break;
+		case 4:
+			SetWindowSize(1920, 1080);
+			break;
+		case 5:
+			SetWindowSize(2560, 1440);
+			break;
+		case 6:
+			SetWindowSize(3840, 2160);
+			break;
+		default:
+			break;
+		}
+		if (IsWindowFullscreen() != fullscreen) {
+			ToggleFullscreen();
+		}
+		SetMusicVolume(main_music, musicvolume);
+		SetMusicVolume(*getwarmusic(), musicvolume);
+		SetSoundVolume(*getwalksound(), effectvolume);
+		SetSoundVolume(*getdeathsound(), effectvolume);
+		SetSoundVolume(*getattacksound(), effectvolume);
+	}
+	else {
+		writesettingsavefile();
+	}
 }
 
 char mainmenu(long long unsigned int level) {
@@ -406,10 +463,16 @@ void settingsmenu(void) {
 		.text = "3840x2160",
 		.textcolor = {0,0,0,255}
 	};
+	Rectangle musicvolumerect = { 1000,300,800,75 };
+	Rectangle musicvolumerectx = { 1010,310,780,55 };
+	Rectangle effectvolumerect = { 1000,500,800,75 };
+	Rectangle effectvolumerectx = { 1010,510,780,55 };
 	while (!WindowShouldClose()) {
 		UpdateMusicStream(main_music);
 		BeginTextureMode(target);
 		ClearBackground(BLACK);
+		fullscreentextpos.x = 100;
+		fullscreentextpos.y = 100;
 		DrawTextEx(myfont, "Fullscreen:", fullscreentextpos, 70, 0, WHITE);
 		DrawTextEx(myfont, "Resolution:", resolutiontextpos, 70, 0, WHITE);
 		e.x = GetMousePosition().x * (1920.0f / GetRenderWidth());
@@ -452,7 +515,11 @@ void settingsmenu(void) {
 			DrawRectangleLinesEx(fullscreenbox, 10, WHITE);
 		}
 		if (IsWindowFullscreen()) {
+			fullscreen = 1;
 			DrawRectangleRec(fullscreentick, WHITE);
+		}
+		else {
+			fullscreen = 0;
 		}
 		if (renderbutton(&backbutton, &myfont)) {
 			break;
@@ -485,8 +552,45 @@ void settingsmenu(void) {
 			SetWindowSize(3840, 2160);
 			reselect = 6;
 		}
+		else if (CheckCollisionPointRec(e, musicvolumerect) && IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+			if (e.x - musicvolumerectx.x >= 780) {
+				e.x = musicvolumerectx.x + 780;
+			}
+			else if (e.x - musicvolumerectx.x <= 0) {
+				e.x = musicvolumerectx.x;
+			}
+			musicvolumerectx.width = e.x - musicvolumerectx.x;
+			musicvolume = (e.x - musicvolumerectx.x) / 780;
+			SetMusicVolume(main_music, musicvolume);
+			SetMusicVolume(*getwarmusic(), musicvolume);
+		}
+		else if (CheckCollisionPointRec(e, effectvolumerect) && IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+			if (e.x - musicvolumerectx.x >= 780) {
+				e.x = musicvolumerectx.x + 780;
+			}
+			else if (e.x - musicvolumerectx.x <= 0) {
+				e.x = musicvolumerectx.x;
+			}
+			effectvolumerectx.width = e.x - musicvolumerectx.x;
+			effectvolume = (e.x - musicvolumerectx.x) / 780;
+			SetSoundVolume(*getwalksound(), effectvolume);
+			SetSoundVolume(*getdeathsound(), effectvolume);
+			SetSoundVolume(*getattacksound(), effectvolume);
+		}
 		restick.y = 280 + (reselect * 100.0f);
 		DrawRectangleLinesEx(restick, 10, WHITE);
+		fullscreentextpos.x = 1000;
+		fullscreentextpos.y = 200;
+		DrawTextEx(myfont, "Music Volume:", fullscreentextpos, 70, 0, WHITE);
+		fullscreentextpos.x = 1000;
+		fullscreentextpos.y = 400;
+		DrawTextEx(myfont, "SFX Volume:", fullscreentextpos, 70, 0, WHITE);
+		DrawRectangleLinesEx(musicvolumerect, 10, WHITE);
+		DrawRectangleLinesEx(effectvolumerect, 10, WHITE);
+		effectvolumerectx.width = effectvolume * 780;
+		musicvolumerectx.width = musicvolume * 780;
+		DrawRectangleRec(musicvolumerectx, _3840x2160res.frontcolor);
+		DrawRectangleRec(effectvolumerectx, _3840x2160res.frontcolor);
 		EndTextureMode();
 
 		BeginDrawing();
@@ -498,6 +602,7 @@ void settingsmenu(void) {
 	}
 	UnloadFont(myfont);
 	UnloadRenderTexture(target);
+	writesettingsavefile();
 }
 
 void setdeafultwh(int width, int height) {
@@ -571,4 +676,8 @@ float getmusicvolume(void) {
 
 float geteffectvolume(void) {
 	return effectvolume;
+}
+
+char getreselect(void) {
+	return reselect;
 }

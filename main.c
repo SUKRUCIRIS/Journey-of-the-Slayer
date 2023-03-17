@@ -11,8 +11,11 @@
 //linker: raylib.lib msvcrt.lib winmm.lib
 
 int main() {
+	SetMouseCursor(0);
+	Image icon = LoadImage("data/characters/character.png");
 	srand((unsigned int)time(0));
 	InitWindow(GetScreenWidth(), GetScreenHeight(), "Journey of the Slayer");
+	SetWindowIcon(icon);
 	InitAudioDevice();
 	setdeafultwh(GetScreenWidth(), GetScreenHeight());
 	SetWindowState(FLAG_WINDOW_HIGHDPI | FLAG_VSYNC_HINT | FLAG_WINDOW_ALWAYS_RUN |
@@ -20,6 +23,7 @@ int main() {
 	SetExitKey(KEY_NULL);
 	SetTargetFPS(60);
 	ToggleFullscreen();
+	readsettingsavefile();
 	intromenu();
 	loadclicksound();
 	long long unsigned int level = 0;
@@ -39,6 +43,7 @@ mainm:
 		creditsmenu();
 		goto mainm;
 	}
+	UnloadImage(icon);
 	unloadclicksound();
 	unloadmainmenumusic();
 	CloseAudioDevice();

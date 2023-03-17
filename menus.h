@@ -17,3 +17,9 @@ void unloadmainmenumusic(void);
 float getmusicvolume(void);
 
 float geteffectvolume(void);
+
+void writesettingsavefile(void);
+
+void readsettingsavefile(void);
+
+char getreselect(void);
