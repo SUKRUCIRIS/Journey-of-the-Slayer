@@ -1,5 +1,5 @@
 # Source code of the game which is named Journey of the Slayer
-Journey of the Slayer is a roguelike turn based isometric strategy game where you kill demons to protect human villages.
+Journey of the Slayer is a roguelike turn based isometric strategy game where you kill demons to protect human villages. You can download and play the game from itchio: https://sukruciris.itch.io/jos
 
 I wrote the game in C language with Raylib library. Raylib is the only dependancy of this code. 
 
